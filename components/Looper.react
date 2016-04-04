@@ -1,0 +1,13 @@
+'use strict';
+
+const React = require('react');
+
+let Looper = React.createClass({
+  render: ()=> {
+    return (
+      <div>Hello, Component!</div>
+    );
+  }
+});
+
+module.exports = Looper;

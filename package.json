@@ -1,0 +1,19 @@
+{
+  "name": "drone",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "webpack ./app.js public/js/bundle.js & nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4",
+    "express-handlebars": "^3.0.0",
+    "node-jsx": "^0.13.3",
+    "react": "^0.14.8",
+    "react-dom": "^0.14.8"
+  }
+}
