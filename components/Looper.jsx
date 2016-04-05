@@ -1,6 +1,7 @@
 'use strict';
 
 const React       = require('react');
+const Component   = React.Component;
 const ReactDOM    = require('react-dom');
 const ProgressBar = require('progressbar.js');
 const dragSource  = require('react-dnd').DragSource;
@@ -23,17 +24,11 @@ function collect(connect, monitor) {
   };
 }
 
-const Looper = React.createClass({
-  propTypes: {
-    xPos: PropTypes.string.isRequired,
-    yPos: PropTypes.string.isRequired,
-    // Injected by React DnD:
-    isDragging: PropTypes.bool.isRequired,
-    connectDragSource: PropTypes.func.isRequired
-  },
+class Looper extends Component {
+  constructor(props) {
+    super(props);
 
-  getInitialState: function() {
-    return {
+    this.state = {
       isPlaying: false,
       loop: true,
       progress: 0,
@@ -42,9 +37,19 @@ const Looper = React.createClass({
       xPos: 0,
       yPos: 0
     };
-  },
+  }
 
-  componentDidMount: function() {
+  static get propTypes() {
+    return {
+      xPos: PropTypes.string.isRequired,
+      yPos: PropTypes.string.isRequired,
+      // Injected by React DnD:
+      isDragging: PropTypes.bool.isRequired,
+      connectDragSource: PropTypes.func.isRequired
+    }
+  }
+
+  componentDidMount() {
     let domNode = ReactDOM.findDOMNode(this)
     let audioNode = domNode.children[0];
 
@@ -64,9 +69,9 @@ const Looper = React.createClass({
       trailColor: '#999'
     });
     this.forceUpdate();
-  },
+  }
 
-  handleClick: function() {
+  handleClick() {
 
     let text = this.state.isPlaying ? 'play' : 'pause';
     this.state.progressBar.setText(`<i class="fa fa-${text}"></i>`);
@@ -79,14 +84,14 @@ const Looper = React.createClass({
       this.state.audioNode.play();
       this.state.isPlaying = true;
     }
-  },
+  }
 
-  setPosition: function(x, y) {
+  setPosition(x, y) {
     this.state.xPos = x;
     this.state.yPos = y;
-  },
+  }
 
-  updateProgress: function() {
+  updateProgress() {
     let audioNode = this.state.audioNode;
     let value = 0;
 
@@ -95,9 +100,9 @@ const Looper = React.createClass({
     }
 
     this.state.progressBar.animate(value);
-  },
+  }
 
-  render: function() {
+  render() {
     let isDragging = this.props.isDragging;
     let connectDragSource = this.props.connectDragSource;
     let xPos = this.state.xPos;
@@ -118,7 +123,7 @@ const Looper = React.createClass({
       </div>
     );
   }
-})
+}
 
 // module.exports = Looper;
 module.exports = dragSource('looper', looperSource, collect)(Looper);

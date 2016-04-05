@@ -46,11 +46,41 @@
 
 	'use strict';
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 	var React = __webpack_require__(1);
+	var Component = React.Component;
 	var ReactDOM = __webpack_require__(158);
 	var Mixer = __webpack_require__(159);
 
-	ReactDOM.render(React.createElement(Mixer, null), document.getElementById('container'));
+	var LooperApp = function (_Component) {
+	  _inherits(LooperApp, _Component);
+
+	  function LooperApp(props) {
+	    _classCallCheck(this, LooperApp);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(LooperApp).call(this, props));
+	  }
+
+	  _createClass(LooperApp, [{
+	    key: 'render',
+	    value: function render() {
+	      return React.createElement(Mixer, null);
+	    }
+	  }]);
+
+	  return LooperApp;
+	}(Component);
+
+	ReactDOM.render(React.createElement(LooperApp, null), document.getElementById('container'));
+
+	module.exports = LooperApp;
 
 /***/ },
 /* 1 */
@@ -19663,23 +19693,43 @@
 
 	'use strict';
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 	var React = __webpack_require__(1);
+	var Component = React.Component;
 	var Looper = __webpack_require__(160);
 	var HTML5Backend = __webpack_require__(291);
 	var dragDropContext = __webpack_require__(169).DragDropContext;
 
-	var Mixer = React.createClass({
-	  displayName: 'Mixer',
+	var Mixer = function (_Component) {
+	  _inherits(Mixer, _Component);
 
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(Looper, { src: 'media/loop.mp3', xPos: '100', yPos: '100' }),
-	      React.createElement(Looper, { src: 'media/loop2.mp3', xPos: '200', yPos: '200' })
-	    );
+	  function Mixer(props) {
+	    _classCallCheck(this, Mixer);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Mixer).call(this, props));
 	  }
-	});
+
+	  _createClass(Mixer, [{
+	    key: 'render',
+	    value: function render() {
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(Looper, { src: 'media/loop.mp3', xPos: '100', yPos: '100' }),
+	        React.createElement(Looper, { src: 'media/loop2.mp3', xPos: '200', yPos: '200' })
+	      );
+	    }
+	  }]);
+
+	  return Mixer;
+	}(Component);
 
 	module.exports = dragDropContext(HTML5Backend)(Mixer);
 
@@ -19689,7 +19739,16 @@
 
 	'use strict';
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 	var React = __webpack_require__(1);
+	var Component = React.Component;
 	var ReactDOM = __webpack_require__(158);
 	var ProgressBar = __webpack_require__(161);
 	var dragSource = __webpack_require__(169).DragSource;
@@ -19712,19 +19771,15 @@
 	  };
 	}
 
-	var Looper = React.createClass({
-	  displayName: 'Looper',
+	var Looper = function (_Component) {
+	  _inherits(Looper, _Component);
 
-	  propTypes: {
-	    xPos: PropTypes.string.isRequired,
-	    yPos: PropTypes.string.isRequired,
-	    // Injected by React DnD:
-	    isDragging: PropTypes.bool.isRequired,
-	    connectDragSource: PropTypes.func.isRequired
-	  },
+	  function Looper(props) {
+	    _classCallCheck(this, Looper);
 
-	  getInitialState: function getInitialState() {
-	    return {
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Looper).call(this, props));
+
+	    _this.state = {
 	      isPlaying: false,
 	      loop: true,
 	      progress: 0,
@@ -19733,91 +19788,114 @@
 	      xPos: 0,
 	      yPos: 0
 	    };
-	  },
-
-	  componentDidMount: function componentDidMount() {
-	    var domNode = ReactDOM.findDOMNode(this);
-	    var audioNode = domNode.children[0];
-
-	    this.state.xPos = this.props.xPos;
-	    this.state.yPos = this.props.yPos;
-
-	    audioNode.addEventListener('timeupdate', this.updateProgress, false);
-	    this.state.audioNode = audioNode;
-
-	    var progressNode = domNode.children[1];
-
-	    this.state.progressBar = new ProgressBar.Circle(progressNode, {
-	      color: '#FF3692',
-	      strokeWidth: 5,
-	      fill: '#333',
-	      trailWidth: 1,
-	      trailColor: '#999'
-	    });
-	    this.forceUpdate();
-	  },
-
-	  handleClick: function handleClick() {
-
-	    var text = this.state.isPlaying ? 'play' : 'pause';
-	    this.state.progressBar.setText('<i class="fa fa-' + text + '"></i>');
-
-	    if (this.state.isPlaying) {
-	      this.state.audioNode.pause();
-	      this.state.isPlaying = false;
-	    } else {
-	      this.state.audioNode.loop = this.state.loop;
-	      this.state.audioNode.play();
-	      this.state.isPlaying = true;
-	    }
-	  },
-
-	  setPosition: function setPosition(x, y) {
-	    this.state.xPos = x;
-	    this.state.yPos = y;
-	  },
-
-	  updateProgress: function updateProgress() {
-	    var audioNode = this.state.audioNode;
-	    var value = 0;
-
-	    if (audioNode.currentTime > 0) {
-	      value = audioNode.currentTime / audioNode.duration;
-	    }
-
-	    this.state.progressBar.animate(value);
-	  },
-
-	  render: function render() {
-	    var isDragging = this.props.isDragging;
-	    var connectDragSource = this.props.connectDragSource;
-	    var xPos = this.state.xPos;
-	    var yPos = this.state.yPos;
-	    var opacity = isDragging ? 0.5 : 1;
-	    var style = {
-	      opacity: opacity,
-	      left: xPos + 'px',
-	      top: yPos + 'px'
-	    };
-
-	    return connectDragSource(React.createElement(
-	      'div',
-	      { className: 'looper', style: style },
-	      React.createElement(
-	        'audio',
-	        { src: this.props.src },
-	        React.createElement(
-	          'div',
-	          null,
-	          'Sorry :('
-	        )
-	      ),
-	      React.createElement('span', { className: 'progress', onClick: this.handleClick })
-	    ));
+	    return _this;
 	  }
-	});
+
+	  _createClass(Looper, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var domNode = ReactDOM.findDOMNode(this);
+	      var audioNode = domNode.children[0];
+
+	      this.state.xPos = this.props.xPos;
+	      this.state.yPos = this.props.yPos;
+
+	      audioNode.addEventListener('timeupdate', this.updateProgress, false);
+	      this.state.audioNode = audioNode;
+
+	      var progressNode = domNode.children[1];
+
+	      this.state.progressBar = new ProgressBar.Circle(progressNode, {
+	        color: '#FF3692',
+	        strokeWidth: 5,
+	        fill: '#333',
+	        trailWidth: 1,
+	        trailColor: '#999'
+	      });
+	      this.forceUpdate();
+	    }
+	  }, {
+	    key: 'handleClick',
+	    value: function handleClick() {
+
+	      var text = this.state.isPlaying ? 'play' : 'pause';
+	      this.state.progressBar.setText('<i class="fa fa-' + text + '"></i>');
+
+	      if (this.state.isPlaying) {
+	        this.state.audioNode.pause();
+	        this.state.isPlaying = false;
+	      } else {
+	        this.state.audioNode.loop = this.state.loop;
+	        this.state.audioNode.play();
+	        this.state.isPlaying = true;
+	      }
+	    }
+	  }, {
+	    key: 'setPosition',
+	    value: function setPosition(x, y) {
+	      this.state.xPos = x;
+	      this.state.yPos = y;
+	    }
+	  }, {
+	    key: 'updateProgress',
+	    value: function updateProgress() {
+	      var audioNode = this.state.audioNode;
+	      var value = 0;
+
+	      if (audioNode.currentTime > 0) {
+	        value = audioNode.currentTime / audioNode.duration;
+	      }
+
+	      this.state.progressBar.animate(value);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var isDragging = this.props.isDragging;
+	      var connectDragSource = this.props.connectDragSource;
+	      var xPos = this.state.xPos;
+	      var yPos = this.state.yPos;
+	      var opacity = isDragging ? 0.5 : 1;
+	      var style = {
+	        opacity: opacity,
+	        left: xPos + 'px',
+	        top: yPos + 'px'
+	      };
+
+	      return connectDragSource(React.createElement(
+	        'div',
+	        { className: 'looper', style: style },
+	        React.createElement(
+	          'audio',
+	          { src: this.props.src },
+	          React.createElement(
+	            'div',
+	            null,
+	            'Sorry :('
+	          )
+	        ),
+	        React.createElement('span', { className: 'progress', onClick: this.handleClick })
+	      ));
+	    }
+	  }], [{
+	    key: 'propTypes',
+	    get: function get() {
+	      return {
+	        xPos: PropTypes.string.isRequired,
+	        yPos: PropTypes.string.isRequired,
+	        // Injected by React DnD:
+	        isDragging: PropTypes.bool.isRequired,
+	        connectDragSource: PropTypes.func.isRequired
+	      };
+	    }
+	  }]);
+
+	  return Looper;
+	}(Component);
 
 	// module.exports = Looper;
+
+
 	module.exports = dragSource('looper', looperSource, collect)(Looper);
 
 /***/ },
