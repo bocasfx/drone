@@ -1,25 +1,10 @@
 'use strict';
 
-const React     = require('react');
-const Component = React.Component;
-const ReactDOM  = require('react-dom');
-const Mixer     = require('./components/Mixer.jsx');
-
-class LooperApp extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return(
-      <Mixer/>
-    );
-  }
-}
+const React          = require('react');
+const ReactDOM       = require('react-dom');
+const MixerContainer = require('./components/MixerContainer.jsx');
 
 ReactDOM.render(
-  <LooperApp/>,
+  <MixerContainer/>,
   document.getElementById('container')
 );
-
-module.exports = LooperApp;

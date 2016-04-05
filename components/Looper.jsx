@@ -10,10 +10,6 @@ const PropTypes   = React.PropTypes;
 const looperSource = {
   beginDrag: function (props) {
     return props;
-  },
-
-  endDrag: function(props, monitor, component) {
-    component.setPosition(500, 500);
   }
 }
 
