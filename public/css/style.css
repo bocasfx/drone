@@ -3,10 +3,13 @@ body {
   font-family: sans-serif;
 }
 
+.looper {
+  position: absolute;
+}
+
 .progress {
   width: 50px;
   height: 50px;
   display: block;
-  margin: 20px;
   cursor: pointer;
 }
