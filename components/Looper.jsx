@@ -1,10 +1,10 @@
 'use strict';
 
-var React = require('react');
-var ReactDOM = require('react-dom');
-var ProgressBar = require('progressbar.js');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const ProgressBar = require('progressbar.js');
 
-var Looper = React.createClass({
+const Looper = React.createClass({
   getInitialState: function() {
     return {
       isPlaying: false,

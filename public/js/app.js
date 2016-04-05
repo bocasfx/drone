@@ -48,14 +48,9 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var Looper = __webpack_require__(159);
+	var Mixer = __webpack_require__(159);
 
-	ReactDOM.render(React.createElement(
-	  'div',
-	  null,
-	  React.createElement(Looper, { src: 'media/loop.mp3' }),
-	  React.createElement(Looper, { src: 'media/loop2.mp3' })
-	), document.getElementById('container'));
+	ReactDOM.render(React.createElement(Mixer, null), document.getElementById('container'));
 
 /***/ },
 /* 1 */
@@ -19669,8 +19664,32 @@
 	'use strict';
 
 	var React = __webpack_require__(1);
+	var Looper = __webpack_require__(160);
+
+	var Mixer = React.createClass({
+	  displayName: 'Mixer',
+
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(Looper, { src: 'media/loop.mp3' }),
+	      React.createElement(Looper, { src: 'media/loop2.mp3' })
+	    );
+	  }
+	});
+
+	module.exports = Mixer;
+
+/***/ },
+/* 160 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var ProgressBar = __webpack_require__(160);
+	var ProgressBar = __webpack_require__(161);
 
 	var Looper = React.createClass({
 	  displayName: 'Looper',
@@ -19750,36 +19769,36 @@
 	module.exports = Looper;
 
 /***/ },
-/* 160 */
+/* 161 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = {
 	    // Higher level API, different shaped progress bars
-	    Line: __webpack_require__(161),
-	    Circle: __webpack_require__(166),
-	    SemiCircle: __webpack_require__(167),
+	    Line: __webpack_require__(162),
+	    Circle: __webpack_require__(167),
+	    SemiCircle: __webpack_require__(168),
 
 	    // Lower level API to use any SVG path
-	    Path: __webpack_require__(163),
+	    Path: __webpack_require__(164),
 
 	    // Base-class for creating new custom shapes
 	    // to be in line with the API of built-in shapes
 	    // Undocumented.
-	    Shape: __webpack_require__(162),
+	    Shape: __webpack_require__(163),
 
 	    // Internal utils, undocumented.
-	    utils: __webpack_require__(165)
+	    utils: __webpack_require__(166)
 	};
 
 
 /***/ },
-/* 161 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Line shaped progress bar
 
-	var Shape = __webpack_require__(162);
-	var utils = __webpack_require__(165);
+	var Shape = __webpack_require__(163);
+	var utils = __webpack_require__(166);
 
 	var Line = function Line(container, options) {
 	    this._pathTemplate = 'M 0,{center} L 100,{center}';
@@ -19808,13 +19827,13 @@
 
 
 /***/ },
-/* 162 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Base object for different progress bar shapes
 
-	var Path = __webpack_require__(163);
-	var utils = __webpack_require__(165);
+	var Path = __webpack_require__(164);
+	var utils = __webpack_require__(166);
 
 	var DESTROYED_ERROR = 'Object is destroyed';
 
@@ -20129,13 +20148,13 @@
 
 
 /***/ },
-/* 163 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Lower level API to animate any kind of svg path
 
-	var Tweenable = __webpack_require__(164);
-	var utils = __webpack_require__(165);
+	var Tweenable = __webpack_require__(165);
+	var utils = __webpack_require__(166);
 
 	var EASING_ALIASES = {
 	    easeIn: 'easeInCubic',
@@ -20302,7 +20321,7 @@
 
 
 /***/ },
-/* 164 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* shifty - v1.5.2 - 2016-02-10 - http://jeremyckahn.github.io/shifty */
@@ -21959,7 +21978,7 @@
 
 
 /***/ },
-/* 165 */
+/* 166 */
 /***/ function(module, exports) {
 
 	// Utility functions
@@ -22102,13 +22121,13 @@
 
 
 /***/ },
-/* 166 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Circle shaped progress bar
 
-	var Shape = __webpack_require__(162);
-	var utils = __webpack_require__(165);
+	var Shape = __webpack_require__(163);
+	var utils = __webpack_require__(166);
 
 	var Circle = function Circle(container, options) {
 	    // Use two arcs to form a circle
@@ -22148,14 +22167,14 @@
 
 
 /***/ },
-/* 167 */
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Semi-SemiCircle shaped progress bar
 
-	var Shape = __webpack_require__(162);
-	var Circle = __webpack_require__(166);
-	var utils = __webpack_require__(165);
+	var Shape = __webpack_require__(163);
+	var Circle = __webpack_require__(167);
+	var utils = __webpack_require__(166);
 
 	var SemiCircle = function SemiCircle(container, options) {
 	    // Use one arc to form a SemiCircle
