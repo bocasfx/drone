@@ -13,7 +13,6 @@ const mixerTarget = {
   drop: function (props, monitor, component) {
     let item = monitor.getItem();
     let delta = monitor.getDifferenceFromInitialOffset();
-    console.log(`Delta: ${JSON.stringify(delta)}`);
     let left = Math.round(item.left + delta.x);
     let top = Math.round(item.top + delta.y);
 

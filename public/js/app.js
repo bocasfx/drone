@@ -19684,7 +19684,6 @@
 	  drop: function drop(props, monitor, component) {
 	    var item = monitor.getItem();
 	    var delta = monitor.getDifferenceFromInitialOffset();
-	    console.log('Delta: ' + JSON.stringify(delta));
 	    var left = Math.round(item.left + delta.x);
 	    var top = Math.round(item.top + delta.y);
 
@@ -19768,10 +19767,8 @@
 
 	  endDrag: function endDrag(props, monitor, component) {
 	    var result = monitor.getDropResult();
-	    console.log('Props: ' + JSON.stringify(props));
 	    component.state.xPos = result.xPos;
 	    component.state.yPos = result.yPos;
-	    console.log('endDrag result: ' + JSON.stringify(result));
 	  }
 	};
 
@@ -19792,11 +19789,6 @@
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Looper).call(this, props));
 
 	    _this.state = {
-	      isPlaying: false,
-	      loop: true,
-	      progress: 0,
-	      audioNode: null,
-	      progressBar: null,
 	      xPos: 0,
 	      yPos: 0
 	    };
@@ -19807,52 +19799,96 @@
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      var domNode = ReactDOM.findDOMNode(this);
-	      var audioNode = domNode.children[0];
 
 	      this.state.xPos = this.props.xPos;
 	      this.state.yPos = this.props.yPos;
 
-	      audioNode.addEventListener('timeupdate', this.updateProgress.bind(this), false);
-	      this.state.audioNode = audioNode;
+	      this.isPlaying = false;
+	      this.progress = 0;
+	      this.duration = 100;
 
-	      var progressNode = domNode.children[1];
-
-	      this.state.progressBar = new ProgressBar.Circle(progressNode, {
+	      this.progressBar = new ProgressBar.Circle(domNode.children[0], {
 	        color: '#FF3692',
 	        strokeWidth: 5,
 	        fill: '#333',
 	        trailWidth: 1,
-	        trailColor: '#999'
+	        trailColor: '#999',
+	        duration: 100
 	      });
+
+	      this.initSynth();
+
+	      this.timeOut = null;
+
 	      this.forceUpdate();
 	    }
 	  }, {
-	    key: 'handleClick',
-	    value: function handleClick() {
+	    key: 'initSynth',
+	    value: function initSynth() {
+
+	      this.audioContext = new window.AudioContext();
+
+	      this.windowWidth = window.innerWidth;
+	      this.windowHeight = window.innerHeight;
+
+	      this.maxFreq = 6000;
+	      this.maxVol = 1;
+
+	      var initialFreq = Math.random() * 200 + 30;;
+	      var initialVol = 0.5;
+
+	      this.gainNode = this.audioContext.createGain();
+	      this.gainNode.gain.value = initialVol;
+
+	      this.oscillator = this.audioContext.createOscillator();
+	      this.oscillator.type = 'triangle';
+	      this.oscillator.connect(this.gainNode);
+	      this.oscillator.start(0);
+
+	      this.oscillator.frequency.value = initialFreq;
+	    }
+	  }, {
+	    key: 'play',
+	    value: function play() {
 
 	      var text = this.state.isPlaying ? 'play' : 'pause';
-	      this.state.progressBar.setText('<i class="fa fa-' + text + '"></i>');
+	      this.progressBar.setText('<i class="fa fa-' + text + '"></i>');
 
 	      if (this.state.isPlaying) {
-	        this.state.audioNode.pause();
+	        this.stopProgressBarAnimation();
+	        this.gainNode.disconnect(this.audioContext.destination);
 	        this.state.isPlaying = false;
 	      } else {
-	        this.state.audioNode.loop = this.state.loop;
-	        this.state.audioNode.play();
+	        this.startProgressBarAnimation();
+	        this.gainNode.connect(this.audioContext.destination);
 	        this.state.isPlaying = true;
 	      }
 	    }
 	  }, {
-	    key: 'updateProgress',
-	    value: function updateProgress() {
-	      var audioNode = this.state.audioNode;
-	      var value = 0;
+	    key: 'startProgressBarAnimation',
+	    value: function startProgressBarAnimation() {
+	      this.timeOut = setInterval(this.animateProgressBar.bind(this), 100);
+	    }
+	  }, {
+	    key: 'animateProgressBar',
+	    value: function animateProgressBar() {
+	      var _this2 = this;
 
-	      if (audioNode.currentTime > 0) {
-	        value = audioNode.currentTime / audioNode.duration;
-	      }
-
-	      this.state.progressBar.animate(value);
+	      this.progress = this.progress === 1 ? 0 : this.progress;
+	      this.progress = this.progress + 1 / this.duration;
+	      this.progressBar.animate(this.progress, function () {
+	        _this2.progressBar.animate(0);
+	      });
+	    }
+	  }, {
+	    key: 'stopProgressBarAnimation',
+	    value: function stopProgressBarAnimation() {
+	      clearTimeout(this.timeOut);
+	    }
+	  }, {
+	    key: 'onDrag',
+	    value: function onDrag(event) {
+	      this.oscillator.frequency.value = event.clientX;
 	    }
 	  }, {
 	    key: 'render',
@@ -19861,28 +19897,17 @@
 	      var connectDragSource = this.props.connectDragSource;
 	      var xPos = this.state.xPos;
 	      var yPos = this.state.yPos;
-	      var opacity = isDragging ? 0.5 : 1;
+	      var opacity = isDragging ? 0 : 1;
 	      var style = {
 	        opacity: opacity,
 	        left: xPos + 'px',
 	        top: yPos + 'px'
 	      };
 
-	      console.log(JSON.stringify(style));
-
 	      return connectDragSource(React.createElement(
 	        'div',
 	        { className: 'looper', style: style },
-	        React.createElement(
-	          'audio',
-	          { src: this.props.src },
-	          React.createElement(
-	            'div',
-	            null,
-	            'Sorry :('
-	          )
-	        ),
-	        React.createElement('span', { className: 'progress', onClick: this.handleClick.bind(this) })
+	        React.createElement('span', { className: 'progress', onClick: this.play.bind(this), draggable: 'true', onDrag: this.onDrag.bind(this) })
 	      ));
 	    }
 	  }], [{

@@ -18,10 +18,8 @@ var looperSource = {
 
   endDrag: function(props, monitor, component) {
     let result = monitor.getDropResult();
-    console.log(`Props: ${JSON.stringify(props)}`);
     component.state.xPos = result.xPos;
     component.state.yPos = result.yPos;
-    console.log(`endDrag result: ${JSON.stringify(result)}`);
   }
 }
 
@@ -38,11 +36,6 @@ class Looper extends Component {
     super(props);
 
     this.state = {
-      isPlaying: false,
-      loop: true,
-      progress: 0,
-      audioNode: null,
-      progressBar: null,
       xPos: 0,
       yPos: 0
     };
@@ -59,51 +52,90 @@ class Looper extends Component {
   }
 
   componentDidMount() {
-    let domNode = ReactDOM.findDOMNode(this)
-    let audioNode = domNode.children[0];
+    let domNode = ReactDOM.findDOMNode(this);
 
     this.state.xPos = this.props.xPos;
     this.state.yPos = this.props.yPos;
 
-    audioNode.addEventListener('timeupdate', this.updateProgress.bind(this), false);
-    this.state.audioNode = audioNode;
+    this.isPlaying = false;
+    this.progress = 0;
+    this.duration = 100;
 
-    let progressNode = domNode.children[1];
-
-    this.state.progressBar = new ProgressBar.Circle(progressNode, {
+    this.progressBar = new ProgressBar.Circle(domNode.children[0], {
       color: '#FF3692',
       strokeWidth: 5,
       fill: '#333',
       trailWidth: 1,
-      trailColor: '#999'
+      trailColor: '#999',
+      duration: 100
     });
+
+    this.initSynth();
+
+    this.timeOut = null;
+
     this.forceUpdate();
   }
 
-  handleClick() {
+  initSynth() {
+
+    this.audioContext = new window.AudioContext();
+
+    this.windowWidth = window.innerWidth;
+    this.windowHeight = window.innerHeight;
+
+    this.maxFreq = 6000;
+    this.maxVol = 1;
+
+    let initialFreq = Math.random() * 200 + 30;;
+    let initialVol = 0.5;
+
+    this.gainNode = this.audioContext.createGain();
+    this.gainNode.gain.value = initialVol;
+
+    
+    this.oscillator = this.audioContext.createOscillator();
+    this.oscillator.type = 'triangle';
+    this.oscillator.connect(this.gainNode);
+    this.oscillator.start(0);
+
+    this.oscillator.frequency.value = initialFreq;
+  }
+
+  play() {
 
     let text = this.state.isPlaying ? 'play' : 'pause';
-    this.state.progressBar.setText(`<i class="fa fa-${text}"></i>`);
-    
+    this.progressBar.setText(`<i class="fa fa-${text}"></i>`);
+
     if (this.state.isPlaying) {
-      this.state.audioNode.pause();
+      this.stopProgressBarAnimation();
+      this.gainNode.disconnect(this.audioContext.destination);
       this.state.isPlaying = false;
     } else {
-      this.state.audioNode.loop = this.state.loop;
-      this.state.audioNode.play();
+      this.startProgressBarAnimation();
+      this.gainNode.connect(this.audioContext.destination);
       this.state.isPlaying = true;
     }
   }
 
-  updateProgress() {
-    let audioNode = this.state.audioNode;
-    let value = 0;
+  startProgressBarAnimation() {
+    this.timeOut = setInterval(this.animateProgressBar.bind(this), 100);
+  }
 
-    if (audioNode.currentTime > 0) {
-      value = audioNode.currentTime / audioNode.duration;
-    }
+  animateProgressBar() {
+    this.progress = this.progress === 1 ? 0 : this.progress;
+    this.progress = this.progress + 1/this.duration;
+    this.progressBar.animate(this.progress, ()=> {
+      this.progressBar.animate(0);
+    });
+  }
 
-    this.state.progressBar.animate(value);
+  stopProgressBarAnimation() {
+    clearTimeout(this.timeOut);
+  }
+
+  onDrag(event) {
+    this.oscillator.frequency.value = event.clientX;
   }
 
   render() {
@@ -111,21 +143,16 @@ class Looper extends Component {
     let connectDragSource = this.props.connectDragSource;
     let xPos = this.state.xPos;
     let yPos = this.state.yPos;
-    let opacity = isDragging ? 0.5 : 1;
+    let opacity = isDragging ? 0 : 1;
     let style = {
       opacity: opacity,
       left: xPos + 'px',
       top: yPos + 'px'
     };
 
-    console.log(JSON.stringify(style));
-
     return connectDragSource(
       <div className="looper" style={style}>
-        <audio src={this.props.src}>
-          <div>Sorry :(</div>
-        </audio>
-        <span className="progress" onClick={this.handleClick.bind(this)}></span>
+        <span className="progress" onClick={this.play.bind(this)} draggable='true' onDrag={this.onDrag.bind(this)}></span>
       </div>
     );
   }
