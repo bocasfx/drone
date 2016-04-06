@@ -7,16 +7,29 @@ const ProgressBar = require('progressbar.js');
 const dragSource  = require('react-dnd').DragSource;
 const PropTypes   = React.PropTypes;
 
-const looperSource = {
-  beginDrag: function (props) {
-    return props;
+var looperSource = {
+  beginDrag: function (props, monitor, component) {
+    let item = {
+      left: parseInt(component.state.xPos),
+      top: parseInt(component.state.yPos)
+    };
+    return item;
+  },
+
+  endDrag: function(props, monitor, component) {
+    let result = monitor.getDropResult();
+    console.log(`Props: ${JSON.stringify(props)}`);
+    component.state.xPos = result.xPos;
+    component.state.yPos = result.yPos;
+    console.log(`endDrag result: ${JSON.stringify(result)}`);
   }
 }
 
 function collect(connect, monitor) {
   return {
     connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging()
+    isDragging: monitor.isDragging(),
+    something: 'else'
   };
 }
 
@@ -52,7 +65,7 @@ class Looper extends Component {
     this.state.xPos = this.props.xPos;
     this.state.yPos = this.props.yPos;
 
-    audioNode.addEventListener('timeupdate', this.updateProgress, false);
+    audioNode.addEventListener('timeupdate', this.updateProgress.bind(this), false);
     this.state.audioNode = audioNode;
 
     let progressNode = domNode.children[1];
@@ -82,11 +95,6 @@ class Looper extends Component {
     }
   }
 
-  setPosition(x, y) {
-    this.state.xPos = x;
-    this.state.yPos = y;
-  }
-
   updateProgress() {
     let audioNode = this.state.audioNode;
     let value = 0;
@@ -110,16 +118,17 @@ class Looper extends Component {
       top: yPos + 'px'
     };
 
+    console.log(JSON.stringify(style));
+
     return connectDragSource(
       <div className="looper" style={style}>
         <audio src={this.props.src}>
           <div>Sorry :(</div>
         </audio>
-        <span className="progress" onClick={this.handleClick}></span>
+        <span className="progress" onClick={this.handleClick.bind(this)}></span>
       </div>
     );
   }
 }
 
-// module.exports = Looper;
 module.exports = dragSource('looper', looperSource, collect)(Looper);

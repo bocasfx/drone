@@ -2,9 +2,9 @@
 
 const React          = require('react');
 const ReactDOM       = require('react-dom');
-const MixerContainer = require('./components/MixerContainer.jsx');
+const Mixer = require('./components/Mixer.jsx');
 
 ReactDOM.render(
-  <MixerContainer/>,
+  <Mixer/>,
   document.getElementById('container')
 );
