@@ -9,6 +9,7 @@ const PropTypes         = React.PropTypes;
 const ContextMenu       = require('./context-menu.jsx');
 const contextMenuLayer  = require('react-contextmenu').ContextMenuLayer;
 const flow              = require('lodash/flow');
+const colors            = require('../config').synthColors;
 
 var looperSource = {
   beginDrag: function (props, monitor, component) {
@@ -65,8 +66,10 @@ class Looper extends Component {
     this.progress = 0;
     this.duration = 100;
 
+    let colorIdx = Math.floor(Math.random() * colors.length);
+
     this.progressBar = new ProgressBar.Circle(domNode.children[0], {
-      color: '#FF3692',
+      color: colors[colorIdx],
       strokeWidth: 10,
       fill: '#333',
       trailWidth: 5,
@@ -83,7 +86,7 @@ class Looper extends Component {
 
   initSynth() {
 
-    this.audioContext = new window.AudioContext();
+    this.audioContext = this.props.audioContext;
 
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
@@ -97,16 +100,41 @@ class Looper extends Component {
     this.gainNode = this.audioContext.createGain();
     this.gainNode.gain.value = initialVol;
 
-    
+    this.waveShaper = this.audioContext.createWaveShaper();
+    this.waveShaper.curve = this.makeDistortionCurve(200);
+
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.type = 'triangle';
-    this.oscillator.connect(this.gainNode);
-    this.oscillator.start();
-
     this.oscillator.frequency.value = initialFreq;
+
+    this.biquadFilter = this.audioContext.createBiquadFilter();
+    this.biquadFilter.type = 'lowshelf';
+    this.biquadFilter.frequency.value = 1000;
+    this.biquadFilter.gain.value = 20;
+    this.biquadFilter.gain.detune = 1000;
+
+    this.oscillator.connect(this.waveShaper);
+    this.waveShaper.connect(this.biquadFilter);
+    this.biquadFilter.connect(this.gainNode);
+
+    this.oscillator.start();
 
     this.frequency = this.state.xPos;
     this.gain = this.windowHeight - this.state.yPos;
+  }
+
+  makeDistortionCurve(amount) {
+    let k = typeof amount === 'number' ? amount : 50;
+    let samples = 44100;
+    let curve = new Float32Array(samples);
+    let deg = Math.PI / 180;
+    let i = 0;
+    let x;
+    for ( ; i < samples; ++i ) {
+      x = i * 2 / samples - 1;
+      curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
+    }
+    return curve;
   }
 
   play(event) {

@@ -42,6 +42,7 @@ class Mixer extends Component {
     this.state = {
       synths: []
     };
+    this.audioContext = new window.AudioContext();
   }
 
   componentDidMount() {
@@ -67,7 +68,7 @@ class Mixer extends Component {
       <div className="mixer" onDoubleClick={this.onDoubleClick.bind(this)}>
         {
           this.state.synths.map((item)=> {
-            return <Synth key={item.key} xPos={item.left} yPos={item.top}/>
+            return <Synth audioContext={this.audioContext} key={item.key} xPos={item.left} yPos={item.top}/>
           })
         }
       </div>
