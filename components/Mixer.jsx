@@ -2,7 +2,7 @@
 
 const React           = require('react');
 const Component       = React.Component;
-const Looper          = require('./Looper.jsx');
+const Looper          = require('./looper.jsx');
 const dropTarget      = require('react-dnd').DropTarget;
 const HTML5Backend    = require('react-dnd-html5-backend');
 const dragDropContext = require('react-dnd').DragDropContext;

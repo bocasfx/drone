@@ -1,11 +1,14 @@
 'use strict';
 
-const React       = require('react');
-const Component   = React.Component;
-const ReactDOM    = require('react-dom');
-const ProgressBar = require('progressbar.js');
-const dragSource  = require('react-dnd').DragSource;
-const PropTypes   = React.PropTypes;
+const React             = require('react');
+const Component         = React.Component;
+const ReactDOM          = require('react-dom');
+const ProgressBar       = require('progressbar.js');
+const dragSource        = require('react-dnd').DragSource;
+const PropTypes         = React.PropTypes;
+const ContextMenu       = require('./context-menu.jsx');
+const contextMenuLayer  = require('react-contextmenu').ContextMenuLayer;
+const flow              = require('lodash/flow');
 
 var looperSource = {
   beginDrag: function (props, monitor, component) {
@@ -66,7 +69,7 @@ class Looper extends Component {
       color: '#FF3692',
       strokeWidth: 10,
       fill: '#333',
-      trailWidth: 1,
+      trailWidth: 5,
       trailColor: '#999',
       duration: 100
     });
@@ -102,7 +105,8 @@ class Looper extends Component {
 
     this.oscillator.frequency.value = initialFreq;
 
-    this.setSynthValues(this.state.xPos, this.state.yPos);
+    this.frequency = this.state.xPos;
+    this.gain = this.windowHeight - this.state.yPos;
   }
 
   play(event) {
@@ -139,13 +143,29 @@ class Looper extends Component {
     clearTimeout(this.timeOut);
   }
 
-  setSynthValues(frequency, gain) {
-    this.oscillator.frequency.value = frequency / this.windowWidth * this.maxFreq;
-    this.gainNode.gain.value = gain / this.windowHeight * this.maxVol;
+  set frequency(level) {
+    this.oscillator.frequency.value = level / this.windowWidth * this.maxFreq;
+  }
+
+  set gain(level) {
+    this.gainNode.gain.value = level / this.windowHeight * this.maxVol;
   }
 
   onDrag(event) {
-    this.setSynthValues(event.clientX, event.clientY);
+    this.frequency = event.clientX;
+    this.gain = this.windowHeight - event.clientY;
+  }
+
+  setWaveToSine() {
+    this.oscillator.type = 'sine';
+  }
+
+  setWaveToSquare() {
+    this.oscillator.type = 'square';
+  }
+
+  setWaveToSaw() {
+    this.oscillator.type = 'triangle';
   }
 
   render() {
@@ -161,11 +181,15 @@ class Looper extends Component {
     };
 
     return connectDragSource(
-      <div className="looper" style={style}>
-        <span className="progress" onClick={this.play.bind(this)} draggable='true' onDrag={this.onDrag.bind(this)}></span>
-      </div>
+        <div className="looper" style={style}>
+          <span className="progress" onClick={this.play.bind(this)} draggable='true' onDrag={this.onDrag.bind(this)}></span>
+          <ContextMenu synth={this}/>
+        </div>
     );
   }
 }
 
-module.exports = dragSource('looper', looperSource, collect)(Looper);
+module.exports = flow (
+  dragSource('looper', looperSource, collect),
+  contextMenuLayer('some_unique_identifier')
+)(Looper);
