@@ -39,14 +39,37 @@ const collect = function(connect, monitor) {
 class Mixer extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      synths: []
+    };
+  }
+
+  componentDidMount() {
+    this.state.synths = this.props.synths;
+    this.forceUpdate();
+  }
+
+  onDoubleClick(event) {
+    let synth = {
+      left: event.clientX - 25,
+      top: event.clientY - 25,
+      key: Date.now()
+    }
+    this.state.synths.push(synth);
+    this.forceUpdate();
   }
 
   render() {
+    
     let connectDropTarget = this.props.connectDropTarget;
+
     return connectDropTarget(
-      <div className="mixer">
-        <Looper src="media/loop.mp3" xPos="100" yPos="100"/>
-        <Looper src="media/loop2.mp3" xPos="200" yPos="200"/>
+      <div className="mixer" onDoubleClick={this.onDoubleClick.bind(this)}>
+        {
+          this.state.synths.map((synth)=> {
+            return <Looper key={synth.key} xPos={synth.left} yPos={synth.top}/>
+          })
+        }
       </div>
     );
   }

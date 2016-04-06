@@ -50,7 +50,9 @@
 	var ReactDOM = __webpack_require__(158);
 	var Mixer = __webpack_require__(159);
 
-	ReactDOM.render(React.createElement(Mixer, null), document.getElementById('container'));
+	var synths = [];
+
+	ReactDOM.render(React.createElement(Mixer, { synths: synths }), document.getElementById('container'));
 
 /***/ },
 /* 1 */
@@ -19714,18 +19716,43 @@
 	  function Mixer(props) {
 	    _classCallCheck(this, Mixer);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Mixer).call(this, props));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Mixer).call(this, props));
+
+	    _this.state = {
+	      synths: []
+	    };
+	    return _this;
 	  }
 
 	  _createClass(Mixer, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.state.synths = this.props.synths;
+	      this.forceUpdate();
+	    }
+	  }, {
+	    key: 'onDoubleClick',
+	    value: function onDoubleClick(event) {
+	      var synth = {
+	        left: event.clientX - 25,
+	        top: event.clientY - 25,
+	        key: Date.now()
+	      };
+	      this.state.synths.push(synth);
+	      this.forceUpdate();
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
+
 	      var connectDropTarget = this.props.connectDropTarget;
+
 	      return connectDropTarget(React.createElement(
 	        'div',
-	        { className: 'mixer' },
-	        React.createElement(Looper, { src: 'media/loop.mp3', xPos: '100', yPos: '100' }),
-	        React.createElement(Looper, { src: 'media/loop2.mp3', xPos: '200', yPos: '200' })
+	        { className: 'mixer', onDoubleClick: this.onDoubleClick.bind(this) },
+	        this.state.synths.map(function (synth) {
+	          return React.createElement(Looper, { key: synth.key, xPos: synth.left, yPos: synth.top });
+	        })
 	      ));
 	    }
 	  }]);
@@ -19790,7 +19817,8 @@
 
 	    _this.state = {
 	      xPos: 0,
-	      yPos: 0
+	      yPos: 0,
+	      isPlaying: false
 	    };
 	    return _this;
 	  }
@@ -19809,7 +19837,7 @@
 
 	      this.progressBar = new ProgressBar.Circle(domNode.children[0], {
 	        color: '#FF3692',
-	        strokeWidth: 5,
+	        strokeWidth: 10,
 	        fill: '#333',
 	        trailWidth: 1,
 	        trailColor: '#999',
@@ -19831,11 +19859,11 @@
 	      this.windowWidth = window.innerWidth;
 	      this.windowHeight = window.innerHeight;
 
-	      this.maxFreq = 6000;
+	      this.maxFreq = 200;
 	      this.maxVol = 1;
 
-	      var initialFreq = Math.random() * 200 + 30;;
-	      var initialVol = 0.5;
+	      var initialFreq = 0;
+	      var initialVol = 0;
 
 	      this.gainNode = this.audioContext.createGain();
 	      this.gainNode.gain.value = initialVol;
@@ -19843,13 +19871,17 @@
 	      this.oscillator = this.audioContext.createOscillator();
 	      this.oscillator.type = 'triangle';
 	      this.oscillator.connect(this.gainNode);
-	      this.oscillator.start(0);
+	      this.oscillator.start();
 
 	      this.oscillator.frequency.value = initialFreq;
+
+	      this.setSynthValues(this.state.xPos, this.state.yPos);
 	    }
 	  }, {
 	    key: 'play',
-	    value: function play() {
+	    value: function play(event) {
+
+	      event.stopPropagation();
 
 	      var text = this.state.isPlaying ? 'play' : 'pause';
 	      this.progressBar.setText('<i class="fa fa-' + text + '"></i>');
@@ -19886,9 +19918,15 @@
 	      clearTimeout(this.timeOut);
 	    }
 	  }, {
+	    key: 'setSynthValues',
+	    value: function setSynthValues(frequency, gain) {
+	      this.oscillator.frequency.value = frequency / this.windowWidth * this.maxFreq;
+	      this.gainNode.gain.value = gain / this.windowHeight * this.maxVol;
+	    }
+	  }, {
 	    key: 'onDrag',
 	    value: function onDrag(event) {
-	      this.oscillator.frequency.value = event.clientX;
+	      this.setSynthValues(event.clientX, event.clientY);
 	    }
 	  }, {
 	    key: 'render',
@@ -19914,8 +19952,8 @@
 	    key: 'propTypes',
 	    get: function get() {
 	      return {
-	        xPos: PropTypes.string.isRequired,
-	        yPos: PropTypes.string.isRequired,
+	        xPos: PropTypes.number.isRequired,
+	        yPos: PropTypes.number.isRequired,
 	        // Injected by React DnD:
 	        isDragging: PropTypes.bool.isRequired,
 	        connectDragSource: PropTypes.func.isRequired

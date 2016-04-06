@@ -37,14 +37,15 @@ class Looper extends Component {
 
     this.state = {
       xPos: 0,
-      yPos: 0
+      yPos: 0,
+      isPlaying: false
     };
   }
 
   static get propTypes() {
     return {
-      xPos: PropTypes.string.isRequired,
-      yPos: PropTypes.string.isRequired,
+      xPos: PropTypes.number.isRequired,
+      yPos: PropTypes.number.isRequired,
       // Injected by React DnD:
       isDragging: PropTypes.bool.isRequired,
       connectDragSource: PropTypes.func.isRequired
@@ -63,7 +64,7 @@ class Looper extends Component {
 
     this.progressBar = new ProgressBar.Circle(domNode.children[0], {
       color: '#FF3692',
-      strokeWidth: 5,
+      strokeWidth: 10,
       fill: '#333',
       trailWidth: 1,
       trailColor: '#999',
@@ -84,11 +85,11 @@ class Looper extends Component {
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
 
-    this.maxFreq = 6000;
+    this.maxFreq = 200;
     this.maxVol = 1;
 
-    let initialFreq = Math.random() * 200 + 30;;
-    let initialVol = 0.5;
+    let initialFreq = 0;
+    let initialVol = 0;
 
     this.gainNode = this.audioContext.createGain();
     this.gainNode.gain.value = initialVol;
@@ -97,12 +98,16 @@ class Looper extends Component {
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.type = 'triangle';
     this.oscillator.connect(this.gainNode);
-    this.oscillator.start(0);
+    this.oscillator.start();
 
     this.oscillator.frequency.value = initialFreq;
+
+    this.setSynthValues(this.state.xPos, this.state.yPos);
   }
 
-  play() {
+  play(event) {
+
+    event.stopPropagation();
 
     let text = this.state.isPlaying ? 'play' : 'pause';
     this.progressBar.setText(`<i class="fa fa-${text}"></i>`);
@@ -134,8 +139,13 @@ class Looper extends Component {
     clearTimeout(this.timeOut);
   }
 
+  setSynthValues(frequency, gain) {
+    this.oscillator.frequency.value = frequency / this.windowWidth * this.maxFreq;
+    this.gainNode.gain.value = gain / this.windowHeight * this.maxVol;
+  }
+
   onDrag(event) {
-    this.oscillator.frequency.value = event.clientX;
+    this.setSynthValues(event.clientX, event.clientY);
   }
 
   render() {
