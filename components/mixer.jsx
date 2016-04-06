@@ -2,7 +2,7 @@
 
 const React           = require('react');
 const Component       = React.Component;
-const Looper          = require('./looper.jsx');
+const Synth           = require('./synth.jsx');
 const dropTarget      = require('react-dnd').DropTarget;
 const HTML5Backend    = require('react-dnd-html5-backend');
 const dragDropContext = require('react-dnd').DragDropContext;
@@ -10,7 +10,7 @@ const flow            = require('lodash/flow');
 
 const mixerTarget = {
 
-  drop: function (props, monitor, component) {
+  drop: function (props, monitor) {
     let item = monitor.getItem();
     let delta = monitor.getDifferenceFromInitialOffset();
     let left = Math.round(item.left + delta.x);
@@ -23,7 +23,7 @@ const mixerTarget = {
   }
 };
 
-const collect = function(connect, monitor) {
+const collect = function(connect) {
   return {
     // Call this function inside render()
     // to let React DnD handle the drag events:
@@ -50,12 +50,12 @@ class Mixer extends Component {
   }
 
   onDoubleClick(event) {
-    let synth = {
+    let newSynth = {
       left: event.clientX - 25,
       top: event.clientY - 25,
       key: Date.now()
     }
-    this.state.synths.push(synth);
+    this.state.synths.push(newSynth);
     this.forceUpdate();
   }
 
@@ -66,8 +66,8 @@ class Mixer extends Component {
     return connectDropTarget(
       <div className="mixer" onDoubleClick={this.onDoubleClick.bind(this)}>
         {
-          this.state.synths.map((synth)=> {
-            return <Looper key={synth.key} xPos={synth.left} yPos={synth.top}/>
+          this.state.synths.map((item)=> {
+            return <Synth key={item.key} xPos={item.left} yPos={item.top}/>
           })
         }
       </div>

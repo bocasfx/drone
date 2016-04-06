@@ -19675,7 +19675,7 @@
 
 	var React = __webpack_require__(1);
 	var Component = React.Component;
-	var Looper = __webpack_require__(160);
+	var Synth = __webpack_require__(160);
 	var dropTarget = __webpack_require__(169).DropTarget;
 	var HTML5Backend = __webpack_require__(386);
 	var dragDropContext = __webpack_require__(169).DragDropContext;
@@ -19683,7 +19683,7 @@
 
 	var mixerTarget = {
 
-	  drop: function drop(props, monitor, component) {
+	  drop: function drop(props, monitor) {
 	    var item = monitor.getItem();
 	    var delta = monitor.getDifferenceFromInitialOffset();
 	    var left = Math.round(item.left + delta.x);
@@ -19696,7 +19696,7 @@
 	  }
 	};
 
-	var collect = function collect(connect, monitor) {
+	var collect = function collect(connect) {
 	  return {
 	    // Call this function inside render()
 	    // to let React DnD handle the drag events:
@@ -19733,12 +19733,12 @@
 	  }, {
 	    key: 'onDoubleClick',
 	    value: function onDoubleClick(event) {
-	      var synth = {
+	      var newSynth = {
 	        left: event.clientX - 25,
 	        top: event.clientY - 25,
 	        key: Date.now()
 	      };
-	      this.state.synths.push(synth);
+	      this.state.synths.push(newSynth);
 	      this.forceUpdate();
 	    }
 	  }, {
@@ -19750,8 +19750,8 @@
 	      return connectDropTarget(React.createElement(
 	        'div',
 	        { className: 'mixer', onDoubleClick: this.onDoubleClick.bind(this) },
-	        this.state.synths.map(function (synth) {
-	          return React.createElement(Looper, { key: synth.key, xPos: synth.left, yPos: synth.top });
+	        this.state.synths.map(function (item) {
+	          return React.createElement(Synth, { key: item.key, xPos: item.left, yPos: item.top });
 	        })
 	      ));
 	    }
