@@ -6,12 +6,11 @@ const ReactDOM          = require('react-dom');
 const ProgressBar       = require('progressbar.js');
 const dragSource        = require('react-dnd').DragSource;
 const PropTypes         = React.PropTypes;
-const ContextMenu       = require('./context-menu.jsx');
-const contextMenuLayer  = require('react-contextmenu').ContextMenuLayer;
 const flow              = require('lodash/flow');
 const colors            = require('../config').synthColors;
+const SynthEditor       = require('./synth-editor.jsx');
 
-var looperSource = {
+var synthSource = {
   beginDrag: function (props, monitor, component) {
     let item = {
       left: parseInt(component.state.xPos),
@@ -39,7 +38,7 @@ function collect(connect, monitor) {
   };
 }
 
-class Looper extends Component {
+class Synth extends Component {
   constructor(props) {
     super(props);
 
@@ -47,7 +46,9 @@ class Looper extends Component {
       xPos: 0,
       yPos: 0,
       isPlaying: false,
-      id: props.id
+      id: props.id,
+      showEditor: false,
+      showControls: false
     };
 
     console.log(props.id);
@@ -146,8 +147,11 @@ class Looper extends Component {
   }
 
   play(event) {
-
+    event.preventDefault();
     event.stopPropagation();
+    event.nativeEvent.stopImmediatePropagation();
+
+    console.log('single');
 
     let text = this.state.isPlaying ? 'play' : 'pause';
     this.progressBar.setText(`<i class="fa fa-${text}"></i>`);
@@ -255,6 +259,17 @@ class Looper extends Component {
     this.props.killSynth(this);
   }
 
+  showEditor(event) {
+    console.log('Showing');
+    this.state.showEditor = !this.state.showEditor;
+    this.forceUpdate();
+  }
+
+  showControls() {
+    this.state.showControls = !this.state.showControls;
+    this.forceUpdate();
+  }
+
   render() {
     let isDragging = this.props.isDragging;
     let connectDragSource = this.props.connectDragSource;
@@ -267,16 +282,32 @@ class Looper extends Component {
       top: yPos + 'px'
     };
 
+    let editorDisplay = this.state.showEditor ? 'block' : 'none';
+    let editorStyle = {
+      display: editorDisplay
+    }
+
+    let controlsDisplay = this.state.showControls ? 'block' : 'none';
+    let controlsStyle = {
+      display: controlsDisplay
+    }
+
+
+
     return connectDragSource(
-        <div className="looper" style={style}>
-          <span className="progress" onClick={this.play.bind(this)} draggable='true' onDrag={this.onDrag.bind(this)}></span>
-          <ContextMenu synth={this}/>
+      <div className="synth" style={style} onMouseEnter={this.showControls.bind(this)} onMouseLeave={this.showControls.bind(this)}>
+        <span className="progress" draggable='true' onDrag={this.onDrag.bind(this)} onClick={this.play.bind(this)}></span>
+        <div className="cog" onClick={this.showEditor.bind(this)}>
+          <div style={controlsStyle}>
+            <i className="fa fa-cog"></i>
+          </div>
         </div>
+        <div style={editorStyle}>
+          <SynthEditor/>
+        </div>
+      </div>
     );
   }
 }
 
-module.exports = flow (
-  dragSource('looper', looperSource, collect),
-  contextMenuLayer('some_unique_identifier')
-)(Looper);
+module.exports = dragSource('synth', synthSource, collect)(Synth);
