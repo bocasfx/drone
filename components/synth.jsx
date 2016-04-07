@@ -70,6 +70,7 @@ class Looper extends Component {
 
     this.progressBar = new ProgressBar.Circle(domNode.children[0], {
       color: colors[colorIdx],
+      fill: '#CAC234',
       strokeWidth: 10,
       fill: '#333',
       trailWidth: 5,
@@ -91,7 +92,7 @@ class Looper extends Component {
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
 
-    this.maxFreq = 200;
+    this.maxFreq = 100;
     this.maxVol = 1;
 
     let initialFreq = 0;
@@ -120,7 +121,7 @@ class Looper extends Component {
     this.oscillator.start();
 
     this.frequency = this.state.xPos;
-    this.gain = this.windowHeight - this.state.yPos;
+    this.gain = (this.windowHeight - this.state.yPos) / this.windowHeight * this.maxVol;
   }
 
   makeDistortionCurve(amount) {
@@ -145,13 +146,9 @@ class Looper extends Component {
     this.progressBar.setText(`<i class="fa fa-${text}"></i>`);
 
     if (this.state.isPlaying) {
-      this.stopProgressBarAnimation();
-      this.gainNode.disconnect(this.audioContext.destination);
-      this.state.isPlaying = false;
+      this.fadeOut();
     } else {
-      this.startProgressBarAnimation();
-      this.gainNode.connect(this.audioContext.destination);
-      this.state.isPlaying = true;
+      this.fadeIn();
     }
   }
 
@@ -176,12 +173,16 @@ class Looper extends Component {
   }
 
   set gain(level) {
-    this.gainNode.gain.value = level / this.windowHeight * this.maxVol;
+    this.gainNode.gain.value = level;
+  }
+
+  get gain() {
+    return this.gainNode.gain.value;
   }
 
   onDrag(event) {
     this.frequency = event.clientX;
-    this.gain = this.windowHeight - event.clientY;
+    this.gain = (this.windowHeight - event.clientY) / this.windowHeight * this.maxVol;
   }
 
   setWaveToSine() {
@@ -194,6 +195,38 @@ class Looper extends Component {
 
   setWaveToSaw() {
     this.oscillator.type = 'triangle';
+  }
+
+  fadeIn() {
+
+    this.startProgressBarAnimation();
+    this.state.isPlaying = true;
+    this.gainNode.connect(this.audioContext.destination);
+    this.gain = 0;
+
+    let fadeInInterval = setInterval(function() {
+      let originalGain = (this.windowHeight - this.state.yPos) / this.windowHeight * this.maxVol;
+      if (this.gain > originalGain) {
+        this.gain = originalGain; 
+        clearInterval(fadeInInterval);
+      }
+      this.gain = this.gain + 0.01;
+
+    }.bind(this), 10);
+  }
+
+  fadeOut() {
+    let fadeOutInterval = setInterval(function() {
+      if (this.gain < 0.0001) {
+        this.gain = 0;
+        this.stopProgressBarAnimation();
+        this.state.isPlaying = false;
+        this.gainNode.disconnect(this.audioContext.destination);
+        clearInterval(fadeOutInterval);
+      }
+      this.gain = this.gain - 0.01;
+
+    }.bind(this), 10);
   }
 
   render() {
