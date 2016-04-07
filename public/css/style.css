@@ -38,6 +38,16 @@ a {
   background-size:50px 50px;
 }
 
+.trash {
+  text-align: center;
+  color: #ccc;
+  bottom: 10px;
+  font-size: 1.5em;
+  position: absolute;
+  left: 50%;
+  margin-left: -15px;
+}
+
 /*.react-context-menu {
   background-color: #666;
   padding: 5px;

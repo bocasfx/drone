@@ -17,9 +17,6 @@ class ContextMenu extends Component {
   }
 
   render() {
-    let data = {
-      some: 'data'
-    };
 
     let synth = this.props.synth;
 

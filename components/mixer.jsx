@@ -7,6 +7,7 @@ const dropTarget      = require('react-dnd').DropTarget;
 const HTML5Backend    = require('react-dnd-html5-backend');
 const dragDropContext = require('react-dnd').DragDropContext;
 const flow            = require('lodash/flow');
+const Trash           = require('./trash.jsx');
 
 const mixerTarget = {
 
@@ -71,6 +72,7 @@ class Mixer extends Component {
             return <Synth audioContext={this.audioContext} key={item.key} xPos={item.left} yPos={item.top}/>
           })
         }
+        <Trash/>
       </div>
     );
   }

@@ -19680,6 +19680,7 @@
 	var HTML5Backend = __webpack_require__(387);
 	var dragDropContext = __webpack_require__(169).DragDropContext;
 	var flow = __webpack_require__(345);
+	var Trash = __webpack_require__(476);
 
 	var mixerTarget = {
 
@@ -19754,7 +19755,8 @@
 	        { className: 'mixer', onDoubleClick: this.onDoubleClick.bind(this) },
 	        this.state.synths.map(function (item) {
 	          return React.createElement(Synth, { audioContext: _this2.audioContext, key: item.key, xPos: item.left, yPos: item.top });
-	        })
+	        }),
+	        React.createElement(Trash, null)
 	      ));
 	    }
 	  }]);
@@ -28753,9 +28755,6 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var data = {
-	        some: 'data'
-	      };
 
 	      var synth = this.props.synth;
 
@@ -37014,6 +37013,67 @@
 	}
 
 	module.exports = exports['default'];
+
+/***/ },
+/* 476 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var React = __webpack_require__(1);
+	var Component = React.Component;
+	var dropTarget = __webpack_require__(169).DropTarget;
+
+	var trashTarget = {
+
+	  drop: function drop() {
+	    return {
+	      suicide: true
+	    };
+	  }
+	};
+
+	var collect = function collect(connect) {
+	  return {
+	    connectDropTarget: connect.dropTarget()
+	  };
+	};
+
+	var Trash = function (_Component) {
+	  _inherits(Trash, _Component);
+
+	  function Trash() {
+	    _classCallCheck(this, Trash);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Trash).apply(this, arguments));
+	  }
+
+	  _createClass(Trash, [{
+	    key: 'render',
+	    value: function render() {
+
+	      var connectDropTarget = this.props.connectDropTarget;
+
+	      return connectDropTarget(React.createElement(
+	        'div',
+	        { className: 'trash' },
+	        React.createElement('i', { className: 'fa fa-trash' })
+	      ));
+	    }
+	  }]);
+
+	  return Trash;
+	}(Component);
+
+	module.exports = dropTarget('looper', trashTarget, collect)(Trash);
 
 /***/ }
 /******/ ]);
