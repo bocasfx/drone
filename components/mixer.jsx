@@ -1,6 +1,7 @@
 'use strict';
 
 const React           = require('react');
+const ReactDOM        = require('react-dom');
 const Component       = React.Component;
 const Synth           = require('./synth.jsx');
 const dropTarget      = require('react-dnd').DropTarget;
@@ -8,10 +9,15 @@ const HTML5Backend    = require('react-dnd-html5-backend');
 const dragDropContext = require('react-dnd').DragDropContext;
 const flow            = require('lodash/flow');
 const Trash           = require('./trash.jsx');
+const _               = require('lodash');
 
 const mixerTarget = {
 
   drop: function (props, monitor) {
+    if (monitor.didDrop()) {
+      return;
+    }
+
     let item = monitor.getItem();
     let delta = monitor.getDifferenceFromInitialOffset();
     let left = Math.round(item.left + delta.x);
@@ -61,6 +67,15 @@ class Mixer extends Component {
     this.forceUpdate();
   }
 
+  killSynth(synth) {
+    console.log(this.state.synths.length);
+    this.state.synths = _.remove(this.state.synths, function(item) {
+      return item.key !== synth.state.id;
+    })
+    console.log(this.state.synths);
+    this.forceUpdate();
+  }
+
   render() {
     
     let connectDropTarget = this.props.connectDropTarget;
@@ -69,7 +84,7 @@ class Mixer extends Component {
       <div className="mixer" onDoubleClick={this.onDoubleClick.bind(this)}>
         {
           this.state.synths.map((item)=> {
-            return <Synth audioContext={this.audioContext} key={item.key} xPos={item.left} yPos={item.top}/>
+            return <Synth audioContext={this.audioContext} id={item.key} key={item.key} xPos={item.left} yPos={item.top} killSynth={this.killSynth.bind(this)}/>
           })
         }
         <Trash/>

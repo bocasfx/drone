@@ -22,6 +22,11 @@ var looperSource = {
 
   endDrag: function(props, monitor, component) {
     let result = monitor.getDropResult();
+    if (result.suicide) {
+      component.suicide();
+      return;
+    }
+    
     component.state.xPos = result.xPos;
     component.state.yPos = result.yPos;
   }
@@ -30,8 +35,7 @@ var looperSource = {
 function collect(connect, monitor) {
   return {
     connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging(),
-    something: 'else'
+    isDragging: monitor.isDragging()
   };
 }
 
@@ -42,8 +46,11 @@ class Looper extends Component {
     this.state = {
       xPos: 0,
       yPos: 0,
-      isPlaying: false
+      isPlaying: false,
+      id: props.id
     };
+
+    console.log(props.id);
   }
 
   static get propTypes() {
@@ -186,14 +193,17 @@ class Looper extends Component {
   }
 
   setWaveToSine() {
+    console.log(this.state.id);
     this.oscillator.type = 'sine';
   }
 
   setWaveToSquare() {
+    console.log(this.state.id);
     this.oscillator.type = 'square';
   }
 
   setWaveToSaw() {
+    console.log(this.state.id);
     this.oscillator.type = 'triangle';
   }
 
@@ -227,6 +237,22 @@ class Looper extends Component {
       this.gain = this.gain - 0.01;
 
     }.bind(this), 10);
+  }
+
+  suicide() {
+    this.oscillator.stop();
+
+    this.gainNode.disconnect();
+    this.biquadFilter.disconnect();
+    this.waveShaper.disconnect();
+    this.oscillator.disconnect();
+
+    this.gainNode = null;
+    this.biquadFilter = null;
+    this.waveShaper = null;
+    this.oscillator = null;
+
+    this.props.killSynth(this);
   }
 
   render() {

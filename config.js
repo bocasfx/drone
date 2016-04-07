@@ -15,7 +15,6 @@ const config = {
     '#85144b',
     '#F012BE',
     '#B10DC9',
-    '#111111',
     '#AAAAAA',
     '#DDDDDD'
   ]
