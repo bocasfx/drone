@@ -19924,8 +19924,13 @@
 
 	      this.oscillator.start();
 
-	      this.frequency = this.state.xPos;
-	      this.gain = (this.windowHeight - this.state.yPos) / this.windowHeight * this.maxVol;
+	      this.frequency = this.normalizeFrequency(this.state.xPos);
+	      this.gain = this.normalizeGain(this.state.yPos);
+	    }
+	  }, {
+	    key: 'setDistortionCurve',
+	    value: function setDistortionCurve(amount) {
+	      this.waveShaper.curve = this.makeDistortionCurve(amount);
 	    }
 	  }, {
 	    key: 'makeDistortionCurve',
@@ -19978,10 +19983,20 @@
 	      clearTimeout(this.timeOut);
 	    }
 	  }, {
+	    key: 'normalizeFrequency',
+	    value: function normalizeFrequency(value) {
+	      return value / this.windowWidth * this.maxFreq;
+	    }
+	  }, {
+	    key: 'normalizeGain',
+	    value: function normalizeGain(value) {
+	      return (this.windowHeight - value) / this.windowHeight * this.maxVol;
+	    }
+	  }, {
 	    key: 'onDrag',
 	    value: function onDrag(event) {
-	      this.frequency = event.clientX;
-	      this.gain = (this.windowHeight - event.clientY) / this.windowHeight * this.maxVol;
+	      this.frequency = this.normalizeFrequency(event.clientX);
+	      this.gain = this.normalizeGain(event.clientY);
 	    }
 	  }, {
 	    key: 'setWaveToSine',
@@ -20108,14 +20123,14 @@
 	        React.createElement(
 	          'div',
 	          { style: editorStyle },
-	          React.createElement(SynthEditor, { hideEditor: this.hideEditor.bind(this) })
+	          React.createElement(SynthEditor, { synth: this })
 	        )
 	      ));
 	    }
 	  }, {
 	    key: 'frequency',
 	    set: function set(level) {
-	      this.oscillator.frequency.value = level / this.windowWidth * this.maxFreq;
+	      this.oscillator.frequency.value = level;
 	    }
 	  }, {
 	    key: 'gain',
@@ -30405,7 +30420,7 @@
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SynthEditor).call(this, props));
 
 	    _this.state = {
-	      hideEditor: props.hideEditor
+	      synth: props.synth
 	    };
 	    return _this;
 	  }
@@ -30414,7 +30429,23 @@
 	    key: 'close',
 	    value: function close() {
 	      console.log('closing');
-	      this.state.hideEditor();
+	      this.state.synth.hideEditor();
+	    }
+	  }, {
+	    key: 'setDistortionCurve',
+	    value: function setDistortionCurve(event) {
+	      if (event.target.value === '') {
+	        return;
+	      }
+
+	      var level = parseInt(event.target.value);
+
+	      this.state.synth.setDistortionCurve(level);
+	    }
+	  }, {
+	    key: 'setGain',
+	    value: function setGain(event) {
+	      this.state.synth.gain = this.state.synth.normalizeGain(parseInt(event.target.value));
 	    }
 	  }, {
 	    key: 'render',
@@ -30427,7 +30458,13 @@
 	          { className: 'close-synth-editor', onClick: this.close.bind(this) },
 	          React.createElement('i', { className: 'fa fa-close' })
 	        ),
-	        'Synth Editor'
+	        React.createElement(
+	          'label',
+	          null,
+	          'WSC ',
+	          React.createElement('input', { type: 'number', defaultValue: '200', onChange: this.setDistortionCurve.bind(this) })
+	        ),
+	        React.createElement('br', null)
 	      );
 	    }
 	  }]);

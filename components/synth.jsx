@@ -131,8 +131,12 @@ class Synth extends Component {
 
     this.oscillator.start();
 
-    this.frequency = this.state.xPos;
-    this.gain = (this.windowHeight - this.state.yPos) / this.windowHeight * this.maxVol;
+    this.frequency = this.normalizeFrequency(this.state.xPos);
+    this.gain = this.normalizeGain(this.state.yPos);
+  }
+
+  setDistortionCurve(amount) {
+    this.waveShaper.curve = this.makeDistortionCurve(amount);
   }
 
   makeDistortionCurve(amount) {
@@ -179,7 +183,7 @@ class Synth extends Component {
   }
 
   set frequency(level) {
-    this.oscillator.frequency.value = level / this.windowWidth * this.maxFreq;
+    this.oscillator.frequency.value = level;
   }
 
   set gain(level) {
@@ -190,9 +194,17 @@ class Synth extends Component {
     return this.gainNode.gain.value;
   }
 
+  normalizeFrequency(value) {
+    return value / this.windowWidth * this.maxFreq;
+  }
+
+  normalizeGain(value) {
+    return (this.windowHeight - value) / this.windowHeight * this.maxVol;
+  }
+
   onDrag(event) {
-    this.frequency = event.clientX;
-    this.gain = (this.windowHeight - event.clientY) / this.windowHeight * this.maxVol;
+    this.frequency = this.normalizeFrequency(event.clientX);
+    this.gain = this.normalizeGain(event.clientY);
   }
 
   setWaveToSine() {
@@ -304,7 +316,7 @@ class Synth extends Component {
           </div>
         </div>
         <div style={editorStyle}>
-          <SynthEditor hideEditor={this.hideEditor.bind(this)}/>
+          <SynthEditor synth={this}/>
         </div>
       </div>
     );
