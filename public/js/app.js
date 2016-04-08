@@ -19877,7 +19877,9 @@
 	        color: colors[colorIdx],
 	        fill: '#CAC234',
 	        strokeWidth: 10
-	      }, _defineProperty(_ref, 'fill', '#333'), _defineProperty(_ref, 'trailWidth', 5), _defineProperty(_ref, 'trailColor', '#999'), _defineProperty(_ref, 'duration', 100), _ref));
+	      }, _defineProperty(_ref, 'fill', '#333'), _defineProperty(_ref, 'trailWidth', 5), _defineProperty(_ref, 'trailColor', '#999'), _defineProperty(_ref, 'duration', 100), _defineProperty(_ref, 'text', {
+	        value: '∿'
+	      }), _ref));
 
 	      this.initSynth();
 
@@ -19947,12 +19949,8 @@
 	      event.stopPropagation();
 	      event.nativeEvent.stopImmediatePropagation();
 
-	      console.log('single');
-
-	      var text = this.state.isPlaying ? 'play' : 'pause';
-	      this.progressBar.setText('<i class="fa fa-' + text + '"></i>');
-
 	      if (this.state.isPlaying) {
+	        this.stopProgressBarAnimation();
 	        this.fadeOut();
 	      } else {
 	        this.fadeIn();
@@ -20027,7 +20025,6 @@
 	      var fadeOutInterval = setInterval(function () {
 	        if (this.gain < 0.0001) {
 	          this.gain = 0;
-	          this.stopProgressBarAnimation();
 	          this.state.isPlaying = false;
 	          this.gainNode.disconnect(this.audioContext.destination);
 	          clearInterval(fadeOutInterval);
@@ -20056,7 +20053,13 @@
 	    key: 'showEditor',
 	    value: function showEditor(event) {
 	      console.log('Showing');
-	      this.state.showEditor = !this.state.showEditor;
+	      this.state.showEditor = true;
+	      this.forceUpdate();
+	    }
+	  }, {
+	    key: 'hideEditor',
+	    value: function hideEditor() {
+	      this.state.showEditor = false;
 	      this.forceUpdate();
 	    }
 	  }, {
@@ -20079,14 +20082,14 @@
 	        top: yPos + 'px'
 	      };
 
-	      var editorDisplay = this.state.showEditor ? 'block' : 'none';
-	      var editorStyle = {
-	        display: editorDisplay
-	      };
-
 	      var controlsDisplay = this.state.showControls ? 'block' : 'none';
 	      var controlsStyle = {
 	        display: controlsDisplay
+	      };
+
+	      var editorDisplay = this.state.showEditor ? 'block' : 'none';
+	      var editorStyle = {
+	        display: editorDisplay
 	      };
 
 	      return connectDragSource(React.createElement(
@@ -20105,7 +20108,7 @@
 	        React.createElement(
 	          'div',
 	          { style: editorStyle },
-	          React.createElement(SynthEditor, null)
+	          React.createElement(SynthEditor, { hideEditor: this.hideEditor.bind(this) })
 	        )
 	      ));
 	    }
@@ -30399,16 +30402,31 @@
 	  function SynthEditor(props) {
 	    _classCallCheck(this, SynthEditor);
 
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(SynthEditor).call(this, props));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SynthEditor).call(this, props));
+
+	    _this.state = {
+	      hideEditor: props.hideEditor
+	    };
+	    return _this;
 	  }
 
 	  _createClass(SynthEditor, [{
+	    key: 'close',
+	    value: function close() {
+	      console.log('closing');
+	      this.state.hideEditor();
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-
 	      return React.createElement(
 	        'div',
 	        { className: 'synth-editor' },
+	        React.createElement(
+	          'div',
+	          { className: 'close-synth-editor', onClick: this.close.bind(this) },
+	          React.createElement('i', { className: 'fa fa-close' })
+	        ),
 	        'Synth Editor'
 	      );
 	    }

@@ -50,13 +50,15 @@ a {
 
 .synth-editor {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: -150;
+  left: -100;
   padding: 50px;
   background-color: #111;
   border: 1px solid #666;
   opacity: 0.8;
   color: #aaa;
+  width: 200px;
+  height: 300px;
 }
 
 .cog {
@@ -64,5 +66,17 @@ a {
   top: -10px;
   right: -10px;
   color: #666;
+  cursor: pointer;
+}
+
+.progressbar-text {
+  font-size: 2em;
+  top: 21px !important;
+}
+
+.close-synth-editor {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   cursor: pointer;
 }

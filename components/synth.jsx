@@ -83,7 +83,10 @@ class Synth extends Component {
       fill: '#333',
       trailWidth: 5,
       trailColor: '#999',
-      duration: 100
+      duration: 100,
+      text: {
+        value: '\u223F'
+      }
     });
 
     this.initSynth();
@@ -151,12 +154,8 @@ class Synth extends Component {
     event.stopPropagation();
     event.nativeEvent.stopImmediatePropagation();
 
-    console.log('single');
-
-    let text = this.state.isPlaying ? 'play' : 'pause';
-    this.progressBar.setText(`<i class="fa fa-${text}"></i>`);
-
     if (this.state.isPlaying) {
+      this.stopProgressBarAnimation();
       this.fadeOut();
     } else {
       this.fadeIn();
@@ -233,7 +232,6 @@ class Synth extends Component {
     let fadeOutInterval = setInterval(function() {
       if (this.gain < 0.0001) {
         this.gain = 0;
-        this.stopProgressBarAnimation();
         this.state.isPlaying = false;
         this.gainNode.disconnect(this.audioContext.destination);
         clearInterval(fadeOutInterval);
@@ -261,7 +259,12 @@ class Synth extends Component {
 
   showEditor(event) {
     console.log('Showing');
-    this.state.showEditor = !this.state.showEditor;
+    this.state.showEditor = true;
+    this.forceUpdate();
+  }
+
+  hideEditor() {
+    this.state.showEditor = false;
     this.forceUpdate();
   }
 
@@ -282,17 +285,15 @@ class Synth extends Component {
       top: yPos + 'px'
     };
 
-    let editorDisplay = this.state.showEditor ? 'block' : 'none';
-    let editorStyle = {
-      display: editorDisplay
-    }
-
     let controlsDisplay = this.state.showControls ? 'block' : 'none';
     let controlsStyle = {
       display: controlsDisplay
     }
 
-
+    let editorDisplay = this.state.showEditor ? 'block' : 'none';
+    let editorStyle = {
+      display: editorDisplay
+    }
 
     return connectDragSource(
       <div className="synth" style={style} onMouseEnter={this.showControls.bind(this)} onMouseLeave={this.showControls.bind(this)}>
@@ -303,7 +304,7 @@ class Synth extends Component {
           </div>
         </div>
         <div style={editorStyle}>
-          <SynthEditor/>
+          <SynthEditor hideEditor={this.hideEditor.bind(this)}/>
         </div>
       </div>
     );
