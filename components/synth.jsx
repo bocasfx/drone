@@ -48,10 +48,7 @@ class Synth extends Component {
       isPlaying: false,
       id: props.id,
       showEditor: false,
-      showControls: false,
-      levels: {
-        waveShaperCurve: 0
-      }
+      showControls: false
     };
 
     console.log(props.id);
@@ -116,7 +113,7 @@ class Synth extends Component {
     this.gainNode.gain.value = initialVol;
 
     this.waveShaper = this.audioContext.createWaveShaper();
-    this.waveShaper.curve = this.makeWaveShaperCurve(this.state.levels.waveShaperCurve);
+    this.waveShaper.curve = this.makeWaveShaperCurve(0);
 
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.type = 'triangle';
@@ -124,9 +121,9 @@ class Synth extends Component {
 
     this.biquadFilter = this.audioContext.createBiquadFilter();
     this.biquadFilter.type = 'lowshelf';
-    this.biquadFilter.frequency.value = 1000;
+    this.biquadFilter.frequency.value = 18000;
     this.biquadFilter.gain.value = 20;
-    this.biquadFilter.gain.detune = 1000;
+    this.biquadFilter.gain.detune = 0;
 
     this.oscillator.connect(this.waveShaper);
     this.waveShaper.connect(this.biquadFilter);
@@ -138,7 +135,19 @@ class Synth extends Component {
     this.gain = this.normalizeGain(this.state.yPos);
   }
 
-  setWaveShaperCurve(amount) {
+  set filterFrequency(freq) {
+    this.biquadFilter.frequency.value = freq;
+  }
+
+  set filterGain(level) {
+    this.biquadFilter.gain.value = level;
+  }
+
+  set filterDetune(level) {
+    this.biquadFilter.gain.detune = level;
+  }
+
+  set waveShaperCurve(amount) {
     this.waveShaper.curve = this.makeWaveShaperCurve(amount);
   }
 

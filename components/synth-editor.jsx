@@ -20,26 +20,49 @@ class SynthEditor extends Component {
     this.state.synth.hideEditor();
   }
 
-  setWaveShaperCurve(value) {
-    this.state.synth.setWaveShaperCurve(value);
+  setWaveShaperCurve(amount) {
+    this.state.synth.waveShaperCurve = amount;
   }
 
-  setGain(event) {
-    this.state.synth.gain = this.state.synth.normalizeGain(parseInt(event.target.value));
+  setFilterGain(level) {
+    this.state.synth.filterGain = level;
+  }
+
+  setFilterFrequency(level) {
+    this.state.synth.filterFrequency = level;
+  }
+
+  setFilterDetune(level) {
+    this.state.synth.filterDetune = level;
   }
 
   render() {
-
-    let waveShaperCurveLevel = this.state.synth.state.levels.waveShaperCurve;
-
     return (
       <div className="synth-editor">
         <div className="close-synth-editor" onClick={this.close.bind(this)}>
           <i className="fa fa-close"></i>
         </div>
+
         <div className="slider-label">Waveshaper Curve</div>
         <div className="slider">
-          <Slider min={0} max={500} defaultValue={waveShaperCurveLevel} onChange={this.setWaveShaperCurve.bind(this)}/>
+          <Slider min={0} max={500} defaultValue={0} onChange={this.setWaveShaperCurve.bind(this)}/>
+        </div>
+
+        <div className="separator"/>
+
+        <div className="slider-label">Filter Gain</div>
+        <div className="slider">
+          <Slider min={0} max={40} defaultValue={20} onChange={this.setFilterGain.bind(this)}/>
+        </div>
+
+        <div className="slider-label">Filter Frequency</div>
+        <div className="slider">
+          <Slider min={20} max={18000} defaultValue={0} onChange={this.setFilterFrequency.bind(this)}/>
+        </div>
+
+        <div className="slider-label">Filter Detune</div>
+        <div className="slider">
+          <Slider min={0} max={100} defaultValue={0} onChange={this.setFilterDetune.bind(this)}/>
         </div>
       </div>
     )

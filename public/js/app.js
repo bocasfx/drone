@@ -19850,10 +19850,7 @@
 	      isPlaying: false,
 	      id: props.id,
 	      showEditor: false,
-	      showControls: false,
-	      levels: {
-	        waveShaperCurve: 0
-	      }
+	      showControls: false
 	    };
 
 	    console.log(props.id);
@@ -19909,7 +19906,7 @@
 	      this.gainNode.gain.value = initialVol;
 
 	      this.waveShaper = this.audioContext.createWaveShaper();
-	      this.waveShaper.curve = this.makeWaveShaperCurve(this.state.levels.waveShaperCurve);
+	      this.waveShaper.curve = this.makeWaveShaperCurve(0);
 
 	      this.oscillator = this.audioContext.createOscillator();
 	      this.oscillator.type = 'triangle';
@@ -19917,23 +19914,22 @@
 
 	      this.biquadFilter = this.audioContext.createBiquadFilter();
 	      this.biquadFilter.type = 'lowshelf';
-	      this.biquadFilter.frequency.value = 1000;
+	      this.biquadFilter.frequency.value = 18000;
 	      this.biquadFilter.gain.value = 20;
-	      this.biquadFilter.gain.detune = 1000;
+	      this.biquadFilter.gain.detune = 0;
+
+	      this.delay = this.audioContext.createDelay(2);
+	      this.delay.delayTime.value = 0;
 
 	      this.oscillator.connect(this.waveShaper);
 	      this.waveShaper.connect(this.biquadFilter);
-	      this.biquadFilter.connect(this.gainNode);
+	      this.biquadFilter.connect(this.delay);
+	      this.delay.connect(this.gainNode);
 
 	      this.oscillator.start();
 
 	      this.frequency = this.normalizeFrequency(this.state.xPos);
 	      this.gain = this.normalizeGain(this.state.yPos);
-	    }
-	  }, {
-	    key: 'setWaveShaperCurve',
-	    value: function setWaveShaperCurve(amount) {
-	      this.waveShaper.curve = this.makeWaveShaperCurve(amount);
 	    }
 	  }, {
 	    key: 'makeWaveShaperCurve',
@@ -20129,6 +20125,31 @@
 	          React.createElement(SynthEditor, { synth: this })
 	        )
 	      ));
+	    }
+	  }, {
+	    key: 'filterFrequency',
+	    set: function set(freq) {
+	      this.biquadFilter.frequency.value = freq;
+	    }
+	  }, {
+	    key: 'filterGain',
+	    set: function set(level) {
+	      this.biquadFilter.gain.value = level;
+	    }
+	  }, {
+	    key: 'filterDetune',
+	    set: function set(level) {
+	      this.biquadFilter.gain.detune = level;
+	    }
+	  }, {
+	    key: 'waveShaperCurve',
+	    set: function set(amount) {
+	      this.waveShaper.curve = this.makeWaveShaperCurve(amount);
+	    }
+	  }, {
+	    key: 'delayTime',
+	    set: function set(seconds) {
+	      this.delay.delayTime.value = seconds;
 	    }
 	  }, {
 	    key: 'frequency',
@@ -30439,20 +30460,32 @@
 	    }
 	  }, {
 	    key: 'setWaveShaperCurve',
-	    value: function setWaveShaperCurve(value) {
-	      this.state.synth.setWaveShaperCurve(value);
+	    value: function setWaveShaperCurve(amount) {
+	      this.state.synth.waveShaperCurve = amount;
 	    }
 	  }, {
-	    key: 'setGain',
-	    value: function setGain(event) {
-	      this.state.synth.gain = this.state.synth.normalizeGain(parseInt(event.target.value));
+	    key: 'setFilterGain',
+	    value: function setFilterGain(level) {
+	      this.state.synth.filterGain = level;
+	    }
+	  }, {
+	    key: 'setFilterFrequency',
+	    value: function setFilterFrequency(level) {
+	      this.state.synth.filterFrequency = level;
+	    }
+	  }, {
+	    key: 'setFilterDetune',
+	    value: function setFilterDetune(level) {
+	      this.state.synth.filterDetune = level;
+	    }
+	  }, {
+	    key: 'setDelayTime',
+	    value: function setDelayTime(seconds) {
+	      this.state.synth.delayTime = seconds;
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
-
-	      var waveShaperCurveLevel = this.state.synth.state.levels.waveShaperCurve;
-
 	      return React.createElement(
 	        'div',
 	        { className: 'synth-editor' },
@@ -30469,7 +30502,49 @@
 	        React.createElement(
 	          'div',
 	          { className: 'slider' },
-	          React.createElement(Slider, { min: 0, max: 500, defaultValue: waveShaperCurveLevel, onChange: this.setWaveShaperCurve.bind(this) })
+	          React.createElement(Slider, { min: 0, max: 500, defaultValue: 0, onChange: this.setWaveShaperCurve.bind(this) })
+	        ),
+	        React.createElement('div', { className: 'separator' }),
+	        React.createElement(
+	          'div',
+	          { className: 'slider-label' },
+	          'Filter Gain'
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'slider' },
+	          React.createElement(Slider, { min: 0, max: 40, defaultValue: 20, onChange: this.setFilterGain.bind(this) })
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'slider-label' },
+	          'Filter Frequency'
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'slider' },
+	          React.createElement(Slider, { min: 20, max: 18000, defaultValue: 0, onChange: this.setFilterFrequency.bind(this) })
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'slider-label' },
+	          'Filter Detune'
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'slider' },
+	          React.createElement(Slider, { min: 0, max: 100, defaultValue: 0, onChange: this.setFilterDetune.bind(this) })
+	        ),
+	        React.createElement('div', { className: 'separator' }),
+	        React.createElement(
+	          'div',
+	          { className: 'slider-label' },
+	          'Delay Time'
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'slider' },
+	          React.createElement(Slider, { min: 0, max: 2, defaultValue: 0, step: 0.1, onChange: this.setDelayTime.bind(this) })
 	        )
 	      );
 	    }

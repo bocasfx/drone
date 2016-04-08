@@ -86,6 +86,11 @@ a {
 }
 
 .slider-label {
-  margin: 20px 10px 10px 10px;
+  margin: 15px 10px 10px 10px;
   font-size: 0.75em;
+}
+
+.separator {
+  margin-top: 20px;
+  border-bottom: solid 1px #444;
 }
