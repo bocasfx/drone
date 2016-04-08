@@ -17,7 +17,7 @@ a {
   margin: 0;
 }
 
-.looper {
+.synth {
   position: absolute;
 }
 
@@ -48,87 +48,49 @@ a {
   margin-left: -15px;
 }
 
-/*.react-context-menu {
-  background-color: #666;
-  padding: 5px;
-  border: 1px solid #777;
-  font-size: 0.8em;
+.synth-editor {
+  position: absolute;
+  top: -150;
+  left: -100;
+  padding: 10px;
+  background-color: #111;
+  border: 1px solid #666;
+  opacity: 0.8;
+  color: #aaa;
+  width: 200px;
+  height: 300px;
 }
 
-.react-context-menu-item {
-  padding: 5px;
-  border-bottom: 1px solid #777;
+.cog {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  color: #666;
+  cursor: pointer;
 }
 
-.react-context-menu-item:last-child{
-    border: none;
+.progressbar-text {
+  font-size: 2em;
+  top: 21px !important;
 }
 
-.react-context-menu-link {
-  color: #CCC;
-  text-decoration: none;
+.close-synth-editor {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
 }
 
-.react-context-menu-wrapper {
-
+.slider {
+  margin: 10px;
 }
 
-.submenu {
-
+.slider-label {
+  margin: 15px 10px 10px 10px;
+  font-size: 0.75em;
 }
 
-.disabled {
-
-}
-
-.active {
-
-}*/
-
-.react-context-menu {
-    min-width: 160px;
-    padding: 5px 0;
-    margin: 2px 0 0;
-    font-size: 16px;
-    color: #373a3c;
-    text-align: left;
-    background-color: #fff;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    border: 1px solid rgba(0,0,0,.15);
-    border-radius: .25rem;
-    outline: none;
-}
-
-.react-context-menu-link {
-    display: inline-block;
-    width: 75%;
-    padding: 3px 20px;
-    clear: both;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #373a3c;
-    text-align: inherit;
-    white-space: nowrap;
-    background: 0 0;
-    border: 0;
-}
-
-.react-context-menu-link.active,
-.react-context-menu-link:hover {
-    max-width: 160px;
-    color: #fff;
-    background-color: #0275d8;
-    border-color: #0275d8;
-    text-decoration: none;
-}
-.react-context-menu-item.submenu > a {
-    padding-right: 27px;
-}
-
-.react-context-menu-item.submenu > a:after {
-    content: "▶";
-    display: inline-block;
-    position: absolute;
-    right: 7px;
+.separator {
+  margin-top: 20px;
+  border-bottom: solid 1px #444;
 }

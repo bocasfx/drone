@@ -6,12 +6,11 @@ const ReactDOM          = require('react-dom');
 const ProgressBar       = require('progressbar.js');
 const dragSource        = require('react-dnd').DragSource;
 const PropTypes         = React.PropTypes;
-const ContextMenu       = require('./context-menu.jsx');
-const contextMenuLayer  = require('react-contextmenu').ContextMenuLayer;
 const flow              = require('lodash/flow');
 const colors            = require('../config').synthColors;
+const SynthEditor       = require('./synth-editor.jsx');
 
-var looperSource = {
+var synthSource = {
   beginDrag: function (props, monitor, component) {
     let item = {
       left: parseInt(component.state.xPos),
@@ -39,7 +38,7 @@ function collect(connect, monitor) {
   };
 }
 
-class Looper extends Component {
+class Synth extends Component {
   constructor(props) {
     super(props);
 
@@ -47,7 +46,9 @@ class Looper extends Component {
       xPos: 0,
       yPos: 0,
       isPlaying: false,
-      id: props.id
+      id: props.id,
+      showEditor: false,
+      showControls: false
     };
 
     console.log(props.id);
@@ -82,7 +83,10 @@ class Looper extends Component {
       fill: '#333',
       trailWidth: 5,
       trailColor: '#999',
-      duration: 100
+      duration: 100,
+      text: {
+        value: '\u223F'
+      }
     });
 
     this.initSynth();
@@ -109,7 +113,7 @@ class Looper extends Component {
     this.gainNode.gain.value = initialVol;
 
     this.waveShaper = this.audioContext.createWaveShaper();
-    this.waveShaper.curve = this.makeDistortionCurve(200);
+    this.waveShaper.curve = this.makeWaveShaperCurve(0);
 
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.type = 'triangle';
@@ -117,9 +121,9 @@ class Looper extends Component {
 
     this.biquadFilter = this.audioContext.createBiquadFilter();
     this.biquadFilter.type = 'lowshelf';
-    this.biquadFilter.frequency.value = 1000;
+    this.biquadFilter.frequency.value = 18000;
     this.biquadFilter.gain.value = 20;
-    this.biquadFilter.gain.detune = 1000;
+    this.biquadFilter.gain.detune = 0;
 
     this.oscillator.connect(this.waveShaper);
     this.waveShaper.connect(this.biquadFilter);
@@ -127,11 +131,27 @@ class Looper extends Component {
 
     this.oscillator.start();
 
-    this.frequency = this.state.xPos;
-    this.gain = (this.windowHeight - this.state.yPos) / this.windowHeight * this.maxVol;
+    this.frequency = this.normalizeFrequency(this.state.xPos);
+    this.gain = this.normalizeGain(this.state.yPos);
   }
 
-  makeDistortionCurve(amount) {
+  set filterFrequency(freq) {
+    this.biquadFilter.frequency.value = freq;
+  }
+
+  set filterGain(level) {
+    this.biquadFilter.gain.value = level;
+  }
+
+  set filterDetune(level) {
+    this.biquadFilter.gain.detune = level;
+  }
+
+  set waveShaperCurve(amount) {
+    this.waveShaper.curve = this.makeWaveShaperCurve(amount);
+  }
+
+  makeWaveShaperCurve(amount) {
     let k = typeof amount === 'number' ? amount : 50;
     let samples = 44100;
     let curve = new Float32Array(samples);
@@ -146,13 +166,12 @@ class Looper extends Component {
   }
 
   play(event) {
-
+    event.preventDefault();
     event.stopPropagation();
-
-    let text = this.state.isPlaying ? 'play' : 'pause';
-    this.progressBar.setText(`<i class="fa fa-${text}"></i>`);
+    event.nativeEvent.stopImmediatePropagation();
 
     if (this.state.isPlaying) {
+      this.stopProgressBarAnimation();
       this.fadeOut();
     } else {
       this.fadeIn();
@@ -176,7 +195,7 @@ class Looper extends Component {
   }
 
   set frequency(level) {
-    this.oscillator.frequency.value = level / this.windowWidth * this.maxFreq;
+    this.oscillator.frequency.value = level;
   }
 
   set gain(level) {
@@ -187,9 +206,17 @@ class Looper extends Component {
     return this.gainNode.gain.value;
   }
 
+  normalizeFrequency(value) {
+    return value / this.windowWidth * this.maxFreq;
+  }
+
+  normalizeGain(value) {
+    return (this.windowHeight - value) / this.windowHeight * this.maxVol;
+  }
+
   onDrag(event) {
-    this.frequency = event.clientX;
-    this.gain = (this.windowHeight - event.clientY) / this.windowHeight * this.maxVol;
+    this.frequency = this.normalizeFrequency(event.clientX);
+    this.gain = this.normalizeGain(event.clientY);
   }
 
   setWaveToSine() {
@@ -229,7 +256,6 @@ class Looper extends Component {
     let fadeOutInterval = setInterval(function() {
       if (this.gain < 0.0001) {
         this.gain = 0;
-        this.stopProgressBarAnimation();
         this.state.isPlaying = false;
         this.gainNode.disconnect(this.audioContext.destination);
         clearInterval(fadeOutInterval);
@@ -255,6 +281,22 @@ class Looper extends Component {
     this.props.killSynth(this);
   }
 
+  showEditor(event) {
+    console.log('Showing');
+    this.state.showEditor = true;
+    this.forceUpdate();
+  }
+
+  hideEditor() {
+    this.state.showEditor = false;
+    this.forceUpdate();
+  }
+
+  showControls() {
+    this.state.showControls = !this.state.showControls;
+    this.forceUpdate();
+  }
+
   render() {
     let isDragging = this.props.isDragging;
     let connectDragSource = this.props.connectDragSource;
@@ -267,16 +309,30 @@ class Looper extends Component {
       top: yPos + 'px'
     };
 
+    let controlsDisplay = this.state.showControls ? 'block' : 'none';
+    let controlsStyle = {
+      display: controlsDisplay
+    }
+
+    let editorDisplay = this.state.showEditor ? 'block' : 'none';
+    let editorStyle = {
+      display: editorDisplay
+    }
+
     return connectDragSource(
-        <div className="looper" style={style}>
-          <span className="progress" onClick={this.play.bind(this)} draggable='true' onDrag={this.onDrag.bind(this)}></span>
-          <ContextMenu synth={this}/>
+      <div className="synth" style={style} onMouseEnter={this.showControls.bind(this)} onMouseLeave={this.showControls.bind(this)}>
+        <span className="progress" draggable='true' onDrag={this.onDrag.bind(this)} onClick={this.play.bind(this)}></span>
+        <div className="cog" onClick={this.showEditor.bind(this)}>
+          <div style={controlsStyle}>
+            <i className="fa fa-cog"></i>
+          </div>
         </div>
+        <div style={editorStyle}>
+          <SynthEditor synth={this}/>
+        </div>
+      </div>
     );
   }
 }
 
-module.exports = flow (
-  dragSource('looper', looperSource, collect),
-  contextMenuLayer('some_unique_identifier')
-)(Looper);
+module.exports = dragSource('synth', synthSource, collect)(Synth);

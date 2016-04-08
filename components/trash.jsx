@@ -31,4 +31,4 @@ class Trash extends Component {
   }
 }
 
-module.exports = dropTarget('looper', trashTarget, collect)(Trash);
+module.exports = dropTarget('synth', trashTarget, collect)(Trash);

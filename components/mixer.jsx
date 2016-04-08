@@ -94,6 +94,6 @@ class Mixer extends Component {
 }
 
 module.exports = flow(
-  dropTarget('looper', mixerTarget, collect),
+  dropTarget('synth', mixerTarget, collect),
   dragDropContext(HTML5Backend)
 )(Mixer);
