@@ -48,7 +48,10 @@ class Synth extends Component {
       isPlaying: false,
       id: props.id,
       showEditor: false,
-      showControls: false
+      showControls: false,
+      levels: {
+        waveShaperCurve: 0
+      }
     };
 
     console.log(props.id);
@@ -113,7 +116,7 @@ class Synth extends Component {
     this.gainNode.gain.value = initialVol;
 
     this.waveShaper = this.audioContext.createWaveShaper();
-    this.waveShaper.curve = this.makeDistortionCurve(200);
+    this.waveShaper.curve = this.makeWaveShaperCurve(this.state.levels.waveShaperCurve);
 
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.type = 'triangle';
@@ -135,11 +138,11 @@ class Synth extends Component {
     this.gain = this.normalizeGain(this.state.yPos);
   }
 
-  setDistortionCurve(amount) {
-    this.waveShaper.curve = this.makeDistortionCurve(amount);
+  setWaveShaperCurve(amount) {
+    this.waveShaper.curve = this.makeWaveShaperCurve(amount);
   }
 
-  makeDistortionCurve(amount) {
+  makeWaveShaperCurve(amount) {
     let k = typeof amount === 'number' ? amount : 50;
     let samples = 44100;
     let curve = new Float32Array(samples);

@@ -52,7 +52,7 @@ a {
   position: absolute;
   top: -150;
   left: -100;
-  padding: 50px;
+  padding: 10px;
   background-color: #111;
   border: 1px solid #666;
   opacity: 0.8;
@@ -79,4 +79,13 @@ a {
   top: 10px;
   right: 10px;
   cursor: pointer;
+}
+
+.slider {
+  margin: 10px;
+}
+
+.slider-label {
+  margin: 20px 10px 10px 10px;
+  font-size: 0.75em;
 }
