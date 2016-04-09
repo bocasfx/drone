@@ -61,12 +61,12 @@ class Mixer extends Component {
   }
 
   onDoubleClick(event) {
-    // let newSynth = {
-    //   left: event.clientX - 25,
-    //   top: event.clientY - 25,
-    //   key: Date.now()
-    // }
-    // this.state.synths.push(newSynth);
+    let newSynth = {
+      left: event.clientX - 25,
+      top: event.clientY - 25,
+      key: Date.now()
+    }
+    this.state.synths.push(newSynth);
 
     let newLooper = {
       left: event.clientX - 25,
