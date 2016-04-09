@@ -61,19 +61,19 @@ class Mixer extends Component {
   }
 
   onDoubleClick(event) {
-    let newSynth = {
-      left: event.clientX - 25,
-      top: event.clientY - 25,
-      key: Date.now()
-    }
-    this.state.synths.push(newSynth);
-
-    // let newLooper = {
+    // let newSynth = {
     //   left: event.clientX - 25,
     //   top: event.clientY - 25,
     //   key: Date.now()
     // }
-    // this.state.loopers.push(newLooper);
+    // this.state.synths.push(newSynth);
+
+    let newLooper = {
+      left: event.clientX - 25,
+      top: event.clientY - 25,
+      key: Date.now()
+    }
+    this.state.loopers.push(newLooper);
 
     this.forceUpdate();
   }
@@ -108,7 +108,7 @@ class Mixer extends Component {
           })
         } {
           this.state.loopers.map((item)=> {
-            return <Looper id={item.key} key={item.key} xPos={item.left} yPos={item.top} killLooper={this.killLooper.bind(this)}/>
+            return <Looper audioContext={this.audioContext} id={item.key} key={item.key} xPos={item.left} yPos={item.top} killLooper={this.killLooper.bind(this)}/>
           })
         }
         <Trash/>

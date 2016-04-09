@@ -20,8 +20,13 @@ class LooperEditor extends Component {
     this.state.looper.hideEditor();
   }
 
-  setFileSource(event) {
-    console.log(event.target.files);
+  loadFile(event) {
+    var fileReader  = new FileReader;
+    let self = this;
+    fileReader.onload = function() {
+      self.state.looper.bufferData(this.result);
+    }
+    fileReader.readAsArrayBuffer(event.target.files[0]);
   }
 
   render() {
@@ -30,7 +35,7 @@ class LooperEditor extends Component {
         <div className="close-editor" onClick={this.close.bind(this)}>
           <i className="fa fa-close"></i>
         </div>
-        <input className="open-file-input" type="file" onChange={this.setFileSource.bind(this)}/>
+        <input className="open-file-input" type="file" onChange={this.loadFile.bind(this)}/>
       </div>
     )
   }

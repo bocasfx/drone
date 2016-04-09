@@ -63,6 +63,7 @@ class Looper extends Component {
   }
 
   componentDidMount() {
+
     let domNode = ReactDOM.findDOMNode(this);
 
     this.state.xPos = this.props.xPos;
@@ -109,6 +110,44 @@ class Looper extends Component {
 
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
+
+    this.audioContext = this.props.audioContext;
+    this.bufferSource = this.audioContext.createBufferSource();
+
+    let initialVol = 0;
+
+    this.gainNode = this.audioContext.createGain();
+    this.gainNode.gain.value = initialVol;
+
+    this.waveShaper = this.audioContext.createWaveShaper();
+    this.waveShaper.curve = this.makeWaveShaperCurve(0);
+
+    this.biquadFilter = this.audioContext.createBiquadFilter();
+    this.biquadFilter.type = 'lowshelf';
+    this.biquadFilter.frequency.value = 18000;
+    this.biquadFilter.gain.value = 20;
+    this.biquadFilter.gain.detune = 0;
+
+    this.bufferSource.connect(this.waveShaper);
+    this.waveShaper.connect(this.biquadFilter);
+    this.biquadFilter.connect(this.gainNode);
+    this.gainNode.connect(this.audioContext.destination);
+
+    this.bufferSource.start();
+  }
+
+  makeWaveShaperCurve(amount) {
+    let k = typeof amount === 'number' ? amount : 50;
+    let samples = 44100;
+    let curve = new Float32Array(samples);
+    let deg = Math.PI / 180;
+    let i = 0;
+    let x;
+    for ( ; i < samples; ++i ) {
+      x = i * 2 / samples - 1;
+      curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
+    }
+    return curve;
   }
 
   play(event) {
@@ -144,6 +183,7 @@ class Looper extends Component {
   }
 
   suicide() {
+    // TODO: Shutdown looper
     this.props.killLooper(this);
   }
 
@@ -163,34 +203,43 @@ class Looper extends Component {
   }
 
   fadeIn() {
-    this.audioNode.play();
+    
     this.startProgressBarAnimation();
     this.state.isPlaying = true;
-    this.audioNode.volume = 0;
+    this.gainNode.gain.value = 1;
 
-    let fadeInInterval = setInterval(function() {
-      let originalVol = (this.windowHeight - this.state.yPos) / this.windowHeight * this.maxVol;
-      let newVol = this.audioNode.volume + 0.01;
-      if (newVol > originalVol) {
-        this.audioNode.volume = originalVol; 
-        clearInterval(fadeInInterval);
-      }
-      this.audioNode.volume = newVol;
-    }.bind(this), 10);
+    // let fadeInInterval = setInterval(function() {
+    //   let originalVol = (this.windowHeight - this.state.yPos) / this.windowHeight * this.maxVol;
+    //   let newVol = this.audioNode.volume + 0.01;
+    //   if (newVol > originalVol) {
+    //     this.audioNode.volume = originalVol; 
+    //     clearInterval(fadeInInterval);
+    //   }
+    //   this.audioNode.volume = newVol;
+    // }.bind(this), 10);
   }
 
   fadeOut() {
-    let fadeOutInterval = setInterval(function() {
-      let newVol = this.audioNode.volume - 0.01;
-      if (newVol < 0.1) {
-        this.audioNode.volume = 0;
-        this.state.isPlaying = false;
-        this.audioNode.pause();
-        clearInterval(fadeOutInterval);
-      }
-      this.audioNode.volume = newVol;
+    this.gainNode.gain.value = 0;
+    this.state.isPlaying = false;
+    // let fadeOutInterval = setInterval(function() {
+    //   let newVol = this.audioNode.volume - 0.01;
+    //   if (newVol < 0.1) {
+    //     this.audioNode.volume = 0;
+    //     this.state.isPlaying = false;
+    //     this.audioNode.pause();
+    //     clearInterval(fadeOutInterval);
+    //   }
+    //   this.audioNode.volume = newVol;
 
-    }.bind(this), 10);
+    // }.bind(this), 10);
+  }
+
+  bufferData(data) {
+    this.audioContext.decodeAudioData(data, (buffer)=> {
+      this.bufferSource.buffer = buffer;
+      this.bufferSource.loop = true;
+    });
   }
 
   render() {
