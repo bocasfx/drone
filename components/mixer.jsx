@@ -4,6 +4,7 @@ const React           = require('react');
 const ReactDOM        = require('react-dom');
 const Component       = React.Component;
 const Synth           = require('./synth.jsx');
+const Looper          = require('./looper.jsx');
 const dropTarget      = require('react-dnd').DropTarget;
 const HTML5Backend    = require('react-dnd-html5-backend');
 const dragDropContext = require('react-dnd').DragDropContext;
@@ -47,13 +48,15 @@ class Mixer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      synths: []
+      synths: [],
+      loopers: []
     };
     this.audioContext = new window.AudioContext();
   }
 
   componentDidMount() {
     this.state.synths = this.props.synths;
+    this.state.loopers = this.props.loopers;
     this.forceUpdate();
   }
 
@@ -64,6 +67,14 @@ class Mixer extends Component {
       key: Date.now()
     }
     this.state.synths.push(newSynth);
+
+    // let newLooper = {
+    //   left: event.clientX - 25,
+    //   top: event.clientY - 25,
+    //   key: Date.now()
+    // }
+    // this.state.loopers.push(newLooper);
+
     this.forceUpdate();
   }
 
@@ -73,6 +84,15 @@ class Mixer extends Component {
       return item.key !== synth.state.id;
     })
     console.log(this.state.synths);
+    this.forceUpdate();
+  }
+
+  killLooper(looper) {
+    console.log(this.state.loopers.length);
+    this.state.loopers = _.remove(this.state.loopers, function(item) {
+      return item.key !== looper.state.id;
+    })
+    console.log(this.state.loopers);
     this.forceUpdate();
   }
 
@@ -86,6 +106,10 @@ class Mixer extends Component {
           this.state.synths.map((item)=> {
             return <Synth audioContext={this.audioContext} id={item.key} key={item.key} xPos={item.left} yPos={item.top} killSynth={this.killSynth.bind(this)}/>
           })
+        } {
+          this.state.loopers.map((item)=> {
+            return <Looper id={item.key} key={item.key} xPos={item.left} yPos={item.top} killLooper={this.killLooper.bind(this)}/>
+          })
         }
         <Trash/>
       </div>
@@ -94,6 +118,6 @@ class Mixer extends Component {
 }
 
 module.exports = flow(
-  dropTarget('synth', mixerTarget, collect),
+  dropTarget(['synth', 'looper'], mixerTarget, collect),
   dragDropContext(HTML5Backend)
 )(Mixer);

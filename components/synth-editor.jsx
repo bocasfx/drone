@@ -39,7 +39,7 @@ class SynthEditor extends Component {
   render() {
     return (
       <div className="synth-editor">
-        <div className="close-synth-editor" onClick={this.close.bind(this)}>
+        <div className="close-editor" onClick={this.close.bind(this)}>
           <i className="fa fa-close"></i>
         </div>
 
@@ -57,7 +57,7 @@ class SynthEditor extends Component {
 
         <div className="slider-label">Filter Frequency</div>
         <div className="slider">
-          <Slider min={20} max={18000} defaultValue={0} onChange={this.setFilterFrequency.bind(this)}/>
+          <Slider min={20} max={2500} defaultValue={0} onChange={this.setFilterFrequency.bind(this)}/>
         </div>
 
         <div className="slider-label">Filter Detune</div>

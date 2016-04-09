@@ -6,11 +6,10 @@ const ReactDOM          = require('react-dom');
 const ProgressBar       = require('progressbar.js');
 const dragSource        = require('react-dnd').DragSource;
 const PropTypes         = React.PropTypes;
-const flow              = require('lodash/flow');
 const colors            = require('../config').synthColors;
-const SynthEditor       = require('./synth-editor.jsx');
+const LooperEditor      = require('./looper-editor.jsx');
 
-var synthSource = {
+var looperSource = {
   beginDrag: function (props, monitor, component) {
     let item = {
       left: parseInt(component.state.xPos),
@@ -21,7 +20,7 @@ var synthSource = {
 
   endDrag: function(props, monitor, component) {
     let result = monitor.getDropResult();
-    if (result.suicide) {
+    if (result && result.suicide) {
       component.suicide();
       return;
     }
@@ -38,7 +37,7 @@ function collect(connect, monitor) {
   };
 }
 
-class Synth extends Component {
+class Looper extends Component {
   constructor(props) {
     super(props);
 
@@ -50,6 +49,7 @@ class Synth extends Component {
       showEditor: false,
       showControls: false
     };
+    console.log('looper');
   }
 
   static get propTypes() {
@@ -71,6 +71,7 @@ class Synth extends Component {
     this.isPlaying = false;
     this.progress = 0;
     this.duration = 100;
+    this.maxVol = 1;
 
     let colorIdx = Math.floor(Math.random() * colors.length);
 
@@ -83,11 +84,11 @@ class Synth extends Component {
       trailColor: '#999',
       duration: 100,
       text: {
-        value: '\u223F',
+        value: '\u2707',
         style: {
           position: 'absolute',
-          left: '16px',
-          top: '1px',
+          left: '12.5px',
+          top: '6px',
           padding: '0',
           margin: '0',
           'font-size': '2em'
@@ -95,80 +96,19 @@ class Synth extends Component {
       }
     });
 
-    this.initSynth();
+    this.audioNode = domNode.children[2];
+
+    this.initialize();
 
     this.timeOut = null;
 
     this.forceUpdate();
   }
 
-  initSynth() {
-
-    this.audioContext = this.props.audioContext;
+  initialize() {
 
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
-
-    this.maxFreq = 100;
-    this.maxVol = 1;
-
-    let initialFreq = 0;
-    let initialVol = 0;
-
-    this.gainNode = this.audioContext.createGain();
-    this.gainNode.gain.value = initialVol;
-
-    this.waveShaper = this.audioContext.createWaveShaper();
-    this.waveShaper.curve = this.makeWaveShaperCurve(0);
-
-    this.oscillator = this.audioContext.createOscillator();
-    this.oscillator.type = 'triangle';
-    this.oscillator.frequency.value = initialFreq;
-
-    this.biquadFilter = this.audioContext.createBiquadFilter();
-    this.biquadFilter.type = 'lowshelf';
-    this.biquadFilter.frequency.value = 18000;
-    this.biquadFilter.gain.value = 20;
-    this.biquadFilter.gain.detune = 0;
-
-    this.oscillator.connect(this.waveShaper);
-    this.waveShaper.connect(this.biquadFilter);
-    this.biquadFilter.connect(this.gainNode);
-
-    this.oscillator.start();
-
-    this.frequency = this.normalizeFrequency(this.state.xPos);
-    this.gain = this.normalizeGain(this.state.yPos);
-  }
-
-  set filterFrequency(freq) {
-    this.biquadFilter.frequency.value = freq;
-  }
-
-  set filterGain(level) {
-    this.biquadFilter.gain.value = level;
-  }
-
-  set filterDetune(level) {
-    this.biquadFilter.gain.detune = level;
-  }
-
-  set waveShaperCurve(amount) {
-    this.waveShaper.curve = this.makeWaveShaperCurve(amount);
-  }
-
-  makeWaveShaperCurve(amount) {
-    let k = typeof amount === 'number' ? amount : 50;
-    let samples = 44100;
-    let curve = new Float32Array(samples);
-    let deg = Math.PI / 180;
-    let i = 0;
-    let x;
-    for ( ; i < samples; ++i ) {
-      x = i * 2 / samples - 1;
-      curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
-    }
-    return curve;
   }
 
   play(event) {
@@ -200,95 +140,19 @@ class Synth extends Component {
     clearTimeout(this.timeOut);
   }
 
-  set frequency(level) {
-    this.oscillator.frequency.value = level;
-  }
-
-  set gain(level) {
-    this.gainNode.gain.value = level;
-  }
-
-  get gain() {
-    return this.gainNode.gain.value;
-  }
-
-  normalizeFrequency(value) {
-    return value / this.windowWidth * this.maxFreq;
-  }
-
-  normalizeGain(value) {
-    return (this.windowHeight - value) / this.windowHeight * this.maxVol;
-  }
-
   onDrag(event) {
-    this.frequency = this.normalizeFrequency(event.clientX);
-    this.gain = this.normalizeGain(event.clientY);
-  }
-
-  setWaveToSine() {
-    console.log(this.state.id);
-    this.oscillator.type = 'sine';
-  }
-
-  setWaveToSquare() {
-    console.log(this.state.id);
-    this.oscillator.type = 'square';
-  }
-
-  setWaveToSaw() {
-    console.log(this.state.id);
-    this.oscillator.type = 'triangle';
-  }
-
-  fadeIn() {
-
-    this.startProgressBarAnimation();
-    this.state.isPlaying = true;
-    this.gainNode.connect(this.audioContext.destination);
-    this.gain = 0;
-
-    let fadeInInterval = setInterval(function() {
-      let originalGain = (this.windowHeight - this.state.yPos) / this.windowHeight * this.maxVol;
-      if (this.gain > originalGain) {
-        this.gain = originalGain; 
-        clearInterval(fadeInInterval);
-      }
-      this.gain = this.gain + 0.01;
-
-    }.bind(this), 10);
-  }
-
-  fadeOut() {
-    let fadeOutInterval = setInterval(function() {
-      if (this.gain < 0.0001) {
-        this.gain = 0;
-        this.state.isPlaying = false;
-        this.gainNode.disconnect(this.audioContext.destination);
-        clearInterval(fadeOutInterval);
-      }
-      this.gain = this.gain - 0.01;
-
-    }.bind(this), 10);
   }
 
   suicide() {
-    this.oscillator.stop();
+    this.props.killLooper(this);
+  }
 
-    this.gainNode.disconnect();
-    this.biquadFilter.disconnect();
-    this.waveShaper.disconnect();
-    this.oscillator.disconnect();
-
-    this.gainNode = null;
-    this.biquadFilter = null;
-    this.waveShaper = null;
-    this.oscillator = null;
-
-    this.props.killSynth(this);
+  showControls() {
+    this.state.showControls = !this.state.showControls;
+    this.forceUpdate();
   }
 
   showEditor(event) {
-    console.log('Showing');
     this.state.showEditor = true;
     this.forceUpdate();
   }
@@ -298,9 +162,35 @@ class Synth extends Component {
     this.forceUpdate();
   }
 
-  showControls() {
-    this.state.showControls = !this.state.showControls;
-    this.forceUpdate();
+  fadeIn() {
+    this.audioNode.play();
+    this.startProgressBarAnimation();
+    this.state.isPlaying = true;
+    this.audioNode.volume = 0;
+
+    let fadeInInterval = setInterval(function() {
+      let originalVol = (this.windowHeight - this.state.yPos) / this.windowHeight * this.maxVol;
+      let newVol = this.audioNode.volume + 0.01;
+      if (newVol > originalVol) {
+        this.audioNode.volume = originalVol; 
+        clearInterval(fadeInInterval);
+      }
+      this.audioNode.volume = newVol;
+    }.bind(this), 10);
+  }
+
+  fadeOut() {
+    let fadeOutInterval = setInterval(function() {
+      let newVol = this.audioNode.volume - 0.01;
+      if (newVol < 0.1) {
+        this.audioNode.volume = 0;
+        this.state.isPlaying = false;
+        this.audioNode.pause();
+        clearInterval(fadeOutInterval);
+      }
+      this.audioNode.volume = newVol;
+
+    }.bind(this), 10);
   }
 
   render() {
@@ -333,12 +223,13 @@ class Synth extends Component {
             <i className="fa fa-cog"></i>
           </div>
         </div>
+        <audio src="media/loop.mp3"/>
         <div style={editorStyle}>
-          <SynthEditor synth={this}/>
+          <LooperEditor looper={this}/>
         </div>
       </div>
     );
   }
 }
 
-module.exports = dragSource('synth', synthSource, collect)(Synth);
+module.exports = dragSource('looper', looperSource, collect)(Looper);
