@@ -65,8 +65,6 @@ class Synth extends AudioDevice {
   initialize() {
 
     super.initialize();
-
-    this.maxFreq = 100;
     
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.type = 'triangle';
@@ -82,28 +80,8 @@ class Synth extends AudioDevice {
     this.oscillator.start();
   }
 
-  startProgressBarAnimation() {
-    this.timeOut = setInterval(this.animateProgressBar.bind(this), 100);
-  }
-
-  animateProgressBar() {
-    this.progress = this.progress === 1 ? 0 : this.progress;
-    this.progress = this.progress + 1/this.duration;
-    this.progressBar.animate(this.progress, ()=> {
-      this.progressBar.animate(0);
-    });
-  }
-
-  stopProgressBarAnimation() {
-    clearTimeout(this.timeOut);
-  }
-
   set oscillatorFrequency(level) {
     this.oscillator.frequency.value = level;
-  }
-
-  normalizeFrequency(value) {
-    return value / this.windowWidth * this.maxFreq;
   }
 
   onDrag(event) {

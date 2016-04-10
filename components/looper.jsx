@@ -67,6 +67,8 @@ class Looper extends AudioDevice {
 
     super.initialize();
 
+    this.maxFreq = 1000;
+
     this.bufferSource = this.audioContext.createBufferSource();
 
     this.bufferSource.connect(this.waveShaper);
@@ -75,22 +77,6 @@ class Looper extends AudioDevice {
     this.gainNode.connect(this.audioContext.destination);
 
     this.bufferSource.start();
-  }
-
-  startProgressBarAnimation() {
-    this.timeOut = setInterval(this.animateProgressBar.bind(this), 100);
-  }
-
-  animateProgressBar() {
-    this.progress = this.progress === 1 ? 0 : this.progress;
-    this.progress = this.progress + 1/this.duration;
-    this.progressBar.animate(this.progress, ()=> {
-      this.progressBar.animate(0);
-    });
-  }
-
-  stopProgressBarAnimation() {
-    clearTimeout(this.timeOut);
   }
 
   suicide() {
@@ -115,6 +101,12 @@ class Looper extends AudioDevice {
       this.bufferSource.buffer = buffer;
       this.bufferSource.loop = true;
     });
+  }
+
+  onDrag(event) {
+    // this.oscillatorFrequency = this.normalizeFrequency(event.clientX);
+    this.bufferSource.detune.value = this.normalizeFrequency(event.clientX - this.windowWidth / 2.0);
+    this.gain = this.normalizeGain(event.clientY);
   }
 
   render() {

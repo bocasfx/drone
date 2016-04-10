@@ -69,6 +69,7 @@ class AudioDevice extends Component {
     this.windowHeight = window.innerHeight;
 
     this.maxVol = 1;
+    this.maxFreq = 100;
 
     this.gainNode = this.audioContext.createGain();
     this.gainNode.gain.value = 0;
@@ -121,6 +122,10 @@ class AudioDevice extends Component {
     this.waveShaper.curve = this.makeWaveShaperCurve(amount);
   }
 
+  normalizeFrequency(value) {
+    return value / this.windowWidth * this.maxFreq;
+  }
+
   normalizeGain(value) {
     return (this.windowHeight - value) / this.windowHeight * this.maxVol;
   }
@@ -144,7 +149,23 @@ class AudioDevice extends Component {
     this.props.killLooper(device);
   }
 
-  onDrag(event) {
+  onDrag() {
+  }
+
+  startProgressBarAnimation() {
+    this.timeOut = setInterval(this.animateProgressBar.bind(this), 100);
+  }
+
+  animateProgressBar() {
+    this.progress = this.progress === 1 ? 0 : this.progress;
+    this.progress = this.progress + 1/this.duration;
+    this.progressBar.animate(this.progress, ()=> {
+      this.progressBar.animate(0);
+    });
+  }
+
+  stopProgressBarAnimation() {
+    clearTimeout(this.timeOut);
   }
 
   play(event) {
