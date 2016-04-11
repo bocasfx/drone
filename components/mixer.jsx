@@ -23,8 +23,8 @@ const mixerTarget = {
     let top = Math.round(item.top + delta.y);
 
     return {
-      xPos: left,
-      yPos: top
+      left: left,
+      top: top
     }
   }
 };
@@ -102,11 +102,11 @@ class Mixer extends Component {
       <div className="mixer" onDoubleClick={this.onDoubleClick.bind(this)}>
         {
           this.state.synths.map((item)=> {
-            return <Synth audioContext={this.audioContext} id={item.key} key={item.key} xPos={item.left} yPos={item.top} killSynth={this.killSynth.bind(this)}/>
+            return <Synth audioContext={this.audioContext} id={item.key} key={item.key} left={item.left} top={item.top} killSynth={this.killSynth.bind(this)}/>
           })
         } {
           this.state.loopers.map((item)=> {
-            return <Looper audioContext={this.audioContext} id={item.key} key={item.key} xPos={item.left} yPos={item.top} killLooper={this.killLooper.bind(this)}/>
+            return <Looper audioContext={this.audioContext} id={item.key} key={item.key} left={item.left} top={item.top} killLooper={this.killLooper.bind(this)}/>
           })
         }
         <Trash/>

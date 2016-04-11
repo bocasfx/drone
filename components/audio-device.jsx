@@ -12,8 +12,8 @@ class AudioDevice extends Component {
 
   static get propTypes() {
     return {
-      xPos: PropTypes.number.isRequired,
-      yPos: PropTypes.number.isRequired,
+      left: PropTypes.number.isRequired,
+      top: PropTypes.number.isRequired,
       // Injected by React DnD:
       isDragging: PropTypes.bool.isRequired,
       connectDragSource: PropTypes.func.isRequired
@@ -21,8 +21,8 @@ class AudioDevice extends Component {
   }
 
   state = {
-    xPos: 0,
-    yPos: 0,
+    left: 0,
+    top: 0,
     isPlaying: false,
     id: this.props.id,
     showEditor: false,
@@ -44,8 +44,8 @@ class AudioDevice extends Component {
   componentDidMount() {
     let domNode = ReactDOM.findDOMNode(this);
 
-    this.state.xPos = this.props.xPos;
-    this.state.yPos = this.props.yPos;
+    this.state.left = this.props.left;
+    this.state.top = this.props.top;
 
     this.isPlaying = false;
     this.progress = 0;
@@ -235,7 +235,7 @@ class AudioDevice extends Component {
     this.gain = 0;
 
     let fadeInInterval = setInterval(function() {
-      let originalGain = (this.windowHeight - this.state.yPos) / this.windowHeight * this.maxVol;
+      let originalGain = (this.windowHeight - this.state.top) / this.windowHeight * this.maxVol;
       if (this.gain > originalGain) {
         this.gain = originalGain; 
         clearInterval(fadeInInterval);

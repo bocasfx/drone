@@ -8,8 +8,8 @@ const SynthEditor       = require('./synth-editor.jsx');
 var synthSource = {
   beginDrag: function (props, monitor, component) {
     let item = {
-      left: parseInt(component.state.xPos),
-      top: parseInt(component.state.yPos)
+      left: parseInt(component.state.left),
+      top: parseInt(component.state.top)
     };
     return item;
   },
@@ -21,8 +21,8 @@ var synthSource = {
       return;
     }
     
-    component.state.xPos = result.xPos;
-    component.state.yPos = result.yPos;
+    component.state.left = result.left;
+    component.state.top = result.top;
   }
 }
 
@@ -66,8 +66,8 @@ class Synth extends AudioDevice {
     this.waveShaper.connect(this.biquadFilter);
     this.biquadFilter.connect(this.gainNode);
 
-    this.oscillatorFrequency = this.normalizeFrequency(this.state.xPos);
-    this.gain = this.normalizeGain(this.state.yPos);
+    this.oscillatorFrequency = this.normalizeFrequency(this.state.left);
+    this.gain = this.normalizeGain(this.state.top);
 
     this.oscillator.start();
   }
@@ -116,13 +116,13 @@ class Synth extends AudioDevice {
     console.log('rendering');
     let isDragging = this.props.isDragging;
     let connectDragSource = this.props.connectDragSource;
-    let xPos = this.state.xPos;
-    let yPos = this.state.yPos;
+    let left = this.state.left;
+    let top = this.state.top;
     let opacity = isDragging ? 0 : 1;
     let style = {
       opacity: opacity,
-      left: xPos + 'px',
-      top: yPos + 'px'
+      left: left + 'px',
+      top: top + 'px'
     };
 
     let controlsDisplay = this.state.showControls ? 'block' : 'none';

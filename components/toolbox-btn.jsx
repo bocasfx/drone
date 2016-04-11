@@ -8,8 +8,8 @@ const PropTypes         = React.PropTypes;
 var toolboxBtnSource = {
   beginDrag: function (props, monitor, component) {
     let item = {
-      left: parseInt(component.state.xPos),
-      top: parseInt(component.state.yPos)
+      left: parseInt(component.state.left),
+      top: parseInt(component.state.top)
     };
     return item;
   },
@@ -36,8 +36,8 @@ class ToolboxBtn extends Component {
 
   static get propTypes() {
     return {
-      // xPos: PropTypes.number.isRequired,
-      // yPos: PropTypes.number.isRequired,
+      // left: PropTypes.number.isRequired,
+      // top: PropTypes.number.isRequired,
       // Injected by React DnD:
       isDragging: PropTypes.bool.isRequired,
       connectDragSource: PropTypes.func.isRequired
@@ -48,8 +48,8 @@ class ToolboxBtn extends Component {
     super(props);
     this.iconClass = props.iconClass;
     this.state = {
-      xPos: 0,
-      yPos: 0
+      left: 0,
+      top: 0
     };
   }
 

@@ -8,8 +8,8 @@ const LooperEditor      = require('./looper-editor.jsx');
 var looperSource = {
   beginDrag: function (props, monitor, component) {
     let item = {
-      left: parseInt(component.state.xPos),
-      top: parseInt(component.state.yPos)
+      left: parseInt(component.state.left),
+      top: parseInt(component.state.top)
     };
     return item;
   },
@@ -21,8 +21,8 @@ var looperSource = {
       return;
     }
     
-    component.state.xPos = result.xPos;
-    component.state.yPos = result.yPos;
+    component.state.left = result.left;
+    component.state.top = result.top;
   }
 }
 
@@ -90,13 +90,13 @@ class Looper extends AudioDevice {
   render() {
     let isDragging = this.props.isDragging;
     let connectDragSource = this.props.connectDragSource;
-    let xPos = this.state.xPos;
-    let yPos = this.state.yPos;
+    let left = this.state.left;
+    let top = this.state.top;
     let opacity = isDragging ? 0 : 1;
     let style = {
       opacity: opacity,
-      left: xPos + 'px',
-      top: yPos + 'px'
+      left: left + 'px',
+      top: top + 'px'
     };
 
     let controlsDisplay = this.state.showControls ? 'block' : 'none';
