@@ -6,6 +6,7 @@ const PropTypes         = React.PropTypes;
 const ReactDOM          = require('react-dom');
 const colors            = require('../config').synthColors;
 const ProgressBar       = require('progressbar.js');
+const q                 = require('q');
 
 class AudioDevice extends Component {
 
@@ -41,6 +42,11 @@ class AudioDevice extends Component {
     this.progress = 0;
     this.duration = 100;
     this.timeOut = null;
+
+    this.attack = 1;
+    this.sustain = 100;
+    this.decay = 1;
+    this.release = 100;
 
     let colorIdx = Math.floor(Math.random() * colors.length);
 
@@ -175,10 +181,78 @@ class AudioDevice extends Component {
 
     if (this.state.isPlaying) {
       this.stopProgressBarAnimation();
-      this.fadeOut();
+      this.state.isPlaying = false;
+      this.noteOff().then(()=> {
+        console.log('disconnecting');
+        this.gainNode.disconnect(this.audioContext.destination);
+      });
     } else {
-      this.fadeIn();
+      this.startProgressBarAnimation();
+      this.state.isPlaying = true;
+      this.noteOn();
     }
+  }
+
+  noteOn() {
+    this.fadeIn()
+      .then(this.scheduleNoteOff());
+  }
+
+  scheduleNoteOff() {
+    setTimeout(()=> {
+      this.noteOff();
+    }, this.sustain);
+  }
+
+  noteOff() {
+    return this.fadeOut()
+      .then(this.scheduleNoteOn());
+  }
+
+  scheduleNoteOn() {
+    if (this.state.isPlaying) {
+      setTimeout(()=> {
+        this.noteOn();
+      }, this.release);
+    }
+  }
+
+  fadeIn() {
+
+    let deferred = q.defer();
+
+    
+    this.gainNode.connect(this.audioContext.destination);
+    this.gain = 0;
+
+    let fadeInInterval = setInterval(function() {
+      let originalGain = (this.windowHeight - this.state.yPos) / this.windowHeight * this.maxVol;
+      if (this.gain > originalGain) {
+        this.gain = originalGain; 
+        clearInterval(fadeInInterval);
+        deferred.resolve();
+      }
+      this.gain = this.gain + 0.01;
+
+    }.bind(this), this.attack);
+
+    return deferred.promise;
+  }
+
+  fadeOut() {
+    let deferred = q.defer();
+
+    let fadeOutInterval = setInterval(function() {
+      if (this.gain < 0.0001) {
+        this.gain = 0;
+        clearInterval(fadeOutInterval);
+        deferred.resolve();
+      }
+      this.gain = this.gain - 0.01;
+
+    }.bind(this), this.decay);
+
+    return deferred.promise;
   }
 }
 

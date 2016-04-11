@@ -83,19 +83,6 @@ class Looper extends AudioDevice {
     super.suicide(this);
   }
 
-  fadeIn() {
-    
-    this.startProgressBarAnimation();
-    this.state.isPlaying = true;
-    this.gain = 1;
-  }
-
-  fadeOut() {
-    this.gain = 0;
-    this.state.isPlaying = false;
-
-  }
-
   bufferData(data) {
     this.audioContext.decodeAudioData(data, (buffer)=> {
       this.bufferSource.buffer = buffer;

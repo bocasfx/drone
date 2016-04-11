@@ -25,6 +25,7 @@
     "express": "^4.13.4",
     "lodash": "^4.8.2",
     "progressbar.js": "^1.0.0",
+    "q": "^1.4.1",
     "rc-slider": "^3.5.1",
     "react": "^0.14.8",
     "react-dnd": "^2.1.4",

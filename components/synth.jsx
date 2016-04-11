@@ -104,37 +104,6 @@ class Synth extends AudioDevice {
     this.oscillator.type = 'triangle';
   }
 
-  fadeIn() {
-
-    this.startProgressBarAnimation();
-    this.state.isPlaying = true;
-    this.gainNode.connect(this.audioContext.destination);
-    this.gain = 0;
-
-    let fadeInInterval = setInterval(function() {
-      let originalGain = (this.windowHeight - this.state.yPos) / this.windowHeight * this.maxVol;
-      if (this.gain > originalGain) {
-        this.gain = originalGain; 
-        clearInterval(fadeInInterval);
-      }
-      this.gain = this.gain + 0.01;
-
-    }.bind(this), 10);
-  }
-
-  fadeOut() {
-    let fadeOutInterval = setInterval(function() {
-      if (this.gain < 0.0001) {
-        this.gain = 0;
-        this.state.isPlaying = false;
-        this.gainNode.disconnect(this.audioContext.destination);
-        clearInterval(fadeOutInterval);
-      }
-      this.gain = this.gain - 0.01;
-
-    }.bind(this), 10);
-  }
-
   suicide() {
     this.oscillator.stop();
 
