@@ -20,6 +20,15 @@ class AudioDevice extends Component {
     }
   }
 
+  state = {
+    xPos: 0,
+    yPos: 0,
+    isPlaying: false,
+    id: this.props.id,
+    showEditor: false,
+    showControls: false
+  }
+
   constructor(props) {
     super(props);
   }

@@ -34,18 +34,9 @@ function collect(connect, monitor) {
 }
 
 class Looper extends AudioDevice {
+
   constructor(props) {
     super(props);
-
-    this.state = {
-      xPos: 0,
-      yPos: 0,
-      isPlaying: false,
-      id: props.id,
-      showEditor: false,
-      showControls: false
-    };
-    console.log('looper');
   }
 
   get progressBarStyle() {

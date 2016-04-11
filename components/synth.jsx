@@ -34,17 +34,9 @@ function collect(connect, monitor) {
 }
 
 class Synth extends AudioDevice {
+
   constructor(props) {
     super(props);
-
-    this.state = {
-      xPos: 0,
-      yPos: 0,
-      isPlaying: false,
-      id: props.id,
-      showEditor: false,
-      showControls: false
-    };
   }
 
   get progressBarStyle() {
@@ -121,6 +113,7 @@ class Synth extends AudioDevice {
   }
 
   render() {
+    console.log('rendering');
     let isDragging = this.props.isDragging;
     let connectDragSource = this.props.connectDragSource;
     let xPos = this.state.xPos;

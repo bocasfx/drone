@@ -1,7 +1,10 @@
 'use strict';
 
 module.exports = {
-  entry: './app.js',
+  entry: [
+    'babel-polyfill',
+    './app.js'
+  ],
   output: {
     path: __dirname + '/public/js/',
     filename: 'app.js'
@@ -12,7 +15,8 @@ module.exports = {
       loader: 'babel-loader',
       exclude: /node_modules/,
       query: {
-        presets: ['es2015', 'react']
+        plugins: ['transform-runtime'],
+        presets: ['es2015', 'stage-0', 'react']
       }
     }, {
       test: /\.css$/,
