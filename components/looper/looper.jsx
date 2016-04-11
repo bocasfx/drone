@@ -1,11 +1,11 @@
 'use strict';
 
 const React             = require('react');
-const AudioDevice       = require('./audio-device.jsx');
+const AudioDevice       = require('../audio-device.jsx');
 const dragSource        = require('react-dnd').DragSource;
-const SynthEditor       = require('./synth-editor.jsx');
+const LooperEditor      = require('./looper-editor.jsx');
 
-var synthSource = {
+var looperSource = {
   beginDrag: function (props, monitor, component) {
     let item = {
       left: parseInt(component.state.left),
@@ -16,7 +16,7 @@ var synthSource = {
 
   endDrag: function(props, monitor, component) {
     let result = monitor.getDropResult();
-    if (result.suicide) {
+    if (result && result.suicide) {
       component.suicide();
       return;
     }
@@ -33,7 +33,7 @@ function collect(connect, monitor) {
   };
 }
 
-class Synth extends AudioDevice {
+class Looper extends AudioDevice {
 
   constructor(props) {
     super(props);
@@ -42,8 +42,8 @@ class Synth extends AudioDevice {
   get progressBarStyle() {
     return {
       position: 'absolute',
-      left: '16px',
-      top: '1px',
+      left: '12.5px',
+      top: '6px',
       padding: '0',
       margin: '0',
       'font-size': '2em'
@@ -51,69 +51,43 @@ class Synth extends AudioDevice {
   }
 
   get progressBarIcon() {
-    return '\u223F';
+    return '\u2707';
   }
 
   initialize() {
 
     super.initialize();
-    
-    this.oscillator = this.audioContext.createOscillator();
-    this.oscillator.type = 'triangle';
-    this.oscillator.frequency.value = 0;
 
-    this.oscillator.connect(this.waveShaper);
+    this.maxFreq = 1000;
+
+    this.bufferSource = this.audioContext.createBufferSource();
+
+    this.bufferSource.connect(this.waveShaper);
     this.waveShaper.connect(this.biquadFilter);
     this.biquadFilter.connect(this.gainNode);
+    this.gainNode.connect(this.audioContext.destination);
 
-    this.oscillatorFrequency = this.normalizeFrequency(this.state.left);
-    this.gain = this.normalizeGain(this.state.top);
-
-    this.oscillator.start();
-  }
-
-  set oscillatorFrequency(level) {
-    this.oscillator.frequency.value = level;
-  }
-
-  onDrag(event) {
-    this.oscillatorFrequency = this.normalizeFrequency(event.clientX);
-    this.gain = this.normalizeGain(event.clientY);
-  }
-
-  setWaveToSine() {
-    console.log(this.state.id);
-    this.oscillator.type = 'sine';
-  }
-
-  setWaveToSquare() {
-    console.log(this.state.id);
-    this.oscillator.type = 'square';
-  }
-
-  setWaveToSaw() {
-    console.log(this.state.id);
-    this.oscillator.type = 'triangle';
+    this.bufferSource.start();
   }
 
   suicide() {
-    this.oscillator.stop();
-
-    this.gainNode.disconnect();
-    this.biquadFilter.disconnect();
-    this.waveShaper.disconnect();
-    this.oscillator.disconnect();
-
-    this.gainNode = null;
-    this.biquadFilter = null;
-    this.waveShaper = null;
-    this.oscillator = null;
-
     super.suicide(this);
   }
 
+  bufferData(data) {
+    this.audioContext.decodeAudioData(data, (buffer)=> {
+      this.bufferSource.buffer = buffer;
+      this.bufferSource.loop = true;
+    });
+  }
+
+  onDrag(event) {
+    // this.oscillatorFrequency = this.normalizeFrequency(event.clientX);
+    this.bufferSource.detune.value = this.normalizeFrequency(event.clientX - this.windowWidth / 2.0);
+    this.gain = this.normalizeGain(event.clientY);
+  }
+
   render() {
-    console.log('rendering');
     let isDragging = this.props.isDragging;
     let connectDragSource = this.props.connectDragSource;
     let left = this.state.left;
@@ -143,12 +117,13 @@ class Synth extends AudioDevice {
             <i className="fa fa-cog"></i>
           </div>
         </div>
+        <audio src="media/loop.mp3"/>
         <div style={editorStyle}>
-          <SynthEditor synth={this}/>
+          <LooperEditor looper={this}/>
         </div>
       </div>
     );
   }
 }
 
-module.exports = dragSource('synth', synthSource, collect)(Synth);
+module.exports = dragSource('looper', looperSource, collect)(Looper);
