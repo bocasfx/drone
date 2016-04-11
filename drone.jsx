@@ -9,11 +9,29 @@ const Mixer    = require('./components/mixer.jsx');
 
 class Drone extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      synths: [],
+      loopers: []
+    }
+  }
+
+  addAudioDevice(type, device) {
+    if (type === 'synth') {
+      this.state.synths.push(device);
+    } else if (type === 'looper') {
+      this.state.loopers.push(device);
+    }
+
+    this.forceUpdate();
+  }
+
   render() {
     return(
       <div className="app-container">
-        <Toolbox/>
-        <Mixer synths={[]} loopers={[]}/>
+        <Toolbox addAudioDevice={this.addAudioDevice.bind(this)}/>
+        <Mixer synths={this.state.synths} loopers={this.state.loopers}/>
       </div>
     );
   }

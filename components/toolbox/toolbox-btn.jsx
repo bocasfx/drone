@@ -21,7 +21,16 @@ var toolboxBtnSource = {
       return;
     }
     
+    console.log(monitor);
+    console.log(component);
     console.log(component.props.iconClass);
+
+    let newSynth = {
+      left: event.clientX - 25,
+      top: event.clientY - 25,
+      key: Date.now()
+    }
+    component.state.addAudioDevice(component.props.iconClass, newSynth);
   }
 }
 
@@ -49,7 +58,8 @@ class ToolboxBtn extends Component {
     this.iconClass = props.iconClass;
     this.state = {
       left: 0,
-      top: 0
+      top: 0,
+      addAudioDevice: props.addAudioDevice
     };
   }
 

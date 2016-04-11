@@ -10,7 +10,8 @@ class Toolbox extends Component {
     super(props);
     this.state = {
       class: 'toolbox',
-      showButtons: false
+      showButtons: false,
+      addAudioDevice: props.addAudioDevice
     };
   }
 
@@ -19,8 +20,8 @@ class Toolbox extends Component {
     return (
       <div className={this.state.class}>
         <div className="logo">DRONE</div>
-        <ToolboxBtn iconClass="synth"/>
-        <ToolboxBtn iconClass="looper"/>
+        <ToolboxBtn iconClass="synth" addAudioDevice={this.state.addAudioDevice}/>
+        <ToolboxBtn iconClass="looper" addAudioDevice={this.state.addAudioDevice}/>
       </div>
     );
   }
