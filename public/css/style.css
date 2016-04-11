@@ -12,6 +12,10 @@ a {
    outline: 0;
 }
 
+.app-container {
+  display: inline;
+}
+
 #container {
   height: 100%;
   margin: 0;
@@ -34,7 +38,6 @@ a {
   height: 100%;
   background-color: transparent;
   background-image: linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent);
-  height:100%;
   background-size:50px 50px;
 }
 
@@ -105,4 +108,48 @@ a {
 
 .open-file-input {
   margin-top: 20px;
+}
+
+.toolbox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background-color: #333;
+  border-bottom: 1px solid #666;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.logo {
+  color: #aaa;
+  padding: 15px;
+}
+
+.toolbox-btn {
+  color: #aaa;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 0;
+  left: 100px;
+  border-left: 1px solid #666;
+  border-right: 1px solid #666;
+  text-align: center;
+  font-size: 2em;
+  cursor: pointer;
+}
+
+.toolbox-btn.looper {
+  left: 150px;
+  border-left: none;
+}
+
+.toolbox-btn.synth:after {
+  content: '\223F';
+}
+
+.toolbox-btn.looper:after {
+  content: '\2707';
 }

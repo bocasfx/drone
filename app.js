@@ -2,12 +2,11 @@
 
 const React    = require('react');
 const ReactDOM = require('react-dom');
-const Mixer    = require('./components/mixer.jsx');
-
-let synths = [];
-let loopers = [];
+const Drone    = require('./drone.jsx');
 
 ReactDOM.render(
-  <Mixer synths={synths} loopers={loopers}/>,
+  <Drone/>,
   document.getElementById('container')
 );
+
+

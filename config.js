@@ -1,5 +1,7 @@
 'use strict';
 
+const HTML5Backend    = require('react-dnd-html5-backend').default;
+
 const config = {
   synthColors: [
     '#001f3f',
@@ -17,7 +19,9 @@ const config = {
     '#B10DC9',
     '#AAAAAA',
     '#DDDDDD'
-  ]
+  ],
+
+  backend: HTML5Backend
 };
 
 module.exports = config;

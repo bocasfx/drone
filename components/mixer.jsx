@@ -6,8 +6,6 @@ const Component       = React.Component;
 const Synth           = require('./synth.jsx');
 const Looper          = require('./looper.jsx');
 const dropTarget      = require('react-dnd').DropTarget;
-const HTML5Backend    = require('react-dnd-html5-backend');
-const dragDropContext = require('react-dnd').DragDropContext;
 const flow            = require('lodash/flow');
 const Trash           = require('./trash.jsx');
 const _               = require('lodash');
@@ -118,6 +116,5 @@ class Mixer extends Component {
 }
 
 module.exports = flow(
-  dropTarget(['synth', 'looper'], mixerTarget, collect),
-  dragDropContext(HTML5Backend)
+  dropTarget(['synth', 'looper', 'toolbox-btn'], mixerTarget, collect)
 )(Mixer);
