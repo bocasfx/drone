@@ -53,9 +53,12 @@ class AudioDevice extends Component {
     this.timeOut = null;
 
     this.attack = 1;
-    this.sustain = 100;
-    this.decay = 1;
-    this.release = 100;
+    this.sustain = 50;
+    this.decay = 30;
+    this.release = 500;
+
+    this.noteOffTimeout = null;
+    this.noteOnTimeout = null;
 
     let colorIdx = Math.floor(Math.random() * colors.length);
 
@@ -189,15 +192,17 @@ class AudioDevice extends Component {
     event.nativeEvent.stopImmediatePropagation();
 
     if (this.state.isPlaying) {
-      this.stopProgressBarAnimation();
       this.state.isPlaying = false;
-      this.noteOff().then(()=> {
+      this.stopProgressBarAnimation();
+      this.fadeOut().then(()=> {
         console.log('disconnecting');
+        clearTimeout(this.noteOffTimeout);
+        clearTimeout(this.noteOnTimeout);
         this.gainNode.disconnect(this.audioContext.destination);
       });
     } else {
-      this.startProgressBarAnimation();
       this.state.isPlaying = true;
+      this.startProgressBarAnimation();
       this.noteOn();
     }
   }
@@ -208,7 +213,7 @@ class AudioDevice extends Component {
   }
 
   scheduleNoteOff() {
-    setTimeout(()=> {
+    this.noteOffTimeout = setTimeout(()=> {
       this.noteOff();
     }, this.sustain);
   }
@@ -220,7 +225,7 @@ class AudioDevice extends Component {
 
   scheduleNoteOn() {
     if (this.state.isPlaying) {
-      setTimeout(()=> {
+      this.noteOnTimeout = setTimeout(()=> {
         this.noteOn();
       }, this.release);
     }

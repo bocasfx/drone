@@ -58,24 +58,6 @@ class Mixer extends Component {
     this.forceUpdate();
   }
 
-  onDoubleClick(event) {
-    let newSynth = {
-      left: event.clientX - 25,
-      top: event.clientY - 25,
-      key: Date.now()
-    }
-    this.state.synths.push(newSynth);
-
-    let newLooper = {
-      left: event.clientX - 25,
-      top: event.clientY - 25,
-      key: Date.now()
-    }
-    this.state.loopers.push(newLooper);
-
-    this.forceUpdate();
-  }
-
   killSynth(synth) {
     console.log(this.state.synths.length);
     this.state.synths = _.remove(this.state.synths, function(item) {
@@ -99,7 +81,7 @@ class Mixer extends Component {
     let connectDropTarget = this.props.connectDropTarget;
 
     return connectDropTarget(
-      <div className="mixer" onDoubleClick={this.onDoubleClick.bind(this)}>
+      <div className="mixer">
         {
           this.state.synths.map((item)=> {
             return <Synth audioContext={this.audioContext} id={item.key} key={item.key} left={item.left} top={item.top} killSynth={this.killSynth.bind(this)}/>
