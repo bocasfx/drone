@@ -23,6 +23,11 @@ var synthSource = {
     
     component.state.left = result.left;
     component.state.top = result.top;
+
+    if (!component.playOnDrag) {
+      component.oscillatorFrequency = component.normalizeFrequency(result.left);
+      component.gain = component.normalizeGain(result.top);
+    }
   }
 }
 
@@ -77,8 +82,10 @@ class Synth extends AudioDevice {
   }
 
   onDrag(event) {
-    this.oscillatorFrequency = this.normalizeFrequency(event.clientX);
-    this.gain = this.normalizeGain(event.clientY);
+    if (this.playOnDrag) {
+      this.oscillatorFrequency = this.normalizeFrequency(event.clientX);
+      this.gain = this.normalizeGain(event.clientY);
+    }
   }
 
   setWaveToSine() {
@@ -113,7 +120,6 @@ class Synth extends AudioDevice {
   }
 
   render() {
-    console.log('rendering');
     let isDragging = this.props.isDragging;
     let connectDragSource = this.props.connectDragSource;
     let left = this.state.left;

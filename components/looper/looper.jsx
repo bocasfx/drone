@@ -23,6 +23,11 @@ var looperSource = {
     
     component.state.left = result.left;
     component.state.top = result.top;
+
+    if (!component.playOnDrag) {
+      component.bufferSource.detune.value = component.normalizeFrequency(event.clientX - component.windowWidth / 2.0);
+      component.gain = component.normalizeGain(event.clientY);
+    }
   }
 }
 
@@ -37,6 +42,7 @@ class Looper extends AudioDevice {
 
   constructor(props) {
     super(props);
+    this.enableGainEnvelope = false;
   }
 
   get progressBarStyle() {
@@ -82,9 +88,10 @@ class Looper extends AudioDevice {
   }
 
   onDrag(event) {
-    // this.oscillatorFrequency = this.normalizeFrequency(event.clientX);
-    this.bufferSource.detune.value = this.normalizeFrequency(event.clientX - this.windowWidth / 2.0);
-    this.gain = this.normalizeGain(event.clientY);
+    if (this.playOnDrag) {
+      this.bufferSource.detune.value = this.normalizeFrequency(event.clientX - this.windowWidth / 2.0);
+      this.gain = this.normalizeGain(event.clientY);
+    }
   }
 
   render() {

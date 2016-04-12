@@ -20,17 +20,16 @@ class AudioDevice extends Component {
     }
   }
 
-  state = {
-    left: 0,
-    top: 0,
-    isPlaying: false,
-    id: this.props.id,
-    showEditor: false,
-    showControls: false
-  }
-
   constructor(props) {
     super(props);
+    this.state = {
+      left: 0,
+      top: 0,
+      isPlaying: false,
+      id: this.props.id,
+      showEditor: false,
+      showControls: false
+    }
   }
 
   get progressBarStyle() {
@@ -53,10 +52,12 @@ class AudioDevice extends Component {
     this.timeOut = null;
 
     this.enableGainEnvelope = true;
-    this.attack = 0;
-    this.sustain = 50;
-    this.decay = 0;
-    this.release = 50;
+    this.attack = 100;
+    this.sustain = 200;
+    this.decay = 100;
+    this.release = 200;
+
+    this.playOnDrag = true;
 
     this.noteOffTimeout = null;
     this.noteOnTimeout = null;
@@ -172,18 +173,21 @@ class AudioDevice extends Component {
   }
 
   startProgressBarAnimation() {
-    this.timeOut = setInterval(this.animateProgressBar.bind(this), 100);
+    this.timeOut = setInterval(this.animateProgressBar.bind(this), 75);
   }
 
   animateProgressBar() {
-    this.progress = this.progress === 1 ? 0 : this.progress;
-    this.progress = this.progress + 1/this.duration;
-    this.progressBar.animate(this.progress, ()=> {
-      this.progressBar.animate(0);
-    });
+    if (this.progress > 1.99) {
+      this.progress = 0;
+      this.progressBar.set(0);
+    } else {
+      this.progress = this.progress + 1/this.duration;
+      this.progressBar.animate(this.progress);  
+    }
   }
 
   stopProgressBarAnimation() {
+    this.progressBar.animate(0);
     clearTimeout(this.timeOut);
   }
 
@@ -195,9 +199,9 @@ class AudioDevice extends Component {
     if (this.isPlaying) {
       this.isPlaying = false;
       this.stopProgressBarAnimation();
-      this.fadeOut().then(()=> {
-        clearTimeout(this.noteOffTimeout);
-        clearTimeout(this.noteOnTimeout);
+      clearTimeout(this.noteOffTimeout);
+      clearTimeout(this.noteOnTimeout);
+      this.fadeOut(10).then(()=> {
         this.gainNode.disconnect(this.audioContext.destination);
       });
     } else {
@@ -212,7 +216,7 @@ class AudioDevice extends Component {
     if (this.enableGainEnvelope) {
       this.fadeIn()
         .then(this.scheduleNoteOff.bind(this))
-        .then(this.fadeOut.bind(this))
+        .then(this.fadeOut.bind(this, this.decay))
         .then(this.scheduleNoteOn.bind(this));
     } else {
       this.fadeIn();
@@ -244,6 +248,8 @@ class AudioDevice extends Component {
 
   fadeIn() {
 
+    let start = new Date().getTime();
+    let time = 0;
 
     let deferred = q.defer();
     this.gain = 0;
@@ -251,39 +257,49 @@ class AudioDevice extends Component {
     let originalGain = (this.windowHeight - this.state.top) / this.windowHeight * this.maxVol;
     let step = originalGain / 50;
 
-    let fadeInInterval = setInterval(function() {
+    let fadeInStep = ()=> {
 
       if (this.gain > originalGain) {
         this.gain = originalGain; 
-        clearInterval(fadeInInterval);
         if(!this.isPlaying) {
           deferred.reject();
         }
         deferred.resolve();
+      } else {
+        if(this.isPlaying) {
+          time += this.attack;
+          this.gain = this.gain + step;
+          let diff = new Date().getTime() - start - time;
+          setTimeout(fadeInStep.bind(this), this.attack - diff);
+        }
       }
-      this.gain = this.gain + step;
+    }
 
-    }.bind(this), this.attack);
-
+    setTimeout(fadeInStep.bind(this), this.attack)
     return deferred.promise;
   }
 
-  fadeOut() {
+  fadeOut(decay) {
 
+    let start = new Date().getTime();
+    let time = 0;
 
     let deferred = q.defer();
     let step = this.gain / 50;
 
-    let fadeOutInterval = setInterval(function() {
+    let fadeOutStep = ()=> {
       if (this.gain < 0.0001) {
         this.gain = 0;
-        clearInterval(fadeOutInterval);
         deferred.resolve();
+      } else {
+        time += decay;
+        this.gain = this.gain - step;
+        let diff = new Date().getTime() - start - time;
+        setTimeout(fadeOutStep, decay - diff);
       }
-      this.gain = this.gain - step;
+    }
 
-    }.bind(this), this.decay);
-
+    setTimeout(fadeOutStep, decay);
     return deferred.promise;
   }
 }
