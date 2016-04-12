@@ -27,8 +27,7 @@ class AudioDevice extends Component {
       top: 0,
       isPlaying: false,
       id: this.props.id,
-      showEditor: false,
-      showControls: false
+      showEditor: false
     }
   }
 
@@ -52,7 +51,7 @@ class AudioDevice extends Component {
     this.timeOut = null;
 
     this.enableGainEnvelope = true;
-    this.attack = 100;
+    this.attack = 1;
     this.sustain = 200;
     this.decay = 100;
     this.release = 200;
@@ -157,11 +156,6 @@ class AudioDevice extends Component {
 
   hideEditor() {
     this.state.showEditor = false;
-    this.forceUpdate();
-  }
-
-  showControls() {
-    this.state.showControls = !this.state.showControls;
     this.forceUpdate();
   }
 

@@ -16,7 +16,6 @@ class SynthEditor extends Component {
   }
 
   close() {
-    console.log('closing');
     this.state.synth.hideEditor();
   }
 

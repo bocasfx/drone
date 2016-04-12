@@ -106,28 +106,9 @@ class Looper extends AudioDevice {
       top: top + 'px'
     };
 
-    let controlsDisplay = this.state.showControls ? 'block' : 'none';
-    let controlsStyle = {
-      display: controlsDisplay
-    }
-
-    let editorDisplay = this.state.showEditor ? 'block' : 'none';
-    let editorStyle = {
-      display: editorDisplay
-    }
-
     return connectDragSource(
-      <div className="synth" style={style} onMouseEnter={this.showControls.bind(this)} onMouseLeave={this.showControls.bind(this)}>
+      <div className="synth" style={style}>
         <span className="progress" draggable='true' onDrag={this.onDrag.bind(this)} onClick={this.play.bind(this)}></span>
-        <div className="cog" onClick={this.showEditor.bind(this)}>
-          <div style={controlsStyle}>
-            <i className="fa fa-cog"></i>
-          </div>
-        </div>
-        <audio src="media/loop.mp3"/>
-        <div style={editorStyle}>
-          <LooperEditor looper={this}/>
-        </div>
       </div>
     );
   }

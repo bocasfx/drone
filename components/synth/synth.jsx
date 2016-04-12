@@ -64,7 +64,7 @@ class Synth extends AudioDevice {
     super.initialize();
     
     this.oscillator = this.audioContext.createOscillator();
-    this.oscillator.type = 'triangle';
+    this.oscillator.type = 'sine';
     this.oscillator.frequency.value = 0;
 
     this.oscillator.connect(this.waveShaper);
@@ -89,17 +89,14 @@ class Synth extends AudioDevice {
   }
 
   setWaveToSine() {
-    console.log(this.state.id);
     this.oscillator.type = 'sine';
   }
 
   setWaveToSquare() {
-    console.log(this.state.id);
     this.oscillator.type = 'square';
   }
 
   setWaveToSaw() {
-    console.log(this.state.id);
     this.oscillator.type = 'triangle';
   }
 
@@ -131,27 +128,9 @@ class Synth extends AudioDevice {
       top: top + 'px'
     };
 
-    let controlsDisplay = this.state.showControls ? 'block' : 'none';
-    let controlsStyle = {
-      display: controlsDisplay
-    }
-
-    let editorDisplay = this.state.showEditor ? 'block' : 'none';
-    let editorStyle = {
-      display: editorDisplay
-    }
-
     return connectDragSource(
-      <div className="synth" style={style} onMouseEnter={this.showControls.bind(this)} onMouseLeave={this.showControls.bind(this)}>
+      <div className="synth" style={style}>
         <span className="progress" draggable='true' onDrag={this.onDrag.bind(this)} onClick={this.play.bind(this)}></span>
-        <div className="cog" onClick={this.showEditor.bind(this)}>
-          <div style={controlsStyle}>
-            <i className="fa fa-cog"></i>
-          </div>
-        </div>
-        <div style={editorStyle}>
-          <SynthEditor synth={this}/>
-        </div>
       </div>
     );
   }

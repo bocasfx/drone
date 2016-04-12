@@ -20,17 +20,19 @@ var toolboxBtnSource = {
       component.suicide();
       return;
     }
-    
-    console.log(monitor);
-    console.log(component);
-    console.log(component.props.iconClass);
 
-    let newSynth = {
-      left: event.clientX - 25,
-      top: event.clientY - 25,
+    console.log(result);
+
+    let iconClass = component.props.iconClass;
+
+    let offset = iconClass === 'synth' ? 100 : 150;
+
+    let device = {
+      left: result.left + offset,
+      top: result.top,
       key: Date.now()
     }
-    component.state.addAudioDevice(component.props.iconClass, newSynth);
+    component.state.addAudioDevice(iconClass, device);
   }
 }
 

@@ -59,20 +59,16 @@ class Mixer extends Component {
   }
 
   killSynth(synth) {
-    console.log(this.state.synths.length);
     this.state.synths = _.remove(this.state.synths, function(item) {
       return item.key !== synth.state.id;
     })
-    console.log(this.state.synths);
     this.forceUpdate();
   }
 
   killLooper(looper) {
-    console.log(this.state.loopers.length);
     this.state.loopers = _.remove(this.state.loopers, function(item) {
       return item.key !== looper.state.id;
     })
-    console.log(this.state.loopers);
     this.forceUpdate();
   }
 

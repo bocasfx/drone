@@ -16,7 +16,6 @@ class LooperEditor extends Component {
   }
 
   close() {
-    console.log('closing');
     this.state.looper.hideEditor();
   }
 
