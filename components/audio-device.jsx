@@ -52,10 +52,11 @@ class AudioDevice extends Component {
     this.duration = 100;
     this.timeOut = null;
 
-    this.attack = 1;
+    this.enableGainEnvelope = true;
+    this.attack = 0;
     this.sustain = 50;
-    this.decay = 30;
-    this.release = 500;
+    this.decay = 0;
+    this.release = 50;
 
     this.noteOffTimeout = null;
     this.noteOnTimeout = null;
@@ -191,62 +192,76 @@ class AudioDevice extends Component {
     event.stopPropagation();
     event.nativeEvent.stopImmediatePropagation();
 
-    if (this.state.isPlaying) {
-      this.state.isPlaying = false;
+    if (this.isPlaying) {
+      this.isPlaying = false;
       this.stopProgressBarAnimation();
       this.fadeOut().then(()=> {
-        console.log('disconnecting');
         clearTimeout(this.noteOffTimeout);
         clearTimeout(this.noteOnTimeout);
         this.gainNode.disconnect(this.audioContext.destination);
       });
     } else {
-      this.state.isPlaying = true;
+      this.isPlaying = true;
       this.startProgressBarAnimation();
+      this.gainNode.connect(this.audioContext.destination);
       this.noteOn();
     }
   }
 
   noteOn() {
-    this.fadeIn()
-      .then(this.scheduleNoteOff());
+    if (this.enableGainEnvelope) {
+      this.fadeIn()
+        .then(this.scheduleNoteOff.bind(this))
+        .then(this.fadeOut.bind(this))
+        .then(this.scheduleNoteOn.bind(this));
+    } else {
+      this.fadeIn();
+    }
   }
 
   scheduleNoteOff() {
+    let deferred = q.defer();
     this.noteOffTimeout = setTimeout(()=> {
-      this.noteOff();
+      if(!this.isPlaying) {
+        deferred.reject();
+      }
+      deferred.resolve();
     }, this.sustain);
-  }
-
-  noteOff() {
-    return this.fadeOut()
-      .then(this.scheduleNoteOn());
+    return deferred.promise;
   }
 
   scheduleNoteOn() {
-    if (this.state.isPlaying) {
-      this.noteOnTimeout = setTimeout(()=> {
-        this.noteOn();
-      }, this.release);
-    }
+    let deferred = q.defer();
+    this.noteOnTimeout = setTimeout(()=> {
+      if(!this.isPlaying) {
+        deferred.reject();
+      }
+      this.noteOn();
+      deferred.resolve();
+    }, this.release);
+    return deferred.promise;
   }
 
   fadeIn() {
 
-    let deferred = q.defer();
 
-    
-    this.gainNode.connect(this.audioContext.destination);
+    let deferred = q.defer();
     this.gain = 0;
 
+    let originalGain = (this.windowHeight - this.state.top) / this.windowHeight * this.maxVol;
+    let step = originalGain / 50;
+
     let fadeInInterval = setInterval(function() {
-      let originalGain = (this.windowHeight - this.state.top) / this.windowHeight * this.maxVol;
+
       if (this.gain > originalGain) {
         this.gain = originalGain; 
         clearInterval(fadeInInterval);
+        if(!this.isPlaying) {
+          deferred.reject();
+        }
         deferred.resolve();
       }
-      this.gain = this.gain + 0.01;
+      this.gain = this.gain + step;
 
     }.bind(this), this.attack);
 
@@ -254,7 +269,10 @@ class AudioDevice extends Component {
   }
 
   fadeOut() {
+
+
     let deferred = q.defer();
+    let step = this.gain / 50;
 
     let fadeOutInterval = setInterval(function() {
       if (this.gain < 0.0001) {
@@ -262,7 +280,7 @@ class AudioDevice extends Component {
         clearInterval(fadeOutInterval);
         deferred.resolve();
       }
-      this.gain = this.gain - 0.01;
+      this.gain = this.gain - step;
 
     }.bind(this), this.decay);
 
