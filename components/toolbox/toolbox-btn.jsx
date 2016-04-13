@@ -15,14 +15,9 @@ var toolboxBtnSource = {
   },
 
   endDrag: function(props, monitor, component) {
+
     let result = monitor.getDropResult();
-    if (result.suicide) {
-      component.suicide();
-      return;
-    }
-
     let iconClass = component.props.iconClass;
-
     let offset = iconClass === 'synth' ? 100 : 150;
 
     let device = {
@@ -46,8 +41,6 @@ class ToolboxBtn extends Component {
 
   static get propTypes() {
     return {
-      // left: PropTypes.number.isRequired,
-      // top: PropTypes.number.isRequired,
       // Injected by React DnD:
       isDragging: PropTypes.bool.isRequired,
       connectDragSource: PropTypes.func.isRequired

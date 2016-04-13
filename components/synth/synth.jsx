@@ -16,18 +16,13 @@ var synthSource = {
 
   endDrag: function(props, monitor, component) {
     let result = monitor.getDropResult();
-    if (result.suicide) {
-      component.suicide();
+    if (result.killDevice) {
+      component.killDevice();
       return;
     }
     
     component.state.left = result.left;
     component.state.top = result.top;
-
-    if (!component.playOnDrag) {
-      component.oscillatorFrequency = component.normalizeFrequency(result.left);
-      component.gain = component.normalizeGain(result.top);
-    }
   }
 }
 
@@ -65,27 +60,18 @@ class Synth extends AudioDevice {
     
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.type = 'triangle';
-    this.oscillator.frequency.value = 0;
+    this.oscillator.frequency.value = 100;
 
     this.oscillator.connect(this.waveShaper);
     this.waveShaper.connect(this.biquadFilter);
-    this.biquadFilter.connect(this.gainNode);
-
-    this.oscillatorFrequency = this.normalizeFrequency(this.state.left);
-    this.gain = this.normalizeGain(this.state.top);
+    this.biquadFilter.connect(this.panner);
+    this.panner.connect(this.gainNode);
 
     this.oscillator.start();
   }
 
-  set oscillatorFrequency(level) {
-    this.oscillator.frequency.value = level;
-  }
-
-  onDrag(event) {
-    if (this.playOnDrag) {
-      this.oscillatorFrequency = this.normalizeFrequency(event.clientX);
-      this.gain = this.normalizeGain(event.clientY);
-    }
+  set frequency(freq) {
+    this.oscillator.frequency.value = freq * 200;
   }
 
   setWaveToSine() {
@@ -100,7 +86,7 @@ class Synth extends AudioDevice {
     this.oscillator.type = 'triangle';
   }
 
-  suicide() {
+  killDevice() {
     this.oscillator.stop();
 
     this.gainNode.disconnect();

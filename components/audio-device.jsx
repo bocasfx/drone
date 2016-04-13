@@ -56,10 +56,11 @@ class AudioDevice extends Component {
     this.decay = 100;
     this.release = 200;
 
-    this.playOnDrag = true;
-
     this.noteOffTimeout = null;
     this.noteOnTimeout = null;
+
+    this.yParameter = 'gain';
+    this.xParameter = 'frequency'
 
     let colorIdx = Math.floor(Math.random() * colors.length);
 
@@ -87,11 +88,8 @@ class AudioDevice extends Component {
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
 
-    this.maxVol = 1;
-    this.maxFreq = 100;
-
     this.gainNode = this.audioContext.createGain();
-    this.gainNode.gain.value = 0;
+    this.gain = 0;
 
     this.waveShaper = this.audioContext.createWaveShaper();
     this.waveShaper.curve = this.makeWaveShaperCurve(0);
@@ -99,8 +97,24 @@ class AudioDevice extends Component {
     this.biquadFilter = this.audioContext.createBiquadFilter();
     this.biquadFilter.type = 'lowshelf';
     this.biquadFilter.frequency.value = 18000;
-    this.biquadFilter.gain.value = 20;
+    this.biquadFilter.gain.value = 0;
     this.biquadFilter.gain.detune = 0;
+
+    this.panner = this.audioContext.createPanner();
+    this.panner.panningModel = 'HRTF';
+    this.panner.distanceModel = 'inverse';
+    this.panner.refDistance = 10;
+    this.panner.maxDistance = 10000;
+    this.panner.rolloffFactor = 1;
+    this.panner.coneInnerAngle = 360;
+    this.panner.coneOuterAngle = 0;
+    this.panner.coneOuterGain = 0;
+    this.panner.setOrientation(1,0,0);
+    this.panner.setPosition(this.windowWidth/2, this.windowHeight/2, 0);
+
+    this.listener = this.audioContext.listener;
+    this.listener.setOrientation(0,0,-1,0,1,0);
+    this.listener.setPosition(this.windowWidth/2, this.windowHeight/2, 5);
   }
 
   makeWaveShaperCurve(amount) {
@@ -117,12 +131,13 @@ class AudioDevice extends Component {
     return curve;
   }
 
-  set gain(level) {
-    this.gainNode.gain.value = level;
-  }
-
   get gain() {
     return this.gainNode.gain.value;
+  }
+
+  set gain(level) {
+    this.gainNode.gain.value = level;
+    this.originalGain = level;
   }
 
   set filterFrequency(freq) {
@@ -141,12 +156,7 @@ class AudioDevice extends Component {
     this.waveShaper.curve = this.makeWaveShaperCurve(amount);
   }
 
-  normalizeFrequency(value) {
-    return value / this.windowWidth * this.maxFreq;
-  }
-
-  normalizeGain(value) {
-    return (this.windowHeight - value) / this.windowHeight * this.maxVol;
+  set frequency(freq) {
   }
 
   showEditor() {
@@ -159,11 +169,9 @@ class AudioDevice extends Component {
     this.forceUpdate();
   }
 
-  suicide(device) {
-    this.props.killLooper(device);
-  }
-
-  onDrag() {
+  onDrag(event) {
+    this[this.xParameter] = event.clientX / this.windowWidth;
+    this[this.yParameter] = event.clientY / this.windowHeight;
   }
 
   startProgressBarAnimation() {
@@ -245,10 +253,9 @@ class AudioDevice extends Component {
     let start = new Date().getTime();
     let time = 0;
 
-    let deferred = q.defer();
-    this.gain = 0;
+    let deferred = q.defer(); 
+    let originalGain = this.originalGain || 1;
 
-    let originalGain = (this.windowHeight - this.state.top) / this.windowHeight * this.maxVol;
     let step = originalGain / 50;
 
     let fadeInStep = ()=> {

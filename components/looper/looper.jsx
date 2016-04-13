@@ -16,18 +16,13 @@ var looperSource = {
 
   endDrag: function(props, monitor, component) {
     let result = monitor.getDropResult();
-    if (result && result.suicide) {
-      component.suicide();
+    if (result && result.killDevice) {
+      component.killDevice();
       return;
     }
     
     component.state.left = result.left;
     component.state.top = result.top;
-
-    if (!component.playOnDrag) {
-      component.bufferSource.detune.value = component.normalizeFrequency(event.clientX - component.windowWidth / 2.0);
-      component.gain = component.normalizeGain(event.clientY);
-    }
   }
 }
 
@@ -70,13 +65,14 @@ class Looper extends AudioDevice {
 
     this.bufferSource.connect(this.waveShaper);
     this.waveShaper.connect(this.biquadFilter);
-    this.biquadFilter.connect(this.gainNode);
+    this.biquadFilter.connect(this.panner);
+    this.panner.connect(this.gainNode);
     this.gainNode.connect(this.audioContext.destination);
 
     this.bufferSource.start();
   }
 
-  suicide() {
+  killDevice() {
     this.props.killDevice(this);
   }
 
@@ -85,13 +81,6 @@ class Looper extends AudioDevice {
       this.bufferSource.buffer = buffer;
       this.bufferSource.loop = true;
     });
-  }
-
-  onDrag(event) {
-    if (this.playOnDrag) {
-      this.bufferSource.detune.value = this.normalizeFrequency(event.clientX - this.windowWidth / 2.0);
-      this.gain = this.normalizeGain(event.clientY);
-    }
   }
 
   render() {

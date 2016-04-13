@@ -8,7 +8,7 @@ const trashTarget = {
 
   drop: function () {
     return {
-      suicide: true
+      killDevice: true
     }
   }
 };
