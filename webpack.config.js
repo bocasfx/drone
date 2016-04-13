@@ -3,7 +3,7 @@
 module.exports = {
   entry: [
     'babel-polyfill',
-    './app.js'
+    './app.jsx'
   ],
   output: {
     path: __dirname + '/public/js/',
