@@ -16,7 +16,7 @@ class SynthEditor extends Component {
   }
 
   close() {
-    this.state.synth.hideEditor();
+    console.log('closing');
   }
 
   setWaveShaperCurve(amount) {
@@ -29,10 +29,6 @@ class SynthEditor extends Component {
 
   setFilterFrequency(level) {
     this.state.synth.filterFrequency = level;
-  }
-
-  setFilterDetune(level) {
-    this.state.synth.filterDetune = level;
   }
 
   render() {
@@ -57,11 +53,6 @@ class SynthEditor extends Component {
         <div className="slider-label">Filter Frequency</div>
         <div className="slider">
           <Slider min={20} max={2500} defaultValue={0} onChange={this.setFilterFrequency.bind(this)}/>
-        </div>
-
-        <div className="slider-label">Filter Detune</div>
-        <div className="slider">
-          <Slider min={0} max={100} defaultValue={0} onChange={this.setFilterDetune.bind(this)}/>
         </div>
       </div>
     )

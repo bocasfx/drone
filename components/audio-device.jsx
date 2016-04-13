@@ -22,13 +22,26 @@ class AudioDevice extends Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       left: 0,
       top: 0,
-      isPlaying: false,
-      id: this.props.id,
-      showEditor: false
+      id: this.props.id
     }
+
+    this.isPlaying = false;
+    this.progress = 0;
+    this.duration = 100;
+    this.timeOut = null;
+
+    this.noteOffTimeout = null;
+    this.noteOnTimeout = null;
+
+    this.yParameter = 'gain';
+    this.xParameter = 'frequency'
+
+    this.windowWidth = window.innerWidth;
+    this.windowHeight = window.innerHeight;
   }
 
   get progressBarStyle() {
@@ -44,23 +57,6 @@ class AudioDevice extends Component {
 
     this.state.left = this.props.left;
     this.state.top = this.props.top;
-
-    this.isPlaying = false;
-    this.progress = 0;
-    this.duration = 100;
-    this.timeOut = null;
-
-    this.enableGainEnvelope = true;
-    this.attack = 1;
-    this.sustain = 200;
-    this.decay = 100;
-    this.release = 200;
-
-    this.noteOffTimeout = null;
-    this.noteOnTimeout = null;
-
-    this.yParameter = 'gain';
-    this.xParameter = 'frequency'
 
     let colorIdx = Math.floor(Math.random() * colors.length);
 
@@ -79,17 +75,15 @@ class AudioDevice extends Component {
     });
 
     this.initialize();
+    this.initializeGainValues();
     this.forceUpdate();
   }
 
   initialize() {
     this.audioContext = this.props.audioContext;
 
-    this.windowWidth = window.innerWidth;
-    this.windowHeight = window.innerHeight;
-
     this.gainNode = this.audioContext.createGain();
-    this.gain = 0;
+    this.gainNode.gain.value = 0;
 
     this.waveShaper = this.audioContext.createWaveShaper();
     this.waveShaper.curve = this.makeWaveShaperCurve(0);
@@ -115,6 +109,14 @@ class AudioDevice extends Component {
     this.listener = this.audioContext.listener;
     this.listener.setOrientation(0,0,-1,0,1,0);
     this.listener.setPosition(this.windowWidth/2, this.windowHeight/2, 5);
+  }
+
+  initializeGainValues() {
+    this.enableGainEnvelope = true;
+    this.attack = 1;
+    this.sustain = 200;
+    this.decay = 100;
+    this.release = 200;
   }
 
   makeWaveShaperCurve(amount) {
@@ -148,25 +150,11 @@ class AudioDevice extends Component {
     this.biquadFilter.gain.value = level;
   }
 
-  set filterDetune(level) {
-    this.biquadFilter.gain.detune = level;
-  }
-
   set waveShaperCurve(amount) {
     this.waveShaper.curve = this.makeWaveShaperCurve(amount);
   }
 
   set frequency(freq) {
-  }
-
-  showEditor() {
-    this.state.showEditor = true;
-    this.forceUpdate();
-  }
-
-  hideEditor() {
-    this.state.showEditor = false;
-    this.forceUpdate();
   }
 
   onDrag(event) {
