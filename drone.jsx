@@ -1,11 +1,13 @@
 'use strict';
 
-const React    = require('react');
+const React           = require('react');
 const Component       = React.Component;
 const config          = require('./config');
 const dragDropContext = require('react-dnd').DragDropContext;
-const Toolbox  = require('./components/toolbox/toolbox.jsx');
-const Mixer    = require('./components/mixer.jsx');
+const Toolbox         = require('./components/toolbox/toolbox.jsx');
+const Mixer           = require('./components/mixer.jsx');
+const _               = require('lodash');
+const inflect         = require('i')();
 
 class Drone extends Component {
 
@@ -17,13 +19,17 @@ class Drone extends Component {
     }
   }
 
-  addAudioDevice(type, device) {
-    if (type === 'synth') {
-      this.state.synths.push(device);
-    } else if (type === 'looper') {
-      this.state.loopers.push(device);
-    }
+  addAudioDevice(device) {
+    let type = inflect.pluralize(device.type);
+    this.state[type].push(device);
+    this.forceUpdate();
+  }
 
+  killDevice(device) {
+    let type = inflect.pluralize(device.props.type);
+    _.remove(this.state[type], {
+      key: device.props.id
+    });
     this.forceUpdate();
   }
 
@@ -31,7 +37,7 @@ class Drone extends Component {
     return(
       <div className="app-container">
         <Toolbox addAudioDevice={this.addAudioDevice.bind(this)}/>
-        <Mixer synths={this.state.synths} loopers={this.state.loopers}/>
+        <Mixer synths={this.state.synths} loopers={this.state.loopers} killDevice={this.killDevice.bind(this)}/>
       </div>
     );
   }

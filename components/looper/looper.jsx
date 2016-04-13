@@ -77,7 +77,7 @@ class Looper extends AudioDevice {
   }
 
   suicide() {
-    super.suicide(this);
+    this.props.killDevice(this);
   }
 
   bufferData(data) {

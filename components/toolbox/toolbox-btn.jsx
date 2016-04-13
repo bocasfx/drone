@@ -21,8 +21,6 @@ var toolboxBtnSource = {
       return;
     }
 
-    console.log(result);
-
     let iconClass = component.props.iconClass;
 
     let offset = iconClass === 'synth' ? 100 : 150;
@@ -30,9 +28,10 @@ var toolboxBtnSource = {
     let device = {
       left: result.left + offset,
       top: result.top,
-      key: Date.now()
+      key: Date.now(),
+      type: iconClass
     }
-    component.state.addAudioDevice(iconClass, device);
+    component.state.addAudioDevice(device);
   }
 }
 

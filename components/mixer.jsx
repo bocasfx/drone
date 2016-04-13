@@ -58,20 +58,6 @@ class Mixer extends Component {
     this.forceUpdate();
   }
 
-  killSynth(synth) {
-    this.state.synths = _.remove(this.state.synths, function(item) {
-      return item.key !== synth.state.id;
-    })
-    this.forceUpdate();
-  }
-
-  killLooper(looper) {
-    this.state.loopers = _.remove(this.state.loopers, function(item) {
-      return item.key !== looper.state.id;
-    })
-    this.forceUpdate();
-  }
-
   render() {
     
     let connectDropTarget = this.props.connectDropTarget;
@@ -80,11 +66,11 @@ class Mixer extends Component {
       <div className="mixer">
         {
           this.state.synths.map((item)=> {
-            return <Synth audioContext={this.audioContext} id={item.key} key={item.key} left={item.left} top={item.top} killSynth={this.killSynth.bind(this)}/>
+            return <Synth type={item.type} audioContext={this.audioContext} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice}/>
           })
         } {
           this.state.loopers.map((item)=> {
-            return <Looper audioContext={this.audioContext} id={item.key} key={item.key} left={item.left} top={item.top} killLooper={this.killLooper.bind(this)}/>
+            return <Looper type={item.type} audioContext={this.audioContext} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice}/>
           })
         }
         <Trash/>

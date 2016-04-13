@@ -64,7 +64,7 @@ class Synth extends AudioDevice {
     super.initialize();
     
     this.oscillator = this.audioContext.createOscillator();
-    this.oscillator.type = 'sine';
+    this.oscillator.type = 'triangle';
     this.oscillator.frequency.value = 0;
 
     this.oscillator.connect(this.waveShaper);
@@ -113,7 +113,7 @@ class Synth extends AudioDevice {
     this.waveShaper = null;
     this.oscillator = null;
 
-    super.suicide(this);
+    this.props.killDevice(this);
   }
 
   render() {
