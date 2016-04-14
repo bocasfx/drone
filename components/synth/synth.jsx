@@ -60,7 +60,6 @@ class Synth extends AudioDevice {
     
     this.oscillator = this.audioContext.createOscillator();
     this.oscillator.type = 'triangle';
-    this.oscillator.frequency.value = 100;
 
     this.oscillator.connect(this.waveShaper);
     this.waveShaper.connect(this.biquadFilter);

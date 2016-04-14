@@ -117,6 +117,11 @@ class AudioDevice extends Component {
     this.sustain = 200;
     this.decay = 100;
     this.release = 200;
+
+    this.originalGain = 1 - (this.props.top / this.windowHeight);
+
+    this.gain = 1 - (this.props.top / this.windowHeight);
+    this.frequency = this.props.left / this.windowWidth;;
   }
 
   makeWaveShaperCurve(amount) {
@@ -139,7 +144,6 @@ class AudioDevice extends Component {
 
   set gain(level) {
     this.gainNode.gain.value = level;
-    this.originalGain = level;
   }
 
   set filterFrequency(freq) {
@@ -159,7 +163,7 @@ class AudioDevice extends Component {
 
   onDrag(event) {
     this[this.xParameter] = event.clientX / this.windowWidth;
-    this[this.yParameter] = event.clientY / this.windowHeight;
+    this[this.yParameter] = 1 - (event.clientY / this.windowHeight);
   }
 
   startProgressBarAnimation() {
