@@ -7,6 +7,7 @@ const ReactDOM          = require('react-dom');
 const colors            = require('../config').synthColors;
 const ProgressBar       = require('progressbar.js');
 const q                 = require('q');
+const Gain              = require('../modules/gain');
 
 class AudioDevice extends Component {
 
@@ -75,15 +76,22 @@ class AudioDevice extends Component {
     });
 
     this.initialize();
-    this.initializeGainValues();
+    this.enableGainEnvelope = true;
+    this.frequency = this.props.left / this.windowWidth;;
     this.forceUpdate();
   }
 
   initialize() {
     this.audioContext = this.props.audioContext;
 
-    this.gainNode = this.audioContext.createGain();
-    this.gainNode.gain.value = 0;
+    this.gain = new Gain({
+      attack: 10,
+      sustain: 500,
+      decay: 10,
+      release: 500,
+      audioContext: this.audioContext,
+      level: 1 - (this.props.top / this.windowHeight)
+    });
 
     this.waveShaper = this.audioContext.createWaveShaper();
     this.waveShaper.curve = this.makeWaveShaperCurve(0);
@@ -111,19 +119,6 @@ class AudioDevice extends Component {
     this.listener.setPosition(this.windowWidth/2, this.windowHeight/2, 5);
   }
 
-  initializeGainValues() {
-    this.enableGainEnvelope = true;
-    this.attack = 1;
-    this.sustain = 200;
-    this.decay = 100;
-    this.release = 200;
-
-    this.originalGain = 1 - (this.props.top / this.windowHeight);
-
-    this.gain = 1 - (this.props.top / this.windowHeight);
-    this.frequency = this.props.left / this.windowWidth;;
-  }
-
   makeWaveShaperCurve(amount) {
     let samples = 44100;
     let curve = new Float32Array(samples);
@@ -136,14 +131,6 @@ class AudioDevice extends Component {
     }
 
     return curve;
-  }
-
-  get gain() {
-    return this.gainNode.gain.value;
-  }
-
-  set gain(level) {
-    this.gainNode.gain.value = level;
   }
 
   set filterFrequency(freq) {
@@ -163,7 +150,7 @@ class AudioDevice extends Component {
 
   onDrag(event) {
     this[this.xParameter] = event.clientX / this.windowWidth;
-    this[this.yParameter] = 1 - (event.clientY / this.windowHeight);
+    this[this.yParameter].level = 1 - (event.clientY / this.windowHeight);
   }
 
   startProgressBarAnimation() {
@@ -195,25 +182,25 @@ class AudioDevice extends Component {
       this.stopProgressBarAnimation();
       clearTimeout(this.noteOffTimeout);
       clearTimeout(this.noteOnTimeout);
-      this.fadeOut(10).then(()=> {
-        this.gainNode.disconnect(this.audioContext.destination);
+      this.gain.fadeOut(10).then(()=> {
+        this.gain.disconnect();
       });
     } else {
       this.isPlaying = true;
       this.startProgressBarAnimation();
-      this.gainNode.connect(this.audioContext.destination);
+      this.gain.connect();
       this.noteOn();
     }
   }
 
   noteOn() {
     if (this.enableGainEnvelope) {
-      this.fadeIn()
+      this.gain.fadeIn()
         .then(this.scheduleNoteOff.bind(this))
-        .then(this.fadeOut.bind(this, this.decay))
+        .then(this.gain.fadeOut.bind(this.gain, this.decay))
         .then(this.scheduleNoteOn.bind(this));
     } else {
-      this.fadeIn();
+      this.gain.fadeIn();
     }
   }
 
@@ -237,62 +224,6 @@ class AudioDevice extends Component {
       this.noteOn();
       deferred.resolve();
     }, this.release);
-    return deferred.promise;
-  }
-
-  fadeIn() {
-
-    let start = new Date().getTime();
-    let time = 0;
-
-    let deferred = q.defer(); 
-    let originalGain = this.originalGain || 1;
-
-    let step = originalGain / 50;
-
-    let fadeInStep = ()=> {
-
-      if (this.gain > originalGain) {
-        this.gain = originalGain; 
-        if(!this.isPlaying) {
-          deferred.reject();
-        }
-        deferred.resolve();
-      } else {
-        if(this.isPlaying) {
-          time += this.attack;
-          this.gain = this.gain + step;
-          let diff = new Date().getTime() - start - time;
-          setTimeout(fadeInStep.bind(this), this.attack - diff);
-        }
-      }
-    }
-
-    setTimeout(fadeInStep.bind(this), this.attack)
-    return deferred.promise;
-  }
-
-  fadeOut(decay) {
-
-    let start = new Date().getTime();
-    let time = 0;
-
-    let deferred = q.defer();
-    let step = this.gain / 50;
-
-    let fadeOutStep = ()=> {
-      if (this.gain < 0.0001) {
-        this.gain = 0;
-        deferred.resolve();
-      } else {
-        time += decay;
-        this.gain = this.gain - step;
-        let diff = new Date().getTime() - start - time;
-        setTimeout(fadeOutStep, decay - diff);
-      }
-    }
-
-    setTimeout(fadeOutStep, decay);
     return deferred.promise;
   }
 }

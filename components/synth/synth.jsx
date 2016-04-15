@@ -64,7 +64,7 @@ class Synth extends AudioDevice {
     this.oscillator.connect(this.waveShaper);
     this.waveShaper.connect(this.biquadFilter);
     this.biquadFilter.connect(this.panner);
-    this.panner.connect(this.gainNode);
+    this.panner.connect(this.gain.node);
 
     this.oscillator.start();
   }
@@ -88,12 +88,12 @@ class Synth extends AudioDevice {
   killDevice() {
     this.oscillator.stop();
 
-    this.gainNode.disconnect();
+    this.gain.disconnect();
     this.biquadFilter.disconnect();
     this.waveShaper.disconnect();
     this.oscillator.disconnect();
 
-    this.gainNode = null;
+    this.gain = null;
     this.biquadFilter = null;
     this.waveShaper = null;
     this.oscillator = null;
