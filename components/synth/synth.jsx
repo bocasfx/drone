@@ -57,16 +57,9 @@ class Synth extends AudioDevice {
 
   initialize() {
 
-    super.initialize();
-    
     this.oscillator = audioContext.createOscillator();
+    super.initialize(this.oscillator);
     this.oscillator.type = 'triangle';
-
-    this.oscillator.connect(this.waveshaper.node);
-    this.waveshaper.connect(this.biquadFilter.node);
-    this.biquadFilter.connect(this.panner);
-    this.panner.connect(this.gain.node);
-
     this.oscillator.start();
   }
 

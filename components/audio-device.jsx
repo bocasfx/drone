@@ -1,16 +1,16 @@
 'use strict';
 
-const React             = require('react');
-const Component         = React.Component;
-const PropTypes         = React.PropTypes;
-const ReactDOM          = require('react-dom');
-const colors            = require('../config').synthColors;
-const ProgressBar       = require('progressbar.js');
-const q                 = require('q');
-const Gain              = require('../modules/gain');
-const Waveshaper        = require('../modules/waveshaper');
-const BiquadFilter      = require('../modules/biquad-filter');
-const audioContext      = require('../audio-context');
+const React        = require('react');
+const Component    = React.Component;
+const PropTypes    = React.PropTypes;
+const ReactDOM     = require('react-dom');
+const colors       = require('../config').synthColors;
+const ProgressBar  = require('progressbar.js');
+const q            = require('q');
+const Gain         = require('../modules/gain');
+const Waveshaper   = require('../modules/waveshaper');
+const BiquadFilter = require('../modules/biquad-filter');
+const Panner       = require('../modules/panner');
 
 class AudioDevice extends Component {
 
@@ -79,39 +79,24 @@ class AudioDevice extends Component {
     });
 
     this.initialize();
-    this.enableGainEnvelope = true;
+    this.enableGainEnvelope = false;
     this.frequency = this.props.left / this.windowWidth;;
     this.forceUpdate();
   }
 
-  initialize() {
+  initialize(source) {
 
-    this.gain = new Gain({
-      level: 1 - (this.props.top / this.windowHeight)
-    });
+    let level = 1 - (this.props.top / this.windowHeight);
 
-    this.waveshaper = new Waveshaper({});
-
+    this.gain         = new Gain({level: level});
+    this.waveshaper   = new Waveshaper({});
     this.biquadFilter = new BiquadFilter({});
+    this.panner       = new Panner({});
 
-    this.panner = audioContext.createPanner();
-    this.panner.panningModel = 'HRTF';
-    this.panner.distanceModel = 'inverse';
-    this.panner.refDistance = 10;
-    this.panner.maxDistance = 10000;
-    this.panner.rolloffFactor = 1;
-    this.panner.coneInnerAngle = 360;
-    this.panner.coneOuterAngle = 0;
-    this.panner.coneOuterGain = 0;
-    this.panner.setOrientation(1,0,0);
-    this.panner.setPosition(this.windowWidth/2, this.windowHeight/2, 0);
-
-    this.listener = audioContext.listener;
-    this.listener.setOrientation(0,0,-1,0,1,0);
-    this.listener.setPosition(this.windowWidth/2, this.windowHeight/2, 5);
-  }
-
-  set frequency(freq) {
+    source.connect(this.waveshaper.node);
+    this.waveshaper.connect(this.biquadFilter.node);
+    this.biquadFilter.connect(this.panner.node);
+    this.panner.connect(this.gain.node);
   }
 
   onDrag(event) {
@@ -146,11 +131,19 @@ class AudioDevice extends Component {
     if (this.isPlaying) {
       this.isPlaying = false;
       this.stopProgressBarAnimation();
-      this.gain.endAutomation();
+      if (this.enableGainEnvelope) {
+        this.gain.endAutomation();
+      } else {
+        this.gain.off();
+      }
     } else {
       this.isPlaying = true;
       this.startProgressBarAnimation();
-      this.gain.startAutomation();
+      if (this.enableGainEnvelope) {
+        this.gain.startAutomation();
+      } else {
+        this.gain.on();
+      }
     }
   }
 }

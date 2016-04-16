@@ -88,6 +88,17 @@ class Gain {
     return deferred.promise;
   }
 
+  on() {
+    this.connect();
+    this.fadeIn();
+  }
+
+  off() {
+    this.fadeOut(10).then(()=> {
+      this.disconnect();
+    })
+  }
+
   startAutomation() {
     this.connect();
     this.noteOn();
