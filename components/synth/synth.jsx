@@ -4,6 +4,7 @@ const React             = require('react');
 const AudioDevice       = require('../audio-device.jsx');
 const dragSource        = require('react-dnd').DragSource;
 const SynthEditor       = require('./synth-editor.jsx');
+const audioContext      = require('../../audio-context');
 
 var synthSource = {
   beginDrag: function (props, monitor, component) {
@@ -58,11 +59,11 @@ class Synth extends AudioDevice {
 
     super.initialize();
     
-    this.oscillator = this.audioContext.createOscillator();
+    this.oscillator = audioContext.createOscillator();
     this.oscillator.type = 'triangle';
 
-    this.oscillator.connect(this.waveShaper);
-    this.waveShaper.connect(this.biquadFilter);
+    this.oscillator.connect(this.waveshaper.node);
+    this.waveshaper.connect(this.biquadFilter.node);
     this.biquadFilter.connect(this.panner);
     this.panner.connect(this.gain.node);
 
@@ -90,12 +91,12 @@ class Synth extends AudioDevice {
 
     this.gain.disconnect();
     this.biquadFilter.disconnect();
-    this.waveShaper.disconnect();
+    this.waveshaper.disconnect();
     this.oscillator.disconnect();
 
     this.gain = null;
     this.biquadFilter = null;
-    this.waveShaper = null;
+    this.waveshaper = null;
     this.oscillator = null;
 
     this.props.killDevice(this);

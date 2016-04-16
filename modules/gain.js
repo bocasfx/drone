@@ -1,16 +1,16 @@
 'use strict';
 
-const q                 = require('q');
+const q            = require('q');
+const audioContext = require('../audio-context');
 
 class Gain {
 
-  constructor({audioContext, attack=1, sustain=200, decay=100, release=200, level=0}) {
-    this.audioContext = audioContext;
+  constructor({attack=1, sustain=500, decay=100, release=5000, level=0}) {
     this.attack = attack;
     this.sustain = sustain;
     this.decay = decay;
     this.release = release;
-    this.gainNode = this.audioContext.createGain();
+    this.gainNode = audioContext.createGain();
     this.gainNode.gain.value = level;
     this.initialGain = level;
   }
@@ -27,11 +27,11 @@ class Gain {
     return this.gainNode;
   }
 
-  connect(destination=this.audioContext.destination) {
+  connect(destination=audioContext.destination) {
     this.gainNode.connect(destination);
   }
 
-  disconnect(destination=this.audioContext.destination) {
+  disconnect(destination=audioContext.destination) {
     this.gainNode.disconnect(destination);
   }
 
@@ -85,6 +85,43 @@ class Gain {
     }
 
     setTimeout(fadeOutStep, decay);
+    return deferred.promise;
+  }
+
+  startAutomation() {
+    this.connect();
+    this.noteOn();
+  }
+
+  endAutomation() {
+    clearTimeout(this.noteOffTimeout);
+    clearTimeout(this.noteOnTimeout);
+    this.fadeOut(10).then(()=> {
+      this.disconnect();
+    });
+  }
+
+  noteOn() {
+    this.fadeIn()
+      .then(this.scheduleNoteOff.bind(this))
+      .then(this.fadeOut.bind(this, this.decay))
+      .then(this.scheduleNoteOn.bind(this));
+  }
+
+  scheduleNoteOff() {
+    let deferred = q.defer();
+    this.noteOffTimeout = setTimeout(()=> {
+      deferred.resolve();
+    }, this.sustain);
+    return deferred.promise;
+  }
+
+  scheduleNoteOn() {
+    let deferred = q.defer();
+    this.noteOnTimeout = setTimeout(()=> {
+      this.noteOn();
+      deferred.resolve();
+    }, this.release);
     return deferred.promise;
   }
 }

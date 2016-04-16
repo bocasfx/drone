@@ -49,7 +49,6 @@ class Mixer extends Component {
       synths: [],
       loopers: []
     };
-    this.audioContext = new window.AudioContext();
   }
 
   componentDidMount() {
@@ -67,11 +66,11 @@ class Mixer extends Component {
         <div className="axes"></div>
         {
           this.state.synths.map((item)=> {
-            return <Synth type={item.type} audioContext={this.audioContext} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice}/>
+            return <Synth type={item.type} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice}/>
           })
         } {
           this.state.loopers.map((item)=> {
-            return <Looper type={item.type} audioContext={this.audioContext} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice}/>
+            return <Looper type={item.type} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice}/>
           })
         }
         <Trash/>

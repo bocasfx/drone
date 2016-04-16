@@ -8,6 +8,9 @@ const colors            = require('../config').synthColors;
 const ProgressBar       = require('progressbar.js');
 const q                 = require('q');
 const Gain              = require('../modules/gain');
+const Waveshaper        = require('../modules/waveshaper');
+const BiquadFilter      = require('../modules/biquad-filter');
+const audioContext      = require('../audio-context');
 
 class AudioDevice extends Component {
 
@@ -82,27 +85,16 @@ class AudioDevice extends Component {
   }
 
   initialize() {
-    this.audioContext = this.props.audioContext;
 
     this.gain = new Gain({
-      attack: 10,
-      sustain: 500,
-      decay: 10,
-      release: 500,
-      audioContext: this.audioContext,
       level: 1 - (this.props.top / this.windowHeight)
     });
 
-    this.waveShaper = this.audioContext.createWaveShaper();
-    this.waveShaper.curve = this.makeWaveShaperCurve(0);
+    this.waveshaper = new Waveshaper({});
 
-    this.biquadFilter = this.audioContext.createBiquadFilter();
-    this.biquadFilter.type = 'lowshelf';
-    this.biquadFilter.frequency.value = 18000;
-    this.biquadFilter.gain.value = 0;
-    this.biquadFilter.gain.detune = 0;
+    this.biquadFilter = new BiquadFilter({});
 
-    this.panner = this.audioContext.createPanner();
+    this.panner = audioContext.createPanner();
     this.panner.panningModel = 'HRTF';
     this.panner.distanceModel = 'inverse';
     this.panner.refDistance = 10;
@@ -114,35 +106,9 @@ class AudioDevice extends Component {
     this.panner.setOrientation(1,0,0);
     this.panner.setPosition(this.windowWidth/2, this.windowHeight/2, 0);
 
-    this.listener = this.audioContext.listener;
+    this.listener = audioContext.listener;
     this.listener.setOrientation(0,0,-1,0,1,0);
     this.listener.setPosition(this.windowWidth/2, this.windowHeight/2, 5);
-  }
-
-  makeWaveShaperCurve(amount) {
-    let samples = 44100;
-    let curve = new Float32Array(samples);
-    let deg = Math.PI / 180;
-    let x = null;
-
-    for (var i=0 ; i < samples; i++ ) {
-      x = i * 2 / samples - 1;
-      curve[i] = ( 3 + amount ) * x * 20 * deg / ( Math.PI + amount * Math.abs(x) );
-    }
-
-    return curve;
-  }
-
-  set filterFrequency(freq) {
-    this.biquadFilter.frequency.value = freq;
-  }
-
-  set filterGain(level) {
-    this.biquadFilter.gain.value = level;
-  }
-
-  set waveShaperCurve(amount) {
-    this.waveShaper.curve = this.makeWaveShaperCurve(amount);
   }
 
   set frequency(freq) {
@@ -180,51 +146,12 @@ class AudioDevice extends Component {
     if (this.isPlaying) {
       this.isPlaying = false;
       this.stopProgressBarAnimation();
-      clearTimeout(this.noteOffTimeout);
-      clearTimeout(this.noteOnTimeout);
-      this.gain.fadeOut(10).then(()=> {
-        this.gain.disconnect();
-      });
+      this.gain.endAutomation();
     } else {
       this.isPlaying = true;
       this.startProgressBarAnimation();
-      this.gain.connect();
-      this.noteOn();
+      this.gain.startAutomation();
     }
-  }
-
-  noteOn() {
-    if (this.enableGainEnvelope) {
-      this.gain.fadeIn()
-        .then(this.scheduleNoteOff.bind(this))
-        .then(this.gain.fadeOut.bind(this.gain, this.decay))
-        .then(this.scheduleNoteOn.bind(this));
-    } else {
-      this.gain.fadeIn();
-    }
-  }
-
-  scheduleNoteOff() {
-    let deferred = q.defer();
-    this.noteOffTimeout = setTimeout(()=> {
-      if(!this.isPlaying) {
-        deferred.reject();
-      }
-      deferred.resolve();
-    }, this.sustain);
-    return deferred.promise;
-  }
-
-  scheduleNoteOn() {
-    let deferred = q.defer();
-    this.noteOnTimeout = setTimeout(()=> {
-      if(!this.isPlaying) {
-        deferred.reject();
-      }
-      this.noteOn();
-      deferred.resolve();
-    }, this.release);
-    return deferred.promise;
   }
 }
 
