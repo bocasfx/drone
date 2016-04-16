@@ -6,7 +6,6 @@ const PropTypes    = React.PropTypes;
 const ReactDOM     = require('react-dom');
 const colors       = require('../config').synthColors;
 const ProgressBar  = require('progressbar.js');
-const q            = require('q');
 const Gain         = require('../modules/gain');
 const Waveshaper   = require('../modules/waveshaper');
 const BiquadFilter = require('../modules/biquad-filter');
@@ -79,7 +78,7 @@ class AudioDevice extends Component {
     });
 
     this.initialize();
-    this.enableGainEnvelope = false;
+    this.enableGainEnvelope = true;
     this.frequency = this.props.left / this.windowWidth;;
     this.forceUpdate();
   }

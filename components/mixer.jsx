@@ -1,14 +1,12 @@
 'use strict';
 
-const React           = require('react');
-const ReactDOM        = require('react-dom');
-const Component       = React.Component;
-const Synth           = require('./synth/synth.jsx');
-const Looper          = require('./looper/looper.jsx');
-const dropTarget      = require('react-dnd').DropTarget;
-const flow            = require('lodash/flow');
-const Trash           = require('./trash.jsx');
-const _               = require('lodash');
+const React      = require('react');
+const Component  = React.Component;
+const Synth      = require('./synth/synth.jsx');
+const Looper     = require('./looper/looper.jsx');
+const dropTarget = require('react-dnd').DropTarget;
+const flow       = require('lodash/flow');
+const Trash      = require('./trash.jsx');
 
 const mixerTarget = {
 

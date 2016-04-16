@@ -1,6 +1,6 @@
 'use strict';
 
-const audioContext      = require('../audio-context');
+const audioContext = require('../audio-context');
 
 class Panner {
 

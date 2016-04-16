@@ -1,10 +1,9 @@
 'use strict';
 
-const React             = require('react');
-const AudioDevice       = require('../audio-device.jsx');
-const dragSource        = require('react-dnd').DragSource;
-const SynthEditor       = require('./synth-editor.jsx');
-const audioContext      = require('../../audio-context');
+const React        = require('react');
+const AudioDevice  = require('../audio-device.jsx');
+const dragSource   = require('react-dnd').DragSource;
+const audioContext = require('../../audio-context');
 
 var synthSource = {
   beginDrag: function (props, monitor, component) {
