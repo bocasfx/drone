@@ -61,8 +61,12 @@ class Panner {
     return this.pannerNode;
   }
 
-  connect(destination=audioContext) {
+  connect(destination=audioContext.destination) {
     this.pannerNode.connect(destination);
+  }
+
+  disconnect(destination=audioContext.destination) {
+    this.pannerNode.disconnect(destination);
   }
 
 }

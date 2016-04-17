@@ -81,10 +81,14 @@ class Synth extends AudioDevice {
   killDevice() {
     this.oscillator.stop();
 
-    this.gain.disconnect();
-    this.biquadFilter.disconnect();
-    this.waveshaper.disconnect();
-    this.oscillator.disconnect();
+    if (this.isPlaying) {
+      this.gain.disconnect();
+    }
+
+    this.panner.disconnect(this.gain.node);
+    this.biquadFilter.disconnect(this.panner.node);
+    this.waveshaper.disconnect(this.biquadFilter.node);
+    this.oscillator.disconnect(this.waveshaper.node );
 
     this.gain = null;
     this.biquadFilter = null;
@@ -106,9 +110,18 @@ class Synth extends AudioDevice {
       top: top + 'px'
     };
 
+    let controlsDisplay = this.state.showControls ? 1 : 0;
+    let controlsStyle = {
+      opacity: controlsDisplay
+    }
+
     return connectDragSource(
-      <div className="synth" style={style}>
-        <span className="progress" draggable='true' onDrag={this.onDrag.bind(this)} onClick={this.play.bind(this)}></span>
+      <div className="synth" style={style} onMouseEnter={this.showControls.bind(this)} onMouseLeave={this.showControls.bind(this)}>
+        <div style={controlsStyle}>
+          <i className="cog fa fa-cog"></i>
+          <i className="times fa fa-times" onClick={this.killDevice.bind(this)}></i>
+        </div>
+        <div className="progress" draggable='true' onDrag={this.onDrag.bind(this)} onClick={this.play.bind(this)}></div>
       </div>
     );
   }

@@ -13,8 +13,12 @@ class Waveshaper {
     this.waveshaperNode.curve = this.makeWaveShaperCurve(curve);
   }
 
-  connect(destination) {
+  connect(destination=audioContext.destination) {
     this.waveshaperNode.connect(destination);
+  }
+
+  disconnect(destination=audioContext.destination) {
+    this.waveshaperNode.disconnect(destination);
   }
 
   get node() {

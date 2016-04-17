@@ -29,7 +29,8 @@ class AudioDevice extends Component {
     this.state = {
       left: 0,
       top: 0,
-      id: this.props.id
+      id: this.props.id,
+      showControls: false
     }
 
     this.isPlaying = false;
@@ -63,7 +64,7 @@ class AudioDevice extends Component {
 
     let colorIdx = Math.floor(Math.random() * colors.length);
 
-    this.progressBar = new ProgressBar.Circle(domNode.children[0], {
+    this.progressBar = new ProgressBar.Circle(domNode.children[1], {
       color: colors[colorIdx],
       fill: '#CAC234',
       strokeWidth: 10,
@@ -144,6 +145,11 @@ class AudioDevice extends Component {
         this.gain.on();
       }
     }
+  }
+
+  showControls() {
+    this.state.showControls = !this.state.showControls;
+    this.forceUpdate();
   }
 }
 

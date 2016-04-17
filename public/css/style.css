@@ -92,11 +92,14 @@ a {
 }
 
 .cog {
-  position: absolute;
-  top: -10px;
-  right: -10px;
   color: #666;
   cursor: pointer;
+}
+
+.times {
+  color: #666;
+  cursor: pointer;
+  margin-left: 25px;
 }
 
 .close-editor {

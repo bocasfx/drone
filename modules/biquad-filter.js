@@ -11,8 +11,12 @@ class BiquadFilter {
     this.gain = gain;
   }
 
-  connect(destination) {
+  connect(destination=audioContext.destination) {
     this.biquadFilter.connect(destination);
+  }
+
+  disconnect(destination=audioContext.destination) {
+    this.biquadFilter.disconnect(destination)
   }
 
   get node() {
