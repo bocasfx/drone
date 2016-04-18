@@ -1,10 +1,11 @@
 'use strict';
 
 const audioContext = require('../audio-context');
+const ranges       = require('../config').ranges;
 
 class BiquadFilter {
 
-  constructor({type='lowshelf', frequency=18000, gain=0}) {
+  constructor({type='lowshelf', frequency=ranges.biquadFilter.frequency.default, gain=ranges.biquadFilter.gain.default}) {
     this.biquadFilter = audioContext.createBiquadFilter();
     this.type = type;
     this.frequency = frequency;

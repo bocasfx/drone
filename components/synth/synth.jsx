@@ -98,6 +98,10 @@ class Synth extends AudioDevice {
     this.props.killDevice(this);
   }
 
+  showEditor() {
+    this.props.showEditor(this);
+  }
+
   render() {
     let isDragging = this.props.isDragging;
     let connectDragSource = this.props.connectDragSource;
@@ -118,7 +122,7 @@ class Synth extends AudioDevice {
     return connectDragSource(
       <div className="synth" style={style} onMouseEnter={this.showControls.bind(this)} onMouseLeave={this.showControls.bind(this)}>
         <div style={controlsStyle}>
-          <i className="cog fa fa-cog"></i>
+          <i className="cog fa fa-cog" onClick={this.showEditor.bind(this)}></i>
           <i className="times fa fa-times" onClick={this.killDevice.bind(this)}></i>
         </div>
         <div className="progress" draggable='true' onDrag={this.onDrag.bind(this)} onClick={this.play.bind(this)}></div>

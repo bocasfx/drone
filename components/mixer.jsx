@@ -6,7 +6,7 @@ const Synth      = require('./synth/synth.jsx');
 const Looper     = require('./looper/looper.jsx');
 const dropTarget = require('react-dnd').DropTarget;
 const flow       = require('lodash/flow');
-const Trash      = require('./trash.jsx');
+const Editor     = require('./editor.jsx');
 
 const mixerTarget = {
 
@@ -55,6 +55,10 @@ class Mixer extends Component {
     this.forceUpdate();
   }
 
+  showEditor(device) {
+    this.refs.editor.show(device);
+  }
+
   render() {
     
     let connectDropTarget = this.props.connectDropTarget;
@@ -64,14 +68,14 @@ class Mixer extends Component {
         <div className="axes"></div>
         {
           this.state.synths.map((item)=> {
-            return <Synth type={item.type} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice}/>
+            return <Synth type={item.type} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice} showEditor={this.showEditor.bind(this)}/>
           })
         } {
           this.state.loopers.map((item)=> {
-            return <Looper type={item.type} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice}/>
+            return <Looper type={item.type} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice} showEditor={this.showEditor.bind(this)}/>
           })
         }
-        <Trash/>
+        <Editor ref="editor"/>
       </div>
     );
   }

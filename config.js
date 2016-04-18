@@ -21,7 +21,30 @@ const config = {
     '#DDDDDD'
   ],
 
-  backend: HTML5Backend
+  backend: HTML5Backend,
+
+  ranges: {
+    waveshaper: {
+      curve: {
+        min: 0,
+        max: 500,
+        default: 0
+      }
+    },
+
+    biquadFilter: {
+      gain: {
+        min: 0,
+        max: 40,
+        default: 0
+      },
+      frequency: {
+        min: 20,
+        max: 18000,
+        default: 18000
+      }
+    }
+  }
 };
 
 module.exports = config;

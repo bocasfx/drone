@@ -55,40 +55,19 @@ a {
   background-size: 100% 100%;
 }
 
-.trash {
-  text-align: center;
-  color: #ccc;
-  bottom: 10px;
-  font-size: 1.5em;
+.editor {
   position: absolute;
-  left: 50%;
-  margin-left: -15px;
-}
-
-.synth-editor {
-  position: absolute;
-  top: -150;
-  left: -100;
+  top: 20%;
+  left: 20%;
   padding: 10px;
   background-color: #111;
   border: 1px solid #666;
   opacity: 0.8;
   color: #aaa;
-  width: 200px;
-  height: 300px;
-}
-
-.looper-editor {
-  position: absolute;
-  top: -150;
-  left: -100;
-  padding: 10px;
-  background-color: #111;
-  border: 1px solid #666;
-  opacity: 0.8;
-  color: #aaa;
-  width: 260px;
-  height: 60px;
+  width: 60%;
+  height: 60%;
+  max-width: 800px;
+  max-height: 600px;
 }
 
 .cog {
@@ -102,7 +81,7 @@ a {
   margin-left: 25px;
 }
 
-.close-editor {
+.hide-editor {
   position: absolute;
   top: 10px;
   right: 10px;

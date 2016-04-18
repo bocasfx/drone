@@ -1,10 +1,11 @@
 'use strict';
 
 const audioContext = require('../audio-context');
+const ranges       = require('../config').ranges;
 
 class Waveshaper {
 
-  constructor({curve=0}) {
+  constructor({curve=ranges.waveshaper.curve.default}) {
     this.waveshaperNode = audioContext.createWaveShaper();
     this.curve = curve;
   }
