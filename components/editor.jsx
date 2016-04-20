@@ -4,6 +4,7 @@ const React     = require('react');
 const Component = React.Component;
 const ranges    = require('../config').ranges;
 const Slider    = require('rc-slider');
+const Knob      = require('./knob.jsx');
 
 class Editor extends Component {
 
@@ -39,6 +40,10 @@ class Editor extends Component {
     this.state.device.biquadFilter.frequency = frequency;
   }
 
+  handleChange(val) {
+    console.log(val);
+  }
+
   render() {
     let display = this.state.show ? 'block' : 'none';
     let style = {
@@ -71,6 +76,8 @@ class Editor extends Component {
         <div className="slider">
           <Slider min={filterFrequency.min} max={filterFrequency.max} defaultValue={filterFrequency.default} onChange={this.setFilterFrequency.bind(this)}/>
         </div>
+
+        <Knob value={5} onChange={this.handleChange} label="Gain"/>
       </div>
     );
   }
