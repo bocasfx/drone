@@ -63,12 +63,12 @@ class AudioDevice extends Component {
     this.state.top = this.props.top;
 
     let colorIdx = Math.floor(Math.random() * colors.length);
+    let fillIdx = Math.floor(Math.random() * colors.length);
 
     this.progressBar = new ProgressBar.Circle(domNode.children[1], {
       color: colors[colorIdx],
-      fill: '#CAC234',
       strokeWidth: 10,
-      fill: '#333',
+      fill: colors[fillIdx],
       trailWidth: 5,
       trailColor: '#999',
       duration: 100,

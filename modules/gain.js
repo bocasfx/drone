@@ -5,7 +5,7 @@ const audioContext = require('../audio-context');
 
 class Gain {
 
-  constructor({attack=1, sustain=500, decay=100, release=500, level=0}) {
+  constructor({attack=100, sustain=5000, decay=100, release=100, level=0}) {
     this.attack = attack;
     this.sustain = sustain;
     this.decay = decay;

@@ -30,6 +30,8 @@ a {
   display: block;
   cursor: pointer;
   opacity: 0.75;
+  box-shadow: 2px 2px 4px #888888;
+  border-radius: 50%;
 }
 
 .mixer {
@@ -82,10 +84,9 @@ a {
   top: 20%;
   left: 20%;
   padding: 10px;
-  background-color: #333;
-  border: 1px solid #666;
+  background-color: #444;
   color: #aaa;
-  width: 60%;
+  width: 50%;
   height: 60%;
   max-width: 800px;
   max-height: 600px;
