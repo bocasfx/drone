@@ -24,7 +24,6 @@ class Editor extends Component {
   show(device) {
     this.state.show = true;
     this.state.device = device;
-    console.log(device);
     this.forceUpdate();
   }
 
@@ -59,25 +58,9 @@ class Editor extends Component {
         <div className="hide-editor" onClick={this.hide.bind(this)}>
           <i className="fa fa-times"></i>
         </div>
-
-        <div className="slider-label">Waveshaper Curve</div>
-        <div className="slider">
-          <Slider min={curve.min} max={curve.max} defaultValue={curve.default} onChange={this.setWaveShaperCurve.bind(this)}/>
-        </div>
-
-        <div className="separator"/>
-
-        <div className="slider-label">Filter Gain</div>
-        <div className="slider">
-          <Slider min={filterGain.min} max={filterGain.max} defaultValue={filterGain.default} onChange={this.setFilterGain.bind(this)}/>
-        </div>
-
-        <div className="slider-label">Filter Frequency</div>
-        <div className="slider">
-          <Slider min={filterFrequency.min} max={filterFrequency.max} defaultValue={filterFrequency.default} onChange={this.setFilterFrequency.bind(this)}/>
-        </div>
-
-        <Knob value={5} onChange={this.handleChange} label="Gain"/>
+        <Knob value={curve.default} onChange={this.setWaveShaperCurve.bind(this)} label="Curve" min={curve.min} max={curve.max}/>
+        <Knob value={filterGain.default} onChange={this.setFilterGain.bind(this)} label="Gain" min={filterGain.min} max={filterGain.max}/>
+        <Knob value={filterFrequency.default} onChange={this.setFilterFrequency.bind(this)} label="Frequency" min={filterFrequency.min} max={filterFrequency.max}/>
       </div>
     );
   }
