@@ -79,6 +79,10 @@ class Editor extends Component {
     this.state.device.panner.coneOuterGain = level;
   }
 
+  setPosition(xPos) {
+    this.state.device.panner.position = xPos;
+  }
+
   render() {
     let display = this.state.show ? 'block' : 'none';
     let style = {
@@ -119,6 +123,7 @@ class Editor extends Component {
             <Knob value={panner.coneInnerAngle.default} onChange={this.setConeInnerAngle.bind(this)} label="Cone Inner Angle" min={panner.coneInnerAngle.min} max={panner.coneInnerAngle.max} knobColor="aqua"/>
             <Knob value={panner.coneOuterAngle.default} onChange={this.setConeOuterAngle.bind(this)} label="Cone Outer Angle" min={panner.coneOuterAngle.min} max={panner.coneOuterAngle.max} knobColor="aqua"/>
             <Knob value={panner.coneOuterGain.default} onChange={this.setConeOuterGain.bind(this)} label="Cone Outer Gain" min={panner.coneOuterGain.min} max={panner.coneOuterGain.max} knobColor="aqua"/>
+            <Knob value={panner.position.default} onChange={this.setPosition.bind(this)} label="Position" min={panner.position.min} max={panner.position.max} knobColor="aqua"/>
           </div>
         </div>
       </div>

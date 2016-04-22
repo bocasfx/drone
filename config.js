@@ -52,8 +52,8 @@ const config = {
           label: 'Max Distance',
           type: 'knob',
           min: 0,
-          max: 20000,
-          default: 10000
+          max: window.innerWidth/2,
+          default: window.innerWidth/4
         },
         rolloffFactor: {
           label: 'Rolloff Factor',
@@ -82,6 +82,13 @@ const config = {
           min: 0,
           max: 20,
           default: 0
+        },
+        position: {
+          label: 'Position',
+          type: 'knob',
+          min: 0,
+          max: window.innerWidth,
+          default: window.innerWidth/2
         }
       }
     },

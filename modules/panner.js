@@ -14,8 +14,8 @@ class Panner {
     coneInnerAngle   = settings.coneInnerAngle.default,
     coneOuterAngle   = settings.coneOuterAngle.default,
     coneOuterGain    = settings.coneOuterGain.default,
-    pannerPosition   = [window.innerWidth/2,window.innerHeight,0],
-    listenerPosition = [window.innerWidth/2,window.innerHeight,5]
+    pannerPosition   = [window.innerWidth/2, window.innerHeight/2 ,0],
+    listenerPosition = [window.innerWidth/2, window.innerHeight/2 ,5]
   ) {
     
     this.pannerNode = audioContext.createPanner();
@@ -67,6 +67,10 @@ class Panner {
 
   set coneOuterGain(level) {
     this.pannerNode.coneOuterGain = level;
+  }
+
+  set position(xPos) {
+    this.pannerNode.setPosition(xPos, window.innerHeight/2, 0);
   }
 
   get node() {
