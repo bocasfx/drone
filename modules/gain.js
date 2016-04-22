@@ -2,10 +2,18 @@
 
 const q            = require('q');
 const audioContext = require('../audio-context');
+const settings     = require('../config').controls.envelope.settings;
 
 class Gain {
 
-  constructor({attack=100, sustain=5000, decay=100, release=100, level=0}) {
+  constructor({
+    attack  = settings.attack.default,
+    sustain = settings.sustain.default,
+    decay   = settings.decay.default,
+    release = settings.release.default,
+    level   = 0
+  }) {
+
     this.attack = attack;
     this.sustain = sustain;
     this.decay = decay;

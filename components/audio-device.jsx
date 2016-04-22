@@ -10,6 +10,7 @@ const Gain         = require('../modules/gain');
 const Waveshaper   = require('../modules/waveshaper');
 const BiquadFilter = require('../modules/biquad-filter');
 const Panner       = require('../modules/panner');
+const _            = require('lodash');
 
 class AudioDevice extends Component {
 
@@ -62,13 +63,13 @@ class AudioDevice extends Component {
     this.state.left = this.props.left;
     this.state.top = this.props.top;
 
-    let colorIdx = Math.floor(Math.random() * colors.length);
-    let fillIdx = Math.floor(Math.random() * colors.length);
+    let color = _.sample(colors);
+    let fill = _.sample(colors);
 
     this.progressBar = new ProgressBar.Circle(domNode.children[1], {
-      color: colors[colorIdx],
+      color: color,
       strokeWidth: 10,
-      fill: colors[fillIdx],
+      fill: fill,
       trailWidth: 5,
       trailColor: '#999',
       duration: 100,

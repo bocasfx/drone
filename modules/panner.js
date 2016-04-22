@@ -1,10 +1,22 @@
 'use strict';
 
 const audioContext = require('../audio-context');
+const settings     = require('../config').controls.panner.settings;
 
 class Panner {
 
-  constructor(panningModel='HRTF', distanceModel='inverse', refDistance=10, maxDistance=10000, rolloffFactor=1, coneInnerAngle=360, coneOuterAngle=0, coneOuterGain=0, pannerPosition=[window.innerWidth/2,window.innerHeight,0], listenerPosition=[window.innerWidth/2,window.innerHeight,5]) {
+  constructor(
+    panningModel     = 'HRTF',
+    distanceModel    = 'inverse',
+    refDistance      = settings.refDistance.default,
+    maxDistance      = settings.maxDistance.default,
+    rolloffFactor    = settings.rolloffFactor.default,
+    coneInnerAngle   = settings.coneInnerAngle.default,
+    coneOuterAngle   = settings.coneOuterAngle.default,
+    coneOuterGain    = settings.coneOuterGain.default,
+    pannerPosition   = [window.innerWidth/2,window.innerHeight,0],
+    listenerPosition = [window.innerWidth/2,window.innerHeight,5]
+  ) {
     
     this.pannerNode = audioContext.createPanner();
     this.panningModel = 'HRTF';

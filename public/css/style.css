@@ -83,13 +83,38 @@ a {
   position: absolute;
   top: 20%;
   left: 20%;
-  padding: 10px;
-  background-color: #444;
-  color: #aaa;
-  width: 50%;
-  height: 60%;
-  max-width: 800px;
-  max-height: 600px;
+  padding: 45px 20px 20px 20px;
+  background-image: linear-gradient(135deg, #F1F0EC, #EBE7E4);
+  color: #333;
+  width: 260;
+  height: 520;
+  box-shadow: 2px 2px 10px #666;
+  border-radius: 15px;
+}
+
+.editor-blanket {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #333;
+  opacity: 0.3;
+}
+
+.editor-section {
+  border: 1px solid #D8D6D3;
+  border-bottom: none;
+}
+
+.editor-section:last-of-type {
+  border-bottom: 1px solid #D8D6D3;
+}
+
+.editor-section-label {
+  margin: 10px;
+  color: #666;
+  font-size: 14px;
 }
 
 .cog {
@@ -177,9 +202,10 @@ a {
   margin: 10px;
   text-align: center;
   font-size: 0.75em;
+  max-width: 65px;
 }
 
-.Knob {
+.knob {
   width: 40px;
   height: 40px;
   display: flex;
@@ -188,9 +214,27 @@ a {
   margin-bottom: 10px;
   margin-left: auto;
   margin-right: auto;
+  border-radius: 50%;
 }
 
-.Knob-spinner {
+.knob-navy    {box-shadow: 2px 2px 5px #999; border: 2px solid #001f3f;}
+.knob-blue    {box-shadow: 2px 2px 5px #999; border: 2px solid #0074D9;}
+.knob-aqua    {box-shadow: 2px 2px 5px #999; border: 2px solid #7FDBFF;}
+.knob-teal    {box-shadow: 2px 2px 5px #999; border: 2px solid #39CCCC;}
+.knob-olive   {box-shadow: 2px 2px 5px #999; border: 2px solid #3D9970;}
+.knob-green   {box-shadow: 2px 2px 5px #999; border: 2px solid #2ECC40;}
+.knob-lime    {box-shadow: 2px 2px 5px #999; border: 2px solid #01FF70;}
+.knob-yellow  {box-shadow: 2px 2px 5px #999; border: 2px solid #FFDC00;}
+.knob-orange  {box-shadow: 2px 2px 5px #999; border: 2px solid #FF851B;}
+.knob-red     {box-shadow: 2px 2px 5px #999; border: 2px solid #FF4136;}
+.knob-maroon  {box-shadow: 2px 2px 5px #999; border: 2px solid #85144b;}
+.knob-fuchsia {box-shadow: 2px 2px 5px #999; border: 2px solid #F012BE;}
+.knob-purple  {box-shadow: 2px 2px 5px #999; border: 2px solid #B10DC9;}
+.knob-black   {box-shadow: 2px 2px 5px #999; border: 2px solid #111111;}
+.knob-gray    {box-shadow: 2px 2px 5px #999; border: 2px solid #AAAAAA;}
+.knob-silver  {box-shadow: 2px 2px 5px #999; border: 2px solid #DDDDDD;}
+
+.knob-spinner {
   display: flex;
   position: absolute;
   width: 100%;
@@ -214,7 +258,8 @@ a {
   }
 }
 
-.Knob-spinner i {
+.knob-spinner i {
   font-size: 0.2em;
   margin: 3px;
+  color: #888;
 }

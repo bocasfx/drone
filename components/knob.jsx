@@ -1,25 +1,25 @@
 'use strict';
 
 const React     = require('react');
-const ReactDOM  = require('react-dom');
 
 class Knob extends React.Component {
   constructor(props) {
     super(props)
 
+    let value = this.props.value / this.props.max * 100;
+    let degree = this.valueToRadian(value);
+
     this.state = {
-      value: this.props.value,
-      degree: this.props.value / this.props.max * 270
+      value: value,
+      degree: degree
     }
 
     this.min = 0;
     this.max = 100;
     this.mouseDown = false;
     this.mousePosition = 0;
-  }
-
-  componentDidMount() {
-    this.input = ReactDOM.findDOMNode(this.refs.number)
+    this.knobColor = props.knobColor || 'orange';
+    this.markerColor = props.markerColor || 'gray';
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -77,8 +77,8 @@ class Knob extends React.Component {
 
     return (
       <div className="knob-container">
-        <div className="Knob" onMouseDown={this.onMouseDown.bind(this)} onMouseUp={this.onMouseUp.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
-          <div className="Knob-spinner" style={spinnerStyle}>
+        <div className={`knob knob-${this.knobColor}`} onMouseDown={this.onMouseDown.bind(this)} onMouseUp={this.onMouseUp.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
+          <div className="knob-spinner" style={spinnerStyle}>
             <i className="fa fa-circle"></i>
           </div>
         </div>
