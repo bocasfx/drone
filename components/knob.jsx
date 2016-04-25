@@ -1,8 +1,9 @@
 'use strict';
 
 const React     = require('react');
+const Draggable = require('./draggable');
 
-class Knob extends React.Component {
+class Knob extends Draggable {
   constructor(props) {
     super(props)
 
@@ -14,10 +15,6 @@ class Knob extends React.Component {
       degree: degree
     }
 
-    this.min = 0;
-    this.max = 100;
-    this.mouseDown = false;
-    this.mousePosition = 0;
     this.knobColor = props.knobColor || 'orange';
     this.markerColor = props.markerColor || 'gray';
   }
@@ -28,21 +25,6 @@ class Knob extends React.Component {
 
   valueToRadian(value) {
     return Math.round((value / 100) * 270)
-  }
-
-  onMouseDown(event) {
-    event.preventDefault();
-    this.mousePosition = event.clientY;
-    this.mouseDown = true;
-    window.onmousemove = this.onMouseMove.bind(this);
-    window.onmouseup = this.onMouseUp.bind(this);
-  }
-
-  onMouseUp(event) {
-    event.preventDefault();
-    this.mouseDown = false;
-    window.onmousemove = null;
-    window.onmouseup = null;
   }
 
   onMouseMove(event) {
