@@ -58,7 +58,7 @@ class Synth extends AudioDevice {
 
     this.oscillator = audioContext.createOscillator();
     super.initialize(this.oscillator);
-    this.oscillator.type = 'triangle';
+    this.oscillator.type = 'sine';
     this.oscillator.start();
   }
 
@@ -66,16 +66,8 @@ class Synth extends AudioDevice {
     this.oscillator.frequency.value = freq * 200;
   }
 
-  setWaveToSine() {
-    this.oscillator.type = 'sine';
-  }
-
-  setWaveToSquare() {
-    this.oscillator.type = 'square';
-  }
-
-  setWaveToSaw() {
-    this.oscillator.type = 'triangle';
+  set type(type) {
+    this.oscillator.type = type;
   }
 
   killDevice() {

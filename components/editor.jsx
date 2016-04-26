@@ -33,6 +33,10 @@ class Editor extends Component {
     this.device[module][parameter] = level;
   }
 
+  setOscillatorWave(type) {
+    this.device.type = type;
+  }
+
   render() {
     let display = this.state.show ? 'block' : 'none';
     let style = {
@@ -80,7 +84,7 @@ class Editor extends Component {
           <div className="settings">
             <div className="editor-section">
               <div className="editor-section-label">Oscillator Wave</div>
-              <Toggle orientation="horizontal" values={['sine', 'triangle', 'square', 'sawtooth']}/>
+              <Toggle orientation="horizontal" values={['sine', 'triangle', 'square', 'sawtooth']} onChange={this.setOscillatorWave.bind(this)}/>
             </div>
           </div>
         </div>

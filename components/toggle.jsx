@@ -14,6 +14,8 @@ class Toggle extends Draggable {
 
     this.values = props.values;
     this.shaftWidth = 12;
+    this.selectedOption = 0;
+    this.previousSelection = 0;
 
     this.initStyles();
   }
@@ -57,24 +59,28 @@ class Toggle extends Draggable {
         realValue: realValue
       });
 
-      if (this.props.onChange) {
-        this.props.onChange(discreteValue / 100 * this.props.max);
+      if (this.props.onChange && this.previousSelection !== this.selectedOption) {
+        console.log(this.selectedOption);
+        this.props.onChange(this.values[this.selectedOption]);
+        this.previousSelection = this.selectedOption;
       }
     }
   }
 
   calculateStops(value) {
 
-    let sw = this.shaftWidth / 2;
+    let halfWidth = this.shaftWidth / 2;
 
-    let step = this.max / this.values.length - 1;
+    let step = this.max / (this.values.length - 1);
 
     if (value <= this.min) {
-      return (this.min - sw);
+      this.selectedOption = 0;
+      return (this.min - halfWidth);
     }
 
     if (value >= this.max) {
-      return (this.max - sw);
+      this.selectedOption = this.values.length - 1 ;
+      return (this.max - halfWidth);
     }
 
     for (var i = 1; i <= this.values.length; i++) {
@@ -88,21 +94,12 @@ class Toggle extends Draggable {
 
       if (value > leftThreshold && value <= rightThreshold) {
         value = stop0;
-        return value - sw;
+        this.selectedOption = i - 1;
+        return value - halfWidth;
       }
     }
 
-
-
-    // (value > this.min && value <= 25) {
-    //   value = this.min - sw;
-    // } else if (value > 25 && value <= 75) {
-    //   value = 50 - sw;
-    // } else {
-    //   value = 100 - sw;
-    // }
-
-    return (this.max - sw);
+    return (this.max - halfWidth);
   }
 
   render() {
