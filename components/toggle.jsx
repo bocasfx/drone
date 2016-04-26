@@ -8,7 +8,7 @@ class Toggle extends Draggable {
     super(props);
     
     this.state = {
-      position: 0,
+      position: -6,
       realValue: 0
     }
 
@@ -65,23 +65,50 @@ class Toggle extends Draggable {
 
   calculateStops(value) {
 
-    if (value < this.min) {
-      value = this.min - 6;
-    } else if (value > this.min && value <= 25) {
-      value = this.min - 6;
-    } else if (value > 25 && value <= 75) {
-      value = 50 - 6;
-    } else {
-      value = 100 - 6;
+    let sw = this.shaftWidth / 2;
+
+    let step = this.max / this.values.length - 1;
+
+    if (value <= this.min) {
+      return (this.min - sw);
     }
 
-    return value;
+    if (value >= this.max) {
+      return (this.max - sw);
+    }
+
+    for (var i = 1; i <= this.values.length; i++) {
+      let stop0 = (i - 1) * step;
+      let stop1 = i * step;
+
+      let leftThreshold = stop0 - (step / 2)
+      leftThreshold = leftThreshold <= 0 ? 0 : leftThreshold;
+
+      let rightThreshold = stop1 - (step / 2);
+
+      if (value > leftThreshold && value <= rightThreshold) {
+        value = stop0;
+        return value - sw;
+      }
+    }
+
+
+
+    // (value > this.min && value <= 25) {
+    //   value = this.min - sw;
+    // } else if (value > 25 && value <= 75) {
+    //   value = 50 - sw;
+    // } else {
+    //   value = 100 - sw;
+    // }
+
+    return (this.max - sw);
   }
 
   render() {
 
     let shaftStyle = {
-      left: this.state.position,
+      left: this.state.position + 'px',
       position: 'relative'
     };
 
