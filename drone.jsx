@@ -36,8 +36,8 @@ class Drone extends Component {
   render() {
     return(
       <div className="app-container">
-        <Toolbox addAudioDevice={this.addAudioDevice.bind(this)}/>
-        <Mixer synths={this.state.synths} loopers={this.state.loopers} killDevice={this.killDevice.bind(this)}/>
+        <Toolbox/>
+        <Mixer synths={this.state.synths} loopers={this.state.loopers} killDevice={this.killDevice.bind(this)} addAudioDevice={this.addAudioDevice.bind(this)}/>
       </div>
     );
   }

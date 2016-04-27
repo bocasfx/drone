@@ -3,7 +3,6 @@
 const React      = require('react');
 const Component  = React.Component;
 const Synth      = require('./synth/synth.jsx');
-const Looper     = require('./looper/looper.jsx');
 const dropTarget = require('react-dnd').DropTarget;
 const flow       = require('lodash/flow');
 const Editor     = require('./editor.jsx');
@@ -29,14 +28,7 @@ const mixerTarget = {
 
 const collect = function(connect) {
   return {
-    // Call this function inside render()
-    // to let React DnD handle the drag events:
     connectDropTarget: connect.dropTarget(),
-    // You can ask the monitor about the current drag state:
-    // isOver: monitor.isOver(),
-    // isOverCurrent: monitor.isOver({ shallow: true }),
-    // canDrop: monitor.canDrop(),
-    // itemType: monitor.getItemType()
   };
 }
 
@@ -44,14 +36,12 @@ class Mixer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      synths: [],
-      loopers: []
+      synths: []
     };
   }
 
   componentDidMount() {
     this.state.synths = this.props.synths;
-    this.state.loopers = this.props.loopers;
     this.forceUpdate();
   }
 
@@ -59,20 +49,32 @@ class Mixer extends Component {
     this.refs.editor.show(device);
   }
 
+  createDevice(event) {
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.nativeEvent.stopImmediatePropagation();
+
+    let device = {
+      left: event.clientX - 25,
+      top: event.clientY - 90,
+      key: Date.now(),
+      type: 'synth'
+    }
+
+    this.props.addAudioDevice(device);
+  }
+
   render() {
     
     let connectDropTarget = this.props.connectDropTarget;
 
     return connectDropTarget(
-      <div className="mixer">
+      <div className="mixer" onDoubleClick={this.createDevice.bind(this)}>
         <div className="axes"></div>
         {
           this.state.synths.map((item)=> {
             return <Synth type={item.type} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice} showEditor={this.showEditor.bind(this)}/>
-          })
-        } {
-          this.state.loopers.map((item)=> {
-            return <Looper type={item.type} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice} showEditor={this.showEditor.bind(this)}/>
           })
         }
         <Editor ref="editor"/>
@@ -82,5 +84,5 @@ class Mixer extends Component {
 }
 
 module.exports = flow(
-  dropTarget(['synth', 'looper', 'toolbox-btn'], mixerTarget, collect)
+  dropTarget(['synth', 'toolbox-btn'], mixerTarget, collect)
 )(Mixer);

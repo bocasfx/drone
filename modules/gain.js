@@ -3,6 +3,7 @@
 const q            = require('q');
 const audioContext = require('../audio-context');
 const settings     = require('../config').controls.envelope.settings;
+const zero          = 0.0001;
 
 class Gain {
 
@@ -11,7 +12,7 @@ class Gain {
     sustain = settings.sustain.default,
     decay   = settings.decay.default,
     release = settings.release.default,
-    level   = 0
+    level   = zero
   }) {
 
     this.attack = attack;
@@ -19,8 +20,10 @@ class Gain {
     this.decay = decay;
     this.release = release;
     this.gainNode = audioContext.createGain();
-    this.gainNode.gain.value = level;
+    this.gainNode.gain.value = zero;
     this.initialGain = level;
+
+    this.gainNode.gain.setValueAtTime(zero, audioContext.currentTime);
   }
 
   get level() {
@@ -45,54 +48,33 @@ class Gain {
 
   fadeIn() {
 
-    // Get the current date to calculate time drifting.
-    // Especially needed for longer fade-ins.
-    let start = new Date().getTime();
-    let time = 0;
+    let deferred = q.defer();
+    let time = audioContext.currentTime + this.attack / 1000.0;
 
-    let deferred = q.defer(); 
-    let initialGain = this.initialGain || 1;
+    this.gainNode.gain.exponentialRampToValueAtTime(this.initialGain, time);
 
-    let step = initialGain / 50;
+    setTimeout(()=> {
+      this.level = this.initialGain;
+      deferred.resolve();
+    }, this.attack);
 
-    let fadeInStep = ()=> {
-
-      if (this.level > initialGain) {
-        this.level = initialGain; 
-        deferred.resolve();
-      } else {
-        time += this.attack;
-        this.level = this.level + step;
-        let diff = new Date().getTime() - start - time;
-        setTimeout(fadeInStep.bind(this), this.attack - diff);
-      }
-    }
-
-    setTimeout(fadeInStep.bind(this), this.attack)
     return deferred.promise;
   }
 
   fadeOut(decay) {
 
-    let start = new Date().getTime();
-    let time = 0;
+    decay = decay || this.decay;
 
     let deferred = q.defer();
-    let step = this.level / 50;
+    let time = audioContext.currentTime + decay / 1000.0;
 
-    let fadeOutStep = ()=> {
-      if (this.level < 0.0001) {
-        this.level = 0;
-        deferred.resolve();
-      } else {
-        time += decay;
-        this.level = this.level - step;
-        let diff = new Date().getTime() - start - time;
-        setTimeout(fadeOutStep, decay - diff);
-      }
-    }
+    this.gainNode.gain.setValueAtTime(this.level, audioContext.currentTime);
 
-    setTimeout(fadeOutStep, decay);
+    this.gainNode.gain.exponentialRampToValueAtTime(zero, time);
+    setTimeout(()=> {
+      deferred.resolve();
+    }, decay);
+
     return deferred.promise;
   }
 
@@ -123,7 +105,7 @@ class Gain {
   noteOn() {
     this.fadeIn()
       .then(this.scheduleNoteOff.bind(this))
-      .then(this.fadeOut.bind(this, this.decay))
+      .then(this.fadeOut.bind(this))
       .then(this.scheduleNoteOn.bind(this));
   }
 

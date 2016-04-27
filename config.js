@@ -100,15 +100,15 @@ const config = {
           label: 'Attack',
           type: 'knob',
           min: 0,
-          max: 500,
-          default: 100
+          max: 10000,
+          default: 5000
         },
         decay: {
           label: 'Decay',
           type: 'knob',
           min: 0,
-          max: 500,
-          default: 100
+          max: 10000,
+          default: 5000
         },
         sustain: {
           label: 'Sustain',
