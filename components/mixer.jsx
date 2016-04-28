@@ -2,7 +2,7 @@
 
 const React      = require('react');
 const Component  = React.Component;
-const Synth      = require('./synth/synth.jsx');
+const Synth      = require('./synth.jsx');
 const dropTarget = require('react-dnd').DropTarget;
 const flow       = require('lodash/flow');
 const Editor     = require('./editor.jsx');
@@ -41,8 +41,9 @@ class Mixer extends Component {
   }
 
   componentDidMount() {
-    this.state.synths = this.props.synths;
-    this.forceUpdate();
+    this.setState({
+      synths: this.props.synths
+    });
   }
 
   showEditor(device) {

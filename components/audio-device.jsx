@@ -60,8 +60,10 @@ class AudioDevice extends Component {
   componentDidMount() {
     let domNode = ReactDOM.findDOMNode(this);
 
-    this.state.left = this.props.left;
-    this.state.top = this.props.top;
+    this.setState({
+      left: this.props.left,
+      top: this.props.top
+    });
 
     let color = _.sample(colors);
     let fill = _.sample(colors);
@@ -82,7 +84,6 @@ class AudioDevice extends Component {
     this.initialize();
     this.enableGainEnvelope = true;
     this.frequency = this.props.left / this.windowWidth;;
-    this.forceUpdate();
   }
 
   initialize(source) {
@@ -149,8 +150,9 @@ class AudioDevice extends Component {
   }
 
   showControls() {
-    this.state.showControls = !this.state.showControls;
-    this.forceUpdate();
+    this.setState({
+      showControls: !this.state.showControls
+    });
   }
 }
 

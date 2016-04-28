@@ -1,9 +1,9 @@
 'use strict';
 
 const React        = require('react');
-const AudioDevice  = require('../audio-device.jsx');
+const AudioDevice  = require('./audio-device.jsx');
 const dragSource   = require('react-dnd').DragSource;
-const audioContext = require('../../audio-context');
+const audioContext = require('../audio-context');
 
 var synthSource = {
   beginDrag: function (props, monitor, component) {
@@ -16,13 +16,20 @@ var synthSource = {
 
   endDrag: function(props, monitor, component) {
     let result = monitor.getDropResult();
+
+    if (!result) {
+      return;
+    }
+
     if (result.killDevice) {
       component.killDevice();
       return;
     }
     
-    component.state.left = result.left;
-    component.state.top = result.top;
+    component.setState({
+      left: result.left,
+      top: result.top
+    });
   }
 }
 

@@ -23,6 +23,11 @@ class Gain {
     this.gainNode.gain.value = zero;
     this.initialGain = level;
 
+    this.fadeInTimeout = null;
+    this.fadeOutTimeout = null;
+    this.noteOffTimeout = null;
+    this.noteOnTimeout = null;
+
     this.gainNode.gain.setValueAtTime(zero, audioContext.currentTime);
   }
 
@@ -49,14 +54,17 @@ class Gain {
   fadeIn() {
 
     let deferred = q.defer();
-    let time = audioContext.currentTime + this.attack / 1000.0;
+    let time = audioContext.currentTime + parseFloat(this.attack);
+
+    console.log(time);
 
     this.gainNode.gain.exponentialRampToValueAtTime(this.initialGain, time);
 
-    setTimeout(()=> {
+    clearTimeout(this.fadeInTimeout);
+    this.fadeInTimeout = setTimeout(()=> {
       this.level = this.initialGain;
       deferred.resolve();
-    }, this.attack);
+    }, this.attack * 1000);
 
     return deferred.promise;
   }
@@ -66,14 +74,15 @@ class Gain {
     decay = decay || this.decay;
 
     let deferred = q.defer();
-    let time = audioContext.currentTime + decay / 1000.0;
+    let time = audioContext.currentTime + parseFloat(decay);
 
     this.gainNode.gain.setValueAtTime(this.level, audioContext.currentTime);
-
     this.gainNode.gain.exponentialRampToValueAtTime(zero, time);
-    setTimeout(()=> {
+
+    clearTimeout(this.fadeOutTimeout);
+    this.fadeOutTimeout = setTimeout(()=> {
       deferred.resolve();
-    }, decay);
+    }, decay * 1000);
 
     return deferred.promise;
   }
@@ -95,8 +104,7 @@ class Gain {
   }
 
   endAutomation() {
-    clearTimeout(this.noteOffTimeout);
-    clearTimeout(this.noteOnTimeout);
+    this.clearTimeouts();
     this.fadeOut(10).then(()=> {
       this.disconnect();
     });
@@ -113,7 +121,7 @@ class Gain {
     let deferred = q.defer();
     this.noteOffTimeout = setTimeout(()=> {
       deferred.resolve();
-    }, this.sustain);
+    }, this.sustain * 1000);
     return deferred.promise;
   }
 
@@ -122,8 +130,15 @@ class Gain {
     this.noteOnTimeout = setTimeout(()=> {
       this.noteOn();
       deferred.resolve();
-    }, this.release);
+    }, this.release * 1000);
     return deferred.promise;
+  }
+
+  clearTimeouts() {
+    clearTimeout(this.fadeInTimeout);
+    clearTimeout(this.fadeOutTimeout);
+    clearTimeout(this.noteOffTimeout);
+    clearTimeout(this.noteOnTimeout);
   }
 }
 

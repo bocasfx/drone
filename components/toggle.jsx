@@ -32,7 +32,8 @@ class Toggle extends Draggable {
         top: '-11px',
         left: '0',
         border: '1px solid #ABABAB',
-        boxShadow: '1px 1px 2px -1px #999'
+        boxShadow: '1px 1px 2px -1px #999',
+        marginLeft: '15px'
       },
 
       track: {
@@ -40,7 +41,8 @@ class Toggle extends Draggable {
         height: '8px',
         backgroundColor: '#E6DFD7',
         borderRadius: '20px',
-        boxShadow: 'inset 0 0 2px 0px #888'
+        boxShadow: 'inset 0 0 2px 0px #888',
+        marginLeft: '15px'
       }
     }
   }

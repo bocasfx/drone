@@ -45,7 +45,7 @@ const config = {
           label: 'Reference Distance',
           type: 'knob',
           min: 0,
-          max: 20000,
+          max: 10,
           default: 10
         },
         maxDistance: {
@@ -84,7 +84,7 @@ const config = {
           default: 0
         },
         position: {
-          label: 'Position',
+          label: 'Pan',
           type: 'knob',
           min: 0,
           max: window.innerWidth,
@@ -100,29 +100,29 @@ const config = {
           label: 'Attack',
           type: 'knob',
           min: 0,
-          max: 10000,
-          default: 5000
+          max: 10,
+          default: 2
         },
         decay: {
           label: 'Decay',
           type: 'knob',
           min: 0,
-          max: 10000,
-          default: 5000
+          max: 10,
+          default: 2
         },
         sustain: {
           label: 'Sustain',
           type: 'knob',
           min: 0,
-          max: 10000,
-          default: 5000
+          max: 10,
+          default: 2
         },
         release: {
           label: 'Release',
           type: 'knob',
           min: 0,
-          max: 10000,
-          default: 100
+          max: 10,
+          default: 2
         }
       }
     },
@@ -134,7 +134,7 @@ const config = {
           label: 'Curve',
           type: 'knob',
           min: 0,
-          max: 500,
+          max: 50,
           default: 0
         }
       }
@@ -152,16 +152,16 @@ const config = {
         gain: {
           label: 'Gain',
           type: 'knob',
-          min: 0,
-          max: 40,
+          min: -20,
+          max: 20,
           default: 0
         },
         frequency: {
           label: 'Frequency',
           type: 'knob',
           min: 20,
-          max: 18000,
-          default: 18000
+          max: 20000,
+          default: 20000
         }
       }
     }

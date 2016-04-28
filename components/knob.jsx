@@ -2,13 +2,16 @@
 
 const React     = require('react');
 const Draggable = require('./draggable');
+const zero      = 0.1;
 
 class Knob extends Draggable {
   constructor(props) {
     super(props)
 
-    let value = this.props.value / this.props.max * 100;
+    let value = ((this.props.value - this.props.min) * (100 / (this.props.max - this.props.min)));
     let degree = this.valueToRadian(value);
+
+    this.valueLabel = this.props.value;
 
     this.state = {
       value: value,
@@ -40,15 +43,24 @@ class Knob extends Draggable {
 
       this.mousePosition = event.clientY;
 
+      console.log(newValue);
+      let normalizedValue = this.normalizeValue(newValue)
+      this.valueLabel = normalizedValue;
+
       this.setState({
         value: newValue,
         degree: this.valueToRadian(newValue)
       });
 
       if (this.props.onChange) {
-        this.props.onChange(newValue / 100 * this.props.max);
+        this.props.onChange(normalizedValue);
       }
     }
+  }
+
+  normalizeValue(value) {
+    let normalizedValue = this.props.min + ((value * (this.props.max - this.props.min)) / 100);
+    return parseFloat(normalizedValue).toFixed(1);
   }
 
   render() {
@@ -59,12 +71,13 @@ class Knob extends Draggable {
 
     return (
       <div className="knob-container">
+        <div className="knob-label noselect">{this.props.label}</div>
         <div className={`knob knob-${this.knobColor}`} onMouseDown={this.onMouseDown.bind(this)} onMouseUp={this.onMouseUp.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
           <div className="knob-spinner" style={spinnerStyle}>
-            <i className="fa fa-circle"></i>
+            <i className="fa fa-circle noselect"></i>
           </div>
         </div>
-        <div>{this.props.label}</div>
+        <div className="knob-value-label noselect">{this.valueLabel}</div>
       </div>
     )
   }

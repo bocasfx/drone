@@ -5,28 +5,28 @@ const settings     = require('../config').controls.panner.settings;
 
 class Panner {
 
-  constructor(
-    panningModel     = 'HRTF',
-    distanceModel    = 'inverse',
+  constructor({
+    panningModel     = settings.panningModel.default,
+    distanceModel    = settings.distanceModel.default,
     refDistance      = settings.refDistance.default,
     maxDistance      = settings.maxDistance.default,
     rolloffFactor    = settings.rolloffFactor.default,
     coneInnerAngle   = settings.coneInnerAngle.default,
     coneOuterAngle   = settings.coneOuterAngle.default,
     coneOuterGain    = settings.coneOuterGain.default,
-    pannerPosition   = [window.innerWidth/2, window.innerHeight/2 ,0],
-    listenerPosition = [window.innerWidth/2, window.innerHeight/2 ,5]
-  ) {
+    pannerPosition   = [window.innerWidth/2, window.innerHeight/2 , 0],
+    listenerPosition = [window.innerWidth/2, window.innerHeight/2 , 50]
+  }) {
     
     this.pannerNode = audioContext.createPanner();
-    this.panningModel = 'HRTF';
-    this.distanceModel = 'inverse';
-    this.refDistance = 10;
-    this.maxDistance = 10000;
-    this.rolloffFactor = 1;
-    this.coneInnerAngle = 360;
-    this.coneOuterAngle = 0;
-    this.coneOuterGain = 0;
+    this.panningModel = panningModel;
+    this.distanceModel = distanceModel;
+    this.refDistance = refDistance;
+    this.maxDistance = maxDistance;
+    this.rolloffFactor = rolloffFactor;
+    this.coneInnerAngle = coneInnerAngle;
+    this.coneOuterAngle = coneOuterAngle;
+    this.coneOuterGain = coneOuterGain;
     this.pannerNode.setOrientation(1,0,0);
     let [px, py, pz] = pannerPosition;
     this.pannerNode.setPosition(px, py, pz);
