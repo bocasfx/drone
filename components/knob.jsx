@@ -43,7 +43,6 @@ class Knob extends Draggable {
 
       this.mousePosition = event.clientY;
 
-      console.log(newValue);
       let normalizedValue = this.normalizeValue(newValue)
       this.valueLabel = normalizedValue;
 

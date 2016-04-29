@@ -5,7 +5,7 @@ const Component = React.Component;
 const controls  = require('../config').controls;
 const Slider    = require('rc-slider');
 const Knob      = require('./knob.jsx');
-const Toggle    = require('./toggle.jsx');
+const Switch    = require('./switch.jsx');
 
 class Editor extends Component {
 
@@ -66,8 +66,8 @@ class Editor extends Component {
           <div className="modules">
             <div className="editor-section">
               <div className="editor-section-label noselect">Oscillator Wave</div>
-              <Toggle orientation="horizontal" labels={['Sine', 'Triangle', 'Square', 'Sawtooth']} values={['sine', 'triangle', 'square', 'sawtooth']} onChange={this.setOscillatorWave.bind(this)}/>
-              <Toggle orientation="horizontal" labels={['On', 'Off']} values={[true, false]} onChange={this.toggleGainEnvelope.bind(this)}/>
+              <Switch value="sine" onChange={this.setOscillatorWave.bind(this)} label="Wave" min={0} max={100} knobColor="purple" labels={['Sine', 'Triangle', 'Square', 'Sawtooth']} values={['sine', 'triangle', 'square', 'sawtooth']}/>
+              <Switch value={true} onChange={this.toggleGainEnvelope.bind(this)} label="Envelope" min={0} max={100} knobColor="purple" labels={['Off', 'On']} values={[false, true]}/>
             </div>
             <div className="editor-section">
               <div className="editor-section-label noselect">Amplitude Envelope</div>

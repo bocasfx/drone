@@ -36,7 +36,7 @@ class Gain {
   }
 
   set level(level) {
-    this.gainNode.gain.value = level;
+    this.gainNode.gain.setValueAtTime(level, audioContext.currentTime);
   }
 
   get node() {
@@ -55,8 +55,6 @@ class Gain {
 
     let deferred = q.defer();
     let time = audioContext.currentTime + parseFloat(this.attack);
-
-    console.log(time);
 
     this.gainNode.gain.exponentialRampToValueAtTime(this.initialGain, time);
 

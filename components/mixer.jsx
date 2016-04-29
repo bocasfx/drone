@@ -57,7 +57,7 @@ class Mixer extends Component {
     event.nativeEvent.stopImmediatePropagation();
 
     let device = {
-      left: event.clientX - 25,
+      left: event.clientX - 35,
       top: event.clientY - 90,
       key: Date.now(),
       type: 'synth'

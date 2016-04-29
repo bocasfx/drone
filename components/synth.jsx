@@ -97,6 +97,14 @@ class Synth extends AudioDevice {
     this.props.killDevice(this);
   }
 
+  cloneDevice() {
+    console.log('clone');
+  }
+
+  soloDevice() {
+    console.log('solo');
+  }
+
   showEditor() {
     this.props.showEditor(this);
   }
@@ -115,16 +123,21 @@ class Synth extends AudioDevice {
 
     let controlsDisplay = this.state.showControls ? 1 : 0;
     let controlsStyle = {
-      opacity: controlsDisplay
+      opacity: controlsDisplay,
+      transition: 'opacity .25s ease-in-out'
     }
 
     return connectDragSource(
       <div className="synth" style={style} onMouseEnter={this.showControls.bind(this)} onMouseLeave={this.showControls.bind(this)}>
         <div style={controlsStyle}>
-          <i className="cog fa fa-cog" onClick={this.showEditor.bind(this)}></i>
-          <i className="times fa fa-times" onClick={this.killDevice.bind(this)}></i>
+          <i className="control control-top fa fa-cog" onClick={this.showEditor.bind(this)}></i>
+          <i className="control control-top control-right fa fa-times" onClick={this.killDevice.bind(this)}></i>
         </div>
         <div className="progress" draggable='true' onDrag={this.onDrag.bind(this)} onClick={this.play.bind(this)}></div>
+        <div style={controlsStyle}>
+          <i className="control control-bottom fa fa-plus" onClick={this.cloneDevice.bind(this)}></i>
+          <i className="control control-bottom control-right fa fa-headphones" onClick={this.soloDevice.bind(this)}></i>
+        </div>
       </div>
     );
   }

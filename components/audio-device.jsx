@@ -35,7 +35,6 @@ class AudioDevice extends Component {
     }
 
     this.isPlaying = false;
-    this.progress = 0;
     this.duration = 100;
     this.timeOut = null;
 
@@ -68,20 +67,24 @@ class AudioDevice extends Component {
     let color = _.sample(colors);
     let fill = _.sample(colors);
 
+    this.initialize();
+
+    this.duration = (this.gain.attack + this.gain.decay + this.gain.sustain + this.gain.release) * 1000;
+
     this.progressBar = new ProgressBar.Circle(domNode.children[1], {
       color: color,
       strokeWidth: 10,
       fill: fill,
       trailWidth: 5,
       trailColor: '#999',
-      duration: 100,
+      duration: this.duration,
       text: {
         value: this.progressBarIcon,
         style: this.progressBarStyle
       }
     });
 
-    this.initialize();
+    
     this.enableGainEnvelope = true;
     this.frequency = this.props.left / this.windowWidth;;
   }
@@ -107,17 +110,13 @@ class AudioDevice extends Component {
   }
 
   startProgressBarAnimation() {
-    this.timeOut = setInterval(this.animateProgressBar.bind(this), 75);
+    this.animateProgressBar();
+    this.timeOut = setInterval(this.animateProgressBar.bind(this), this.duration);
   }
 
   animateProgressBar() {
-    if (this.progress > 1.99) {
-      this.progress = 0;
-      this.progressBar.set(0);
-    } else {
-      this.progress = this.progress + 1/this.duration;
-      this.progressBar.animate(this.progress);  
-    }
+    this.progressBar.set(0);
+    this.progressBar.animate(2);
   }
 
   stopProgressBarAnimation() {

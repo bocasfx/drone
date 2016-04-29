@@ -19,7 +19,6 @@ class Draggable extends React.Component {
     this.mouseDown = true;
     window.onmousemove = this.onMouseMove.bind(this);
     window.onmouseup = this.onMouseUp.bind(this);
-    console.log('down');
   }
 
   onMouseUp(event) {
@@ -27,7 +26,6 @@ class Draggable extends React.Component {
     this.mouseDown = false;
     window.onmousemove = null;
     window.onmouseup = null;
-    console.log('up');
   }
 }
 
