@@ -5,7 +5,6 @@ const Component    = React.Component;
 const PropTypes    = React.PropTypes;
 const ReactDOM     = require('react-dom');
 const colors       = require('../config').synthColors;
-const ProgressBar  = require('progressbar.js');
 const Gain         = require('../modules/gain');
 const Waveshaper   = require('../modules/waveshaper');
 const BiquadFilter = require('../modules/biquad-filter');
@@ -46,45 +45,21 @@ class AudioDevice extends Component {
 
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
-  }
 
-  get progressBarStyle() {
-    return {};
-  }
+    this.color = _.sample(colors);
+    while ((this.backgroundColor = _.sample(colors)) === this.color) {
 
-  get progressBarIcon() {
-    return {};
+    }
   }
 
   componentDidMount() {
-    let domNode = ReactDOM.findDOMNode(this);
 
     this.setState({
       left: this.props.left,
       top: this.props.top
     });
 
-    let color = _.sample(colors);
-    let fill = _.sample(colors);
-
     this.initialize();
-
-    this.duration = (this.gain.attack + this.gain.decay + this.gain.sustain + this.gain.release) * 1000;
-
-    this.progressBar = new ProgressBar.Circle(domNode.children[1], {
-      color: color,
-      strokeWidth: 10,
-      fill: fill,
-      trailWidth: 5,
-      trailColor: '#999',
-      duration: this.duration,
-      text: {
-        value: this.progressBarIcon,
-        style: this.progressBarStyle
-      }
-    });
-
-    
     this.enableGainEnvelope = true;
     this.frequency = this.props.left / this.windowWidth;;
   }
@@ -109,21 +84,6 @@ class AudioDevice extends Component {
     this[this.yParameter].level = 1 - (event.clientY / this.windowHeight);
   }
 
-  startProgressBarAnimation() {
-    this.animateProgressBar();
-    this.timeOut = setInterval(this.animateProgressBar.bind(this), this.duration);
-  }
-
-  animateProgressBar() {
-    this.progressBar.set(0);
-    this.progressBar.animate(2);
-  }
-
-  stopProgressBarAnimation() {
-    this.progressBar.animate(0);
-    clearTimeout(this.timeOut);
-  }
-
   play(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -131,7 +91,6 @@ class AudioDevice extends Component {
 
     if (this.isPlaying) {
       this.isPlaying = false;
-      this.stopProgressBarAnimation();
       if (this.enableGainEnvelope) {
         this.gain.endAutomation();
       } else {
@@ -139,7 +98,6 @@ class AudioDevice extends Component {
       }
     } else {
       this.isPlaying = true;
-      this.startProgressBarAnimation();
       if (this.enableGainEnvelope) {
         this.gain.startAutomation();
       } else {

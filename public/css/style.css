@@ -25,16 +25,43 @@ a {
   width: 70px;
 }
 
-.progress {
+.osc {
+  font-size: 50px;
+  position: relative;
+  opacity: 1;
   width: 50px;
   height: 50px;
-  display: block;
-  cursor: pointer;
-  opacity: 0.75;
-  box-shadow: 2px 2px 4px #888888;
-  border-radius: 50%;
-  margin-left: 10px;
 }
+
+.osc i {
+  left: 3.5px;
+  top: 1px;
+  position: absolute;
+}
+
+.anim {
+  animation: 3s linear infinite play;
+}
+
+.progress {
+  box-shadow: 2px 2px 4px #888888;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  opacity: 0.75;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+@keyframes play {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 
 .mixer {
   width: 100%;
@@ -72,7 +99,7 @@ a {
   position: absolute;
   top: calc(50% - 277px);
   left: calc(50% - 225px);
-  padding: 45px 20px 20px 20px;
+  padding: 25px 20px 20px 20px;
   background-image: linear-gradient(135deg, #F1F0EC, #EBE7E4);
   color: #333;
   width: 350px;

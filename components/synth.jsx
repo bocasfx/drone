@@ -46,23 +46,7 @@ class Synth extends AudioDevice {
     super(props);
   }
 
-  get progressBarStyle() {
-    return {
-      position: 'absolute',
-      left: '16px',
-      top: '1px',
-      padding: '0',
-      margin: '0',
-      'font-size': '2em'
-    }
-  }
-
-  get progressBarIcon() {
-    return '\u223F';
-  }
-
   initialize() {
-
     this.oscillator = audioContext.createOscillator();
     super.initialize(this.oscillator);
     this.oscillator.type = 'sine';
@@ -121,11 +105,22 @@ class Synth extends AudioDevice {
       top: top + 'px'
     };
 
-    let controlsDisplay = this.state.showControls ? 1 : 0;
+    let controlsOpacity = this.state.showControls ? 1 : 0;
     let controlsStyle = {
-      opacity: controlsDisplay,
+      opacity: controlsOpacity,
       transition: 'opacity .25s ease-in-out'
     }
+
+    let iconStyle = {
+      color: this.color
+    };
+
+    let containerStyle = {
+      backgroundColor: this.backgroundColor,
+      border: '2px solid' + this.color
+    }
+
+    let animate = this.isPlaying ? 'anim' : '';
 
     return connectDragSource(
       <div className="synth" style={style} onMouseEnter={this.showControls.bind(this)} onMouseLeave={this.showControls.bind(this)}>
@@ -133,7 +128,11 @@ class Synth extends AudioDevice {
           <i className="control control-top fa fa-cog" onClick={this.showEditor.bind(this)}></i>
           <i className="control control-top control-right fa fa-times" onClick={this.killDevice.bind(this)}></i>
         </div>
-        <div className="progress" draggable='true' onDrag={this.onDrag.bind(this)} onClick={this.play.bind(this)}></div>
+        <div style={containerStyle} className="progress" draggable='true' onDrag={this.onDrag.bind(this)} onClick={this.play.bind(this)}>
+          <div className={`osc ${animate}`}>
+            <i style={iconStyle} className="fa fa-times-circle-o"></i>
+          </div>
+        </div>
         <div style={controlsStyle}>
           <i className="control control-bottom fa fa-plus" onClick={this.cloneDevice.bind(this)}></i>
           <i className="control control-bottom control-right fa fa-headphones" onClick={this.soloDevice.bind(this)}></i>
