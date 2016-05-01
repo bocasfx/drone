@@ -56,6 +56,7 @@ class Gain {
     let deferred = q.defer();
     let time = audioContext.currentTime + parseFloat(this.attack);
 
+    this.gainNode.gain.setValueAtTime(zero, audioContext.currentTime);
     this.gainNode.gain.exponentialRampToValueAtTime(this.initialGain, time);
 
     clearTimeout(this.fadeInTimeout);

@@ -3,34 +3,8 @@
 const React      = require('react');
 const Component  = React.Component;
 const Synth      = require('./synth.jsx');
-const dropTarget = require('react-dnd').DropTarget;
 const flow       = require('lodash/flow');
 const Editor     = require('./editor.jsx');
-
-const mixerTarget = {
-
-  drop: function (props, monitor) {
-    if (monitor.didDrop()) {
-      return;
-    }
-
-    let item = monitor.getItem();
-    let delta = monitor.getDifferenceFromInitialOffset();
-    let left = Math.round(item.left + delta.x);
-    let top = Math.round(item.top + delta.y);
-
-    return {
-      left: left,
-      top: top
-    }
-  }
-};
-
-const collect = function(connect) {
-  return {
-    connectDropTarget: connect.dropTarget(),
-  };
-}
 
 class Mixer extends Component {
   constructor(props) {
@@ -58,7 +32,7 @@ class Mixer extends Component {
 
     let device = {
       left: event.clientX - 35,
-      top: event.clientY - 90,
+      top: event.clientY - 75,
       key: Date.now(),
       type: 'synth'
     }
@@ -67,10 +41,8 @@ class Mixer extends Component {
   }
 
   render() {
-    
-    let connectDropTarget = this.props.connectDropTarget;
 
-    return connectDropTarget(
+    return (
       <div className="mixer" onDoubleClick={this.createDevice.bind(this)}>
         <div className="axes"></div>
         {
@@ -84,6 +56,4 @@ class Mixer extends Component {
   }
 }
 
-module.exports = flow(
-  dropTarget(['synth', 'toolbox-btn'], mixerTarget, collect)
-)(Mixer);
+module.exports = Mixer;

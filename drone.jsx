@@ -3,7 +3,6 @@
 const React           = require('react');
 const Component       = React.Component;
 const config          = require('./config');
-const dragDropContext = require('react-dnd').DragDropContext;
 const Toolbox         = require('./components/toolbox.jsx');
 const Mixer           = require('./components/mixer.jsx');
 const _               = require('lodash');
@@ -44,4 +43,4 @@ class Drone extends Component {
 
 }
 
-module.exports = dragDropContext(config.backend)(Drone);
+module.exports = Drone;
