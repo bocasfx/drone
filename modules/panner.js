@@ -35,6 +35,7 @@ class Panner {
     this.listener.setOrientation(0,0,-1,0,1,0);
     let [lx, ly, lz] = listenerPosition;
     this.listener.setPosition(lx, ly, lz);
+    this.pannerSetting = pannerPosition[0];
   }
 
   set panningModel(level) {
@@ -70,7 +71,12 @@ class Panner {
   }
 
   set position(xPos) {
+    this.pannerSetting = xPos;
     this.pannerNode.setPosition(xPos, window.innerHeight/2, 0);
+  }
+
+  get position() {
+    return this.pannerSetting;
   }
 
   get node() {

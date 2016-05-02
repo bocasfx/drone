@@ -3,14 +3,13 @@
 const React     = require('react');
 const Knob      = require('./knob.jsx');
 const zero      = 0.1;
-const _         = require('lodash');
 
 class Switch extends Knob {
   constructor(props) {
     super(props)
     this.values = props.values;
     this.labels = props.labels;
-    this.selectedOption = _.findIndex(props.values, (o)=> { return o === props.value; });
+    this.selectedOption = props.value;
     this.previousSelection = 0;
     this.valueLabel = this.labels[this.selectedOption];
   }
@@ -24,6 +23,9 @@ class Switch extends Knob {
       position: discreteValue,
       degree: this.valueToRadian(discreteValue)
     })
+  }
+
+  componentWillReceiveProps() {
   }
 
   onMouseMove(event) {

@@ -26,6 +26,15 @@ class Knob extends Draggable {
     return nextState.value !== this.state.value
   }
 
+  componentWillReceiveProps(newProps) {
+    this.setState({
+      value: newProps.value,
+      degree: this.valueToRadian(this.denormalizeValue(newProps.value))
+    });
+    this.valueLabel = newProps.value;
+    this.forceUpdate();
+  }
+
   valueToRadian(value) {
     return Math.round((value / 100) * 270)
   }
@@ -62,7 +71,13 @@ class Knob extends Draggable {
     return parseFloat(normalizedValue).toFixed(1);
   }
 
+  denormalizeValue(normalizedValue) {
+    return 100 * (normalizedValue - this.props.min) / (this.props.max - this.props.min);
+  }
+
   render() {
+
+    console.log('Deg: ' + this.state.degree);
 
     let spinnerStyle = {
       transform: `rotate(${-45 + this.state.degree}deg)`

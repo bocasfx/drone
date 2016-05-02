@@ -8,10 +8,16 @@ class Waveshaper {
   constructor({curve=settings.curve.default}) {
     this.waveshaperNode = audioContext.createWaveShaper();
     this.curve = curve;
+    this.curveLevel = 0;
   }
 
   set curve(curve) {
+    this.curveLevel = curve;
     this.waveshaperNode.curve = this.makeWaveShaperCurve(curve);
+  }
+
+  get curve() {
+    return this.curveLevel;
   }
 
   connect(destination=audioContext.destination) {
