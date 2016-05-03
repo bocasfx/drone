@@ -1,7 +1,5 @@
 'use strict';
 
-const HTML5Backend    = require('react-dnd-html5-backend').default;
-
 const config = {
   synthColors: {
     navy:    '#001f3f',
@@ -21,8 +19,6 @@ const config = {
     gray:    '#AAAAAA',
     silver:  '#DDDDDD' 
   },
-
-  backend: HTML5Backend,
 
   controls: {
 

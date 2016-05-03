@@ -26,6 +26,16 @@ class Knob extends Draggable {
     return nextState.value !== this.state.value
   }
 
+  componentWillReceiveProps(newProps) {
+    let denormalizedValue = this.denormalizeValue(newProps.value);
+    this.setState({
+      value: denormalizedValue,
+      degree: this.valueToRadian(denormalizedValue)
+    });
+    this.valueLabel = newProps.value;
+    this.forceUpdate();
+  }
+
   valueToRadian(value) {
     return Math.round((value / 100) * 270)
   }
@@ -60,6 +70,10 @@ class Knob extends Draggable {
   normalizeValue(value) {
     let normalizedValue = this.props.min + ((value * (this.props.max - this.props.min)) / 100);
     return parseFloat(normalizedValue).toFixed(1);
+  }
+
+  denormalizeValue(normalizedValue) {
+    return 100 * (normalizedValue - this.props.min) / (this.props.max - this.props.min);
   }
 
   render() {

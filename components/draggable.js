@@ -11,6 +11,7 @@ class Draggable extends React.Component {
     this.max = 100;
     this.mouseDown = false;
     this.mousePosition = 0;
+    this.isDragging = false;
   }
 
   onMouseDown(event) {

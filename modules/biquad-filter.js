@@ -37,8 +37,16 @@ class BiquadFilter {
     this.biquadFilter.frequency.value = frequency;
   }
 
+  get frequency() {
+    return this.biquadFilter.frequency.value;
+  }
+
   set gain(gain) {
     this.biquadFilter.gain.value = gain;
+  }
+
+  get gain() {
+    return this.biquadFilter.gain.value;
   }
 }
 
