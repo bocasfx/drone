@@ -25,7 +25,14 @@ class Switch extends Knob {
     })
   }
 
-  componentWillReceiveProps() {
+  componentWillReceiveProps(newProps) {
+    let discreteValue = this.calculateStops(newProps.value);
+    // this.setState({
+    //   value: discreteValue,
+    //   degree: this.valueToRadian(discreteValue)
+    // });
+    // this.valueLabel = this.labels[this.selectedOption];
+    // this.forceUpdate();
   }
 
   onMouseMove(event) {
