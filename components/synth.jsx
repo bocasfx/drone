@@ -138,7 +138,7 @@ class Synth extends React.Component {
   }
 
   cloneDevice() {
-    console.log('clone');
+    this.props.cloneDevice(this);
   }
 
   soloDevice() {
@@ -223,6 +223,13 @@ class Synth extends React.Component {
         top: event.clientY - 75
       });
     }
+  }
+
+  get position() {
+    return {
+      left: this.state.left,
+      top: this.state.top
+    };
   }
 
   render() {

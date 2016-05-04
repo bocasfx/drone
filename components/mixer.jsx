@@ -47,7 +47,15 @@ class Mixer extends Component {
         <div className="axes"></div>
         {
           this.state.synths.map((item)=> {
-            return <Synth type={item.type} id={item.key} key={item.key} left={item.left} top={item.top} killDevice={this.props.killDevice} showEditor={this.showEditor.bind(this)}/>
+            return <Synth
+                    type={item.type}
+                    id={item.key}
+                    key={item.key}
+                    left={item.left}
+                    top={item.top}
+                    killDevice={this.props.killDevice}
+                    cloneDevice={this.props.cloneDevice}
+                    showEditor={this.showEditor.bind(this)}/>
           })
         }
         <Editor ref="editor"/>

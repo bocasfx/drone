@@ -170,14 +170,12 @@ a {
   left: 0;
   width: 100%;
   height: 50px;
-  background-color: #0074D9;
-  border-bottom: 1px solid #666;
   opacity: 0.8;
   cursor: pointer;
+  box-shadow: 0 2px 4px #aaa;
 }
 
 .logo {
-  color: #7FDBFF;
   padding: 15px;
 }
 

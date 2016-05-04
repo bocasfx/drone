@@ -24,6 +24,19 @@ class Drone extends Component {
     this.forceUpdate();
   }
 
+  cloneDevice(device) {
+
+    let newDevice = {
+      left: device.position.left,
+      top: device.position.top,
+      key: Date.now(),
+      type: 'synth'
+    }
+
+    this.state.synths.push(newDevice);
+    this.forceUpdate();
+  }
+
   killDevice(device) {
     let type = inflect.pluralize(device.props.type);
     _.remove(this.state[type], {
@@ -36,11 +49,15 @@ class Drone extends Component {
     return(
       <div className="app-container">
         <Toolbox/>
-        <Mixer synths={this.state.synths} loopers={this.state.loopers} killDevice={this.killDevice.bind(this)} addAudioDevice={this.addAudioDevice.bind(this)}/>
+        <Mixer
+          synths={this.state.synths}
+          loopers={this.state.loopers}
+          killDevice={this.killDevice.bind(this)}
+          addAudioDevice={this.addAudioDevice.bind(this)}
+          cloneDevice={this.cloneDevice.bind(this)}/>
       </div>
     );
   }
-
 }
 
 module.exports = Drone;

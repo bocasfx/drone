@@ -1,21 +1,34 @@
 'use strict';
 
-const React           = require('react');
-const Component       = React.Component;
+const React     = require('react');
+const Component = React.Component;
+const colors    = require('../config').synthColors;
+const _         = require('lodash');
 
 class Toolbox extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      class: 'toolbox',
-      showButtons: false
-    };
+
+    let color = _.sample(colors);
+    let backgroundColor = null;
+    while ((backgroundColor = _.sample(colors)) === color) {}
+    let borderBottom = '2px solid ' + color;
+
+    this.style = {
+      backgroundColor: backgroundColor,
+      color: color,
+      borderBottom: borderBottom
+    }
+  }
+
+  shouldComponentUpdate() {
+    return false;
   }
 
   render() {
     return (
-      <div className={this.state.class}>
+      <div style={this.style} className="toolbox">
         <div className="logo noselect">DRONE</div>
       </div>
     );
