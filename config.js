@@ -27,61 +27,52 @@ const config = {
       settings: {
         panningModel: {
           label: 'Panning Model',
-          type: 'option',
           options: ['HRTF'],
           default: 'HRTF'
         },
         distanceModel: {
           label: 'Distance Model',
-          type: 'option',
           options: ['inverse'],
           default: 'inverse'
         },
         refDistance: {
           label: 'Reference Distance',
-          type: 'knob',
           min: 0,
           max: 10,
           default: 10
         },
         maxDistance: {
           label: 'Max Distance',
-          type: 'knob',
           min: 0,
           max: window.innerWidth/2,
           default: window.innerWidth/4
         },
         rolloffFactor: {
           label: 'Rolloff Factor',
-          type: 'knob',
           min: 1,
           max: 10,
           default: 1
         },
         coneInnerAngle: {
           label: 'Cone Inner Angle',
-          type: 'knob',
           min: 0,
           max: 360,
           default: 360
         },
         coneOuterAngle: {
           label: 'Cone Outer Angle',
-          type: 'knob',
           min: 0,
           max: 360,
           default: 0
         },
         coneOuterGain: {
           label: 'Cone Outer Gain',
-          type: 'knob',
           min: 0,
           max: 20,
           default: 0
         },
         position: {
           label: 'Pan',
-          type: 'knob',
           min: 0,
           max: window.innerWidth,
           default: window.innerWidth/2
@@ -94,28 +85,24 @@ const config = {
       settings: {
         attack: {
           label: 'Attack',
-          type: 'knob',
           min: 0,
           max: 10,
           default: 2
         },
         decay: {
           label: 'Decay',
-          type: 'knob',
           min: 0,
           max: 10,
           default: 2
         },
         sustain: {
           label: 'Sustain',
-          type: 'knob',
           min: 0,
           max: 10,
           default: 2
         },
         release: {
           label: 'Release',
-          type: 'knob',
           min: 0,
           max: 10,
           default: 2
@@ -128,7 +115,6 @@ const config = {
       settings: {
         curve: {
           label: 'Curve',
-          type: 'knob',
           min: 0,
           max: 50,
           default: 0
@@ -141,23 +127,38 @@ const config = {
       settings: {
         type: {
           label: 'Type',
-          type: 'option',
           options: ['lowshelf'],
           default: 'lowshelf'
         },
         gain: {
           label: 'Gain',
-          type: 'knob',
           min: -20,
           max: 20,
           default: 0
         },
         frequency: {
           label: 'Frequency',
-          type: 'knob',
           min: 20,
           max: 20000,
           default: 20000
+        }
+      }
+    },
+
+    oscillator: {
+      label: 'Oscillator',
+      settings: {
+        wave: {
+          label: 'Wave',
+          labels: ['Sine', 'Triangle', 'Square', 'Sawtooth'],
+          default: 0,
+          values: ['sine', 'triangle', 'square', 'sawtooth']
+        },
+        toggleEnvelope: {
+          label: 'Envelope',
+          labels: ['Off', 'On'],
+          default: 1,
+          values: [false, true]
         }
       }
     }

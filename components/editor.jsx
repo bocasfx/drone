@@ -5,6 +5,7 @@ const Component = React.Component;
 const controls  = require('../config').controls;
 const Knob      = require('./knob.jsx');
 const Switch    = require('./switch.jsx');
+const _         = require('lodash');
 
 class Editor extends Component {
 
@@ -30,6 +31,10 @@ class Editor extends Component {
       panner: {
         position: controls.panner.settings.position.default
       },
+      oscillator: {
+        wave: controls.oscillator.settings.wave.default,
+        toggleEnvelope: controls.oscillator.settings.toggleEnvelope.default
+      },
       show: false
     };
 
@@ -37,7 +42,8 @@ class Editor extends Component {
       envelope: controls.envelope.settings,
       waveshaper: controls.waveshaper.settings,
       biquadFilter: controls.biquadFilter.settings,
-      panner: controls.panner.settings
+      panner: controls.panner.settings,
+      oscillator: controls.oscillator.settings
     };
   }
 
@@ -53,6 +59,9 @@ class Editor extends Component {
   }
 
   loadDeviceParameters() {
+    let wave = _.findIndex(controls.oscillator.settings.wave.values, (o)=> { return o === this.device.type; });
+    let toggleEnvelope = _.findIndex(controls.oscillator.settings.toggleEnvelope.values, (o)=> { return o === this.device.enableGainEnvelope; });
+    
     this.setState({
       envelope: {
         attack: this.device.gain.attack,
@@ -69,6 +78,10 @@ class Editor extends Component {
       },
       panner: {
         position: this.device.panner.position
+      },
+      oscillator: {
+        wave: wave,
+        toggleEnvelope: toggleEnvelope
       },
       show: true
     });
@@ -96,6 +109,7 @@ class Editor extends Component {
     let waveshaper = this.settings.waveshaper;
     let biquadFilter = this.settings.biquadFilter;
     let panner = this.settings.panner;
+    let oscillator = this.settings.oscillator;
 
     return(
       <div style={style}>
@@ -106,9 +120,21 @@ class Editor extends Component {
           </div>
           <div className="modules">
             <div className="editor-section">
-              <div className="editor-section-label noselect">Oscillator Wave</div>
-              <Switch value={0} onChange={this.setOscillatorWave.bind(this)} label="Wave" min={0} max={100} knobColor="purple" labels={['Sine', 'Triangle', 'Square', 'Sawtooth']} values={['sine', 'triangle', 'square', 'sawtooth']}/>
-              <Switch value={1} onChange={this.toggleGainEnvelope.bind(this)} label="Envelope" min={0} max={100} knobColor="purple" labels={['Off', 'On']} values={[false, true]}/>
+              <div className="editor-section-label noselect">Oscillator</div>
+              <Switch
+                value={this.state.oscillator.wave}
+                onChange={this.setOscillatorWave.bind(this)}
+                label={oscillator.wave.label}
+                knobColor="purple"
+                labels={oscillator.wave.labels}
+                values={oscillator.wave.values}/>
+              <Switch
+                value={this.state.oscillator.toggleEnvelope}
+                onChange={this.toggleGainEnvelope.bind(this)}
+                label={oscillator.toggleEnvelope.label}
+                knobColor="purple"
+                labels={oscillator.toggleEnvelope.labels}
+                values={oscillator.toggleEnvelope.values}/>
             </div>
             <div className="editor-section">
               <div className="editor-section-label noselect">Amplitude Envelope</div>

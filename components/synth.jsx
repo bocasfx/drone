@@ -113,6 +113,10 @@ class Synth extends React.Component {
     this.oscillator.type = type;
   }
 
+  get type() {
+    return this.oscillator.type;
+  }
+
   killDevice() {
     this.oscillator.stop();
 
