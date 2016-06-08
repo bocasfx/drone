@@ -13,27 +13,13 @@ class Drone extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      synths: [],
-      loopers: []
+      synths: []
     }
   }
 
   addAudioDevice(device) {
     let type = inflect.pluralize(device.type);
     this.state[type].push(device);
-    this.forceUpdate();
-  }
-
-  cloneDevice(device) {
-
-    let newDevice = {
-      left: device.position.left,
-      top: device.position.top,
-      key: Date.now(),
-      type: 'synth'
-    }
-
-    this.state.synths.push(newDevice);
     this.forceUpdate();
   }
 
@@ -51,10 +37,8 @@ class Drone extends Component {
         <Toolbox/>
         <Mixer
           synths={this.state.synths}
-          loopers={this.state.loopers}
           killDevice={this.killDevice.bind(this)}
-          addAudioDevice={this.addAudioDevice.bind(this)}
-          cloneDevice={this.cloneDevice.bind(this)}/>
+          addAudioDevice={this.addAudioDevice.bind(this)}/>
       </div>
     );
   }

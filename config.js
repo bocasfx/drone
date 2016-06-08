@@ -73,9 +73,9 @@ const config = {
         },
         position: {
           label: 'Pan',
-          min: 0,
-          max: window.innerWidth,
-          default: window.innerWidth/2
+          min: -50,
+          max: 50,
+          default: 0
         }
       }
     },

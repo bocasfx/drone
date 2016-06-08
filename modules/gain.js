@@ -28,7 +28,7 @@ class Gain {
     this.noteOffTimeout = null;
     this.noteOnTimeout = null;
 
-    this.gainNode.gain.setValueAtTime(zero, audioContext.currentTime);
+    this.gainNode.gain.setTargetAtTime(zero, audioContext.currentTime, 0.015);
   }
 
   get level() {
@@ -36,7 +36,7 @@ class Gain {
   }
 
   set level(level) {
-    this.gainNode.gain.setValueAtTime(level, audioContext.currentTime);
+    this.gainNode.gain.setTargetAtTime(level, audioContext.currentTime, 0.015);
   }
 
   get node() {
@@ -56,7 +56,7 @@ class Gain {
     let deferred = q.defer();
     let time = audioContext.currentTime + parseFloat(this.attack);
 
-    this.gainNode.gain.setValueAtTime(zero, audioContext.currentTime);
+    this.gainNode.gain.setTargetAtTime(zero, audioContext.currentTime, 0.015);
     this.gainNode.gain.exponentialRampToValueAtTime(this.initialGain, time);
 
     clearTimeout(this.fadeInTimeout);
@@ -75,7 +75,7 @@ class Gain {
     let deferred = q.defer();
     let time = audioContext.currentTime + parseFloat(decay);
 
-    this.gainNode.gain.setValueAtTime(this.level, audioContext.currentTime);
+    this.gainNode.gain.setTargetAtTime(this.level, audioContext.currentTime, 0.015);
     this.gainNode.gain.exponentialRampToValueAtTime(zero, time);
 
     clearTimeout(this.fadeOutTimeout);

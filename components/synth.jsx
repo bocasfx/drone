@@ -21,7 +21,7 @@ class Synth extends React.Component {
       top: 0,
       id: this.props.id,
       showControls: false
-    }
+    };
 
     this.isPlaying = false;
     this.duration = 100;
@@ -31,7 +31,7 @@ class Synth extends React.Component {
     this.noteOnTimeout = null;
 
     this.yParameter = 'gain';
-    this.xParameter = 'frequency'
+    this.xParameter = 'frequency';
 
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
@@ -47,7 +47,9 @@ class Synth extends React.Component {
 
     let color = _.sample(colors);
     let fill = null;
-    while ((fill = _.sample(colors)) === this.color) {}
+    while ((fill = _.sample(colors)) === this.color) {
+      // Do nothing
+    }
 
     this.initialize();
 
@@ -71,7 +73,7 @@ class Synth extends React.Component {
     this.frequency = this.props.left / this.windowWidth;;
   }
 
-  initialize(source) {
+  initialize() {
 
     let level = 1 - (this.props.top / this.windowHeight);
 
@@ -98,7 +100,7 @@ class Synth extends React.Component {
       padding: '0',
       margin: '0',
       'font-size': '2em'
-    }
+    };
   }
 
   get progressBarIcon() {
@@ -106,7 +108,7 @@ class Synth extends React.Component {
   }
 
   set frequency(freq) {
-    this.oscillator.frequency.value = freq * 200;
+    this.oscillator.frequency.setTargetAtTime(freq * 200, audioContext.currentTime, 0.015);
   }
 
   set type(type) {
@@ -137,14 +139,6 @@ class Synth extends React.Component {
     this.props.killDevice(this);
   }
 
-  cloneDevice() {
-    this.props.cloneDevice(this);
-  }
-
-  soloDevice() {
-    console.log('solo');
-  }
-
   showEditor() {
     this.props.showEditor(this);
   }
@@ -160,6 +154,7 @@ class Synth extends React.Component {
   }
 
   stopProgressBarAnimation() {
+    this.progressBar._opts.duration = 500;
     this.progressBar.animate(0);
     clearTimeout(this.timeOut);
   }
@@ -202,6 +197,14 @@ class Synth extends React.Component {
     if (!this.isDragging) {
       this.play();
       return;
+    } else {
+      let yParam = this[this.yParameter];
+
+      yParam
+        .fadeOut()
+        .then(() => {
+          yParam.noteOn();
+        });
     }
     window.onmousemove = null;
     window.onmouseup = null;
@@ -211,13 +214,22 @@ class Synth extends React.Component {
   onMouseMove(event) {
     event.preventDefault();
     if (this.mouseDown) {
+
+      if(!this.isDragging) {
+        this[this.yParameter].clearTimeouts();
+      }
       
+      // We want to still update the synth's 
+      // state in case the mouse pointer gets
+      // outside its bounding rect.
       window.onmousemove = this.onMouseMove.bind(this);
       window.onmouseup = this.onMouseUp.bind(this);
 
       this.isDragging = true;
       this[this.xParameter] = event.clientX / this.windowWidth;
       this[this.yParameter].level = 1 - (event.clientY / this.windowHeight);
+
+      // Update the synth's location
       this.setState({
         left: event.clientX - 35,
         top: event.clientY - 75
@@ -233,12 +245,9 @@ class Synth extends React.Component {
   }
 
   render() {
-    let isDragging = false;
     let left = this.state.left;
     let top = this.state.top;
-    let opacity = isDragging ? 0 : 1;
     let style = {
-      opacity: opacity,
       left: left + 'px',
       top: top + 'px'
     };
@@ -247,7 +256,7 @@ class Synth extends React.Component {
     let controlsStyle = {
       opacity: controlsDisplay,
       transition: 'opacity .25s ease-in-out'
-    }
+    };
 
     return (
       <div className="synth" style={style} onMouseMove={this.onMouseMove.bind(this)} onMouseLeave={this.showControls.bind(this)} onMouseEnter={this.showControls.bind(this)}>
@@ -256,10 +265,6 @@ class Synth extends React.Component {
           <i className="control control-top control-right fa fa-times" onClick={this.killDevice.bind(this)}></i>
         </div>
         <div className="progress noselect" onMouseDown={this.onMouseDown.bind(this)} onMouseUp={this.onMouseUp.bind(this)}></div>
-        <div style={controlsStyle}>
-          <i className="control control-bottom fa fa-plus" onClick={this.cloneDevice.bind(this)}></i>
-          <i className="control control-bottom control-right fa fa-headphones" onClick={this.soloDevice.bind(this)}></i>
-        </div>
       </div>
     );
   }
